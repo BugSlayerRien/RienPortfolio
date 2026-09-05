@@ -1,0 +1,672 @@
+/* ============================================================
+   Cross Media Bar
+   ============================================================ */
+
+.xmb {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-xmb);
+
+  /* The cross point: where the selected item always sits. */
+  --cross-x: clamp(140px, 22vw, 300px);
+  --cross-y: 47vh;
+
+  transition: opacity var(--dur-blade) var(--ease-out),
+    filter var(--dur-blade) var(--ease-out), transform var(--dur-blade) var(--ease-out);
+
+  /* Rows dissolve toward the top and bottom of the screen instead of running
+     into the HUD, and the category head fades out once you scroll deep. */
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 87%, transparent 100%);
+}
+
+/* Pushed back and blurred while a blade is open. */
+.xmb[data-dimmed] {
+  opacity: 0.26;
+  filter: blur(7px) saturate(0.7);
+  transform: scale(0.97) translateX(-3%);
+  pointer-events: none;
+}
+
+.xmb__rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transform: translate3d(calc(var(--cross-x) - var(--cat) * var(--col-gap)), 0, 0);
+  transition: transform var(--dur-slide) var(--ease-xmb);
+  will-change: transform;
+}
+
+/* ---------- Column ---------- */
+
+.xmb__col {
+  position: absolute;
+  top: 0;
+  left: calc(var(--ci) * var(--col-gap));
+  height: 100%;
+  transition: transform var(--dur-slide) var(--ease-xmb), opacity var(--dur-slide) var(--ease-soft);
+}
+
+/* Only the active column scrolls vertically. */
+.xmb__col[data-active] {
+  transform: translate3d(0, calc(-1 * var(--item) * var(--row-gap)), 0);
+  z-index: 3;
+}
+
+/* ...except a burst column. Its nodes are a fixed cluster, not a list, so
+   scrolling the column would drag the whole thing off the top of the screen
+   as the cursor walked down it. The cursor moves; the cluster stays put. */
+.xmb__col[data-burst][data-active] {
+  transform: none;
+}
+
+/* Columns fade with distance from the cursor — XMB depth-of-field. */
+.xmb__col[data-distance='1'] {
+  opacity: 0.72;
+}
+.xmb__col[data-distance='2'] {
+  opacity: 0.42;
+}
+.xmb__col[data-distance='3'] {
+  opacity: 0.22;
+}
+.xmb__col[data-distance='4'] {
+  opacity: 0.1;
+}
+
+/* ---------- Category head ---------- */
+
+.xmb__cat {
+  position: absolute;
+  top: calc(var(--cross-y) - var(--row-gap));
+  left: 0;
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+  width: var(--icon-sel);
+  padding: 0;
+  color: var(--ink-soft);
+  transition: color var(--dur-tick) var(--ease-soft), transform var(--dur-tick) var(--ease-out);
+}
+
+/* Constant-size slot so the glyph never shifts the rail. */
+.xmb__cat-slot {
+  display: grid;
+  place-items: center;
+  width: var(--icon-sel);
+  height: var(--icon-sel);
+}
+
+.xmb__cat-glyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--icon);
+  height: var(--icon);
+  border-radius: var(--r-md);
+  color: var(--pearl-300);
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
+  transition: transform var(--dur-tick) var(--ease-out), color var(--dur-tick) var(--ease-soft),
+    filter var(--dur-tick) var(--ease-soft);
+}
+
+/* Sits above the glyph — below it would collide with item 0. */
+.xmb__cat-label {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  margin-bottom: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--dur-tick) var(--ease-soft), transform var(--dur-tick) var(--ease-out);
+  white-space: nowrap;
+}
+
+.xmb__col[data-active] .xmb__cat {
+  color: var(--pearl-100);
+}
+
+.xmb__col[data-active] .xmb__cat-glyph {
+  color: #fff;
+  filter: drop-shadow(0 0 16px rgba(160, 210, 255, 0.55)) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
+}
+
+.xmb__col[data-active] .xmb__cat-label {
+  opacity: 1;
+  transform: none;
+}
+
+/* Idle breathing on the active category glyph. */
+.xmb[data-idle] .xmb__col[data-active] .xmb__cat-glyph {
+  animation: cat-breathe 5.2s var(--ease-soft) infinite;
+}
+
+@keyframes cat-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 12px rgba(160, 210, 255, 0.35)) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
+  }
+  50% {
+    transform: scale(1.09);
+    filter: drop-shadow(0 0 26px rgba(200, 180, 255, 0.7)) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
+  }
+}
+
+/* ---------- Items ---------- */
+
+.xmb__items {
+  position: absolute;
+  top: var(--cross-y);
+  left: 0;
+  margin: 0;
+  opacity: 0;
+  transition: opacity var(--dur-slide) var(--ease-soft);
+  pointer-events: none;
+}
+
+.xmb__col[data-active] .xmb__items {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.xmb__item {
+  position: absolute;
+  top: calc(var(--ii) * var(--row-gap));
+  left: 0;
+  translate: 0 -50%;
+  transition: opacity var(--dur-slide) var(--ease-soft), filter var(--dur-slide) var(--ease-soft);
+}
+
+.xmb__item[data-offset='1'] {
+  opacity: 0.62;
+}
+.xmb__item[data-offset='2'] {
+  opacity: 0.34;
+}
+.xmb__item[data-offset='3'] {
+  opacity: 0.16;
+}
+.xmb__item[data-offset='4'] {
+  opacity: 0.07;
+}
+
+.xmb__item-btn {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0;
+  /* Shift left by half a slot so the tile straddles the cross point. */
+  margin-left: calc(var(--icon-sel) / -2);
+  border-radius: var(--r-md);
+  text-align: left;
+  color: var(--ink-soft);
+  transition: color var(--dur-tick) var(--ease-soft);
+}
+
+/* Constant-size slot: the tile grows on selection without moving the row. */
+.xmb__item-slot {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--icon-sel);
+  height: var(--icon-sel);
+}
+
+/* --- The item glyph: a pearlescent tile --- */
+
+.xmb__item-glyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--icon);
+  height: var(--icon);
+  border-radius: 16px;
+  color: var(--pearl-200);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 55%, rgba(255, 255, 255, 0.09));
+  border: 1px solid var(--edge);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), var(--shadow-sm);
+  overflow: hidden;
+  isolation: isolate;
+  transition: width var(--dur-tick) var(--ease-out), height var(--dur-tick) var(--ease-out),
+    transform var(--dur-tick) var(--ease-out), box-shadow var(--dur-tick) var(--ease-soft),
+    border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft);
+}
+
+/* Holographic film inside each tile. */
+.xmb__item-glyph::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--holo-soft);
+  background-size: 200% 200%;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  animation: holo-wander 16s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* Travelling specular band. */
+.xmb__item-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    112deg,
+    transparent calc(var(--sheen) + 6%),
+    rgba(255, 255, 255, 0.55) calc(var(--sheen) + 15%),
+    rgba(255, 255, 255, 0.08) calc(var(--sheen) + 22%),
+    transparent calc(var(--sheen) + 32%)
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity var(--dur-tick) var(--ease-soft);
+  pointer-events: none;
+}
+
+/* --- Text --- */
+
+.xmb__item-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity var(--dur-slide) var(--ease-soft), transform var(--dur-slide) var(--ease-out);
+}
+
+.xmb__item-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: var(--track-ui);
+  line-height: 1.15;
+  color: var(--pearl-100);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+}
+
+.xmb__item-sub {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-ui);
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+
+.xmb__col[data-active] .xmb__item-text {
+  opacity: 0.55;
+  transform: none;
+}
+
+/* --- Selected item --- */
+
+.xmb__item[data-selected] {
+  opacity: 1;
+  z-index: 4;
+}
+
+.xmb__item[data-selected] .xmb__item-glyph {
+  width: var(--icon-sel);
+  height: var(--icon-sel);
+  color: #fff;
+  border-color: var(--edge-bright);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), var(--shadow-holo),
+    0 0 34px rgba(150, 200, 255, 0.28);
+}
+
+.xmb__item[data-selected] .xmb__item-glyph::before {
+  opacity: 0.85;
+  animation-duration: 9s;
+}
+
+.xmb__item[data-selected] .xmb__item-sheen {
+  opacity: 1;
+  animation: sheen-pass 4.5s var(--ease-soft) infinite;
+}
+
+.xmb__item[data-selected] .xmb__item-text {
+  opacity: 1;
+}
+
+.xmb__item[data-selected] .xmb__item-title {
+  font-size: var(--fs-xl);
+  background: var(--holo);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holo-drift 11s linear infinite;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.6));
+}
+
+.xmb__item[data-selected] .xmb__item-sub {
+  color: var(--pearl-400);
+}
+
+/* Idle: the selected tile breathes and lifts. */
+.xmb[data-idle] .xmb__item[data-selected] .xmb__item-glyph {
+  animation: item-breathe 4.6s var(--ease-soft) infinite;
+}
+
+@keyframes item-breathe {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), var(--shadow-holo),
+      0 0 26px rgba(150, 200, 255, 0.22);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) scale(1.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), var(--shadow-holo),
+      0 0 56px rgba(190, 190, 255, 0.5);
+  }
+}
+
+/* Hover reads as a pre-select. */
+.xmb__item-btn:hover .xmb__item-glyph {
+  border-color: var(--edge-bright);
+  transform: translateY(-2px);
+}
+
+/* ---------- Cross-point focus mark ---------- */
+
+.xmb__focus {
+  position: absolute;
+  top: var(--cross-y);
+  left: var(--cross-x);
+  translate: -50% -50%;
+  width: 180px;
+  height: 180px;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.xmb__focus-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(170, 205, 255, 0.16) 0%, transparent 62%);
+  animation: float-idle 9s var(--ease-soft) infinite;
+}
+
+.xmb__focus-core {
+  position: absolute;
+  width: 4px;
+  height: 46vh;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.07) 45%, transparent);
+  filter: blur(2px);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 860px) {
+  .xmb {
+    --cross-x: 92px;
+    --cross-y: 44vh;
+    --col-gap: 74px;
+    --row-gap: 88px;
+    --icon: 48px;
+    --icon-sel: 64px;
+  }
+
+  .xmb__item-title {
+    font-size: var(--fs-md);
+  }
+
+  .xmb__item[data-selected] .xmb__item-title {
+    font-size: var(--fs-lg);
+  }
+
+  .xmb__item-sub {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xmb__item-sheen,
+  .xmb__item-glyph::before,
+  .xmb__focus-ring {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Socials — the burst column
+   ============================================================
+
+   The last stop on the bar has no blade. Arriving detonates it: a flash at
+   the cross point, then the nodes fly outward from it into a readable
+   cluster. Each node carries its own delay off --bi, so they arrive as a
+   ripple rather than all at once.
+   ------------------------------------------------------------ */
+
+.xmb__burst {
+  position: absolute;
+  top: var(--cross-y);
+  left: 0;
+  translate: 0 -50%;
+  width: min(680px, 56vw);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+  padding-left: 26px;
+  pointer-events: none;
+}
+
+.xmb__col[data-active] .xmb__burst {
+  pointer-events: auto;
+}
+
+/* The detonation flash, pinned on the cross point. */
+.xmb__burst-flash {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 230, 255, 0.85);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.xmb__col[data-active] .xmb__burst-flash {
+  animation: burst-flash 900ms var(--ease-out) forwards;
+}
+
+@keyframes burst-flash {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 0.95;
+    box-shadow: 0 0 40px 10px rgba(170, 210, 255, 0.55);
+  }
+  100% {
+    width: 130vmax;
+    height: 130vmax;
+    opacity: 0;
+    box-shadow: 0 0 0 0 rgba(255, 143, 209, 0);
+  }
+}
+
+/* ---------- A node ---------- */
+
+.xmb__node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 15px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--edge);
+  /* Glass over a dark base — the wave runs straight behind these nodes and
+     would otherwise wash the label out wherever a bright ribbon crosses. */
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 55%, rgba(255, 255, 255, 0.09)),
+    linear-gradient(180deg, rgba(11, 15, 30, 0.78), rgba(8, 11, 22, 0.85));
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--shadow-sm);
+  color: var(--ink-soft);
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Parked at the cross point, collapsed, until the column goes active. */
+  opacity: 0;
+  transform: translate3d(calc(-26px - 50%), 0, 0) scale(0.2);
+  transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft),
+    box-shadow var(--dur-tick) var(--ease-soft);
+}
+
+/* Oil-slick film. */
+.xmb__node::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--holo-soft);
+  background-size: 220% 220%;
+  mix-blend-mode: overlay;
+  opacity: 0.42;
+  animation: holo-wander 18s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.xmb__col[data-active] .xmb__node {
+  animation: node-fly 760ms var(--ease-out) forwards;
+  animation-delay: calc(var(--bi) * 65ms);
+}
+
+@keyframes node-fly {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(-26px - 50%), 0, 0) scale(0.2) rotate(-8deg);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  75% {
+    transform: translate3d(0, 0, 0) scale(1.05) rotate(0.6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.xmb__node-glyph {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  border: 1px solid var(--edge);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--pearl-200);
+  transition: color var(--dur-tick) var(--ease-soft), border-color var(--dur-tick) var(--ease-soft);
+}
+
+.xmb__node-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.xmb__node-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.xmb__node-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pearl-100);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Selected / hovered node. */
+.xmb__node[data-selected],
+.xmb__node:hover {
+  border-color: var(--edge-bright);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), var(--shadow-holo);
+}
+
+.xmb__node[data-selected] .xmb__node-glyph,
+.xmb__node:hover .xmb__node-glyph {
+  color: #fff;
+  border-color: var(--edge-bright);
+}
+
+.xmb__node[data-selected] .xmb__node-value {
+  background: var(--holo);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holo-drift 11s linear infinite;
+}
+
+/* Idle: the whole cluster breathes gently. */
+.xmb[data-idle] .xmb__col[data-active][data-burst] .xmb__node {
+  animation: node-fly 760ms var(--ease-out) forwards,
+    float-idle 7s var(--ease-soft) infinite calc(900ms + var(--bi) * 220ms);
+}
+
+/* The burst column has no item list, so nothing should mask it away. */
+.xmb__col[data-burst] .xmb__items {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .xmb__burst {
+    width: min(420px, 68vw);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    padding-left: 18px;
+  }
+
+  .xmb__node {
+    padding: 9px 12px;
+    gap: 10px;
+  }
+
+  .xmb__node-glyph {
+    width: 34px;
+    height: 34px;
+  }
+
+  .xmb__node-value {
+    font-size: 0.86rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xmb__col[data-active] .xmb__node,
+  .xmb[data-idle] .xmb__col[data-active][data-burst] .xmb__node {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .xmb__col[data-active] .xmb__burst-flash {
+    animation: none;
+  }
+}

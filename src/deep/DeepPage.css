@@ -1,0 +1,945 @@
+/* ============================================================
+   The deep dive.
+
+   The page starts in the XMB's own palette and drains as you descend:
+   `--dive` (0 to 1, published on scroll) crossfades a bright surface layer
+   into a near-black abyss. The iridescence never leaves — it just gets darker
+   and oilier, petrol on wet asphalt instead of a soap bubble.
+   ============================================================ */
+
+.deep {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  color: #e2e2ee;
+  font-family: var(--font-ui);
+  background: #04040a;
+
+  --dive: 0;
+
+  /* Darker iridescence. Same five hues as the surface, taken down in
+     luminance so they read as oil on black rather than neon. */
+  --oil: linear-gradient(
+    100deg,
+    #8a4f79 0%,
+    #6b5aa0 20%,
+    #3f7d94 42%,
+    #4e8f7c 62%,
+    #9a8452 80%,
+    #8a4f79 100%
+  );
+
+  /* The same slick, lifted enough to read as type. */
+  --oil-lit: linear-gradient(
+    100deg,
+    #e79ec8 0%,
+    #ad9ceb 20%,
+    #7fc6de 42%,
+    #8fdcc0 62%,
+    #e6d29a 80%,
+    #e79ec8 100%
+  );
+
+  /* Ink drains toward grey as you sink, but never all the way. */
+  --ink-1: color-mix(in oklab, #fdfcff calc((1 - var(--dive)) * 100%), #e6e6f0);
+  --ink-2: color-mix(in oklab, #d6daf0 calc((1 - var(--dive)) * 100%), #9d9db4);
+  --ink-3: color-mix(in oklab, #a9b0d4 calc((1 - var(--dive)) * 100%), #74748c);
+}
+
+/* ---------- Ground ---------- */
+
+.deep__ground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.deep__ground > span {
+  position: absolute;
+  inset: 0;
+  /* Promote every layer once. The blurred slicks are expensive to rasterise,
+     so they must be painted a single time and then only have their opacity
+     changed as --dive moves. */
+  transform: translateZ(0);
+  will-change: opacity;
+}
+
+/* Layer 1: the surface. Deliberately the XMB's palette, so arriving here
+   feels like the same world one floor down rather than a different site. */
+.deep__surface-layer {
+  inset: -12%;
+  background:
+    radial-gradient(120% 90% at 18% 8%, rgba(96, 68, 150, 0.55), transparent 58%),
+    radial-gradient(100% 80% at 84% 22%, rgba(28, 96, 148, 0.5), transparent 60%),
+    radial-gradient(120% 100% at 50% 108%, rgba(150, 74, 130, 0.35), transparent 62%),
+    linear-gradient(180deg, #0a0e1c 0%, #10142a 45%, #080b18 100%);
+  opacity: calc(1 - var(--dive));
+  animation: ground-drift 34s ease-in-out infinite alternate;
+}
+
+/* Layer 2: the abyss, fading up as the surface fades out. */
+.deep__abyss-layer {
+  inset: -12%;
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(70, 60, 100, 0.2), transparent 62%),
+    linear-gradient(180deg, #07070f 0%, #040409 50%, #010103 100%);
+  opacity: var(--dive);
+}
+
+/* The oil slick. Present at every depth — it is the through-line between the
+   bright surface and the black bottom — but it thickens as you go down. */
+.deep__oil {
+  inset: -18%;
+  background: conic-gradient(
+    from var(--holo-angle) at 50% 50%,
+    rgba(190, 90, 160, 0.3),
+    rgba(120, 100, 210, 0.26),
+    rgba(60, 160, 200, 0.3),
+    rgba(80, 190, 150, 0.24),
+    rgba(210, 175, 90, 0.26),
+    rgba(190, 90, 160, 0.3)
+  );
+  mix-blend-mode: overlay;
+  filter: blur(64px);
+  /* never below 0.45 — the iridescence has to survive the bottom */
+  opacity: calc(0.9 - var(--dive) * 0.45);
+  animation: holo-spin 54s linear infinite;
+}
+
+/* The second slick, and the reason iridescence survives the bottom.
+   `overlay` over near-black renders as black, so the layer above dies out as
+   the abyss takes over. This one is `screen`, which adds light instead of
+   modulating it — so it only becomes visible once it is dark enough to matter. */
+.deep__oil-deep {
+  inset: -18%;
+  background: conic-gradient(
+    from calc(var(--holo-angle) * -1) at 42% 58%,
+    rgba(150, 70, 125, 0.55),
+    rgba(92, 76, 165, 0.5),
+    rgba(44, 120, 150, 0.55),
+    rgba(58, 145, 115, 0.45),
+    rgba(160, 130, 66, 0.5),
+    rgba(150, 70, 125, 0.55)
+  );
+  mix-blend-mode: screen;
+  filter: blur(80px);
+  opacity: calc(0.05 + var(--dive) * 0.3);
+  animation: holo-spin 78s linear infinite reverse;
+}
+
+.deep__silt {
+  inset: -10%;
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(215, 215, 245, 0.55), transparent),
+    radial-gradient(1px 1px at 68% 14%, rgba(215, 215, 245, 0.45), transparent),
+    radial-gradient(1.6px 1.6px at 34% 68%, rgba(215, 215, 245, 0.4), transparent),
+    radial-gradient(1px 1px at 82% 74%, rgba(215, 215, 245, 0.5), transparent),
+    radial-gradient(1.2px 1.2px at 52% 42%, rgba(215, 215, 245, 0.35), transparent),
+    radial-gradient(1px 1px at 24% 88%, rgba(215, 215, 245, 0.4), transparent);
+  background-size: 340px 340px;
+  animation: silt-fall 26s linear infinite;
+  opacity: calc(0.35 + var(--dive) * 0.4);
+}
+
+@keyframes silt-fall {
+  to {
+    background-position: 0 340px, 0 340px, 0 340px, 0 340px, 0 340px, 0 340px;
+  }
+}
+
+.deep__grain {
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Closes in as you descend — pressure. */
+.deep__vignette {
+  background: radial-gradient(
+    120% 100% at 50% 45%,
+    transparent calc(46% - var(--dive) * 22%),
+    rgba(1, 1, 4, calc(0.5 + var(--dive) * 0.42)) 100%
+  );
+}
+
+/* ---------- Reaching a stratum ---------- */
+
+/* What used to be a screen-wide crack and a full-page shake. Both looked good
+   and ran badly — see the note in DeepPage.jsx. The moment is now carried by
+   the header of the stratum you just entered, which costs a transform and a
+   background-position on two small elements. */
+
+.deep__stratum[data-active] .deep__head {
+  animation: head-arrive 760ms var(--ease-out) both;
+}
+
+@keyframes head-arrive {
+  0% { transform: translate3d(-26px, 8px, 0); opacity: 0.35; }
+  60% { transform: translate3d(3px, 0, 0); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+.deep__stratum[data-align='right'][data-active] .deep__head {
+  animation-name: head-arrive-right;
+}
+
+@keyframes head-arrive-right {
+  0% { transform: translate3d(26px, 8px, 0); opacity: 0.35; }
+  60% { transform: translate3d(-3px, 0, 0); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+/* The rule fills with iridescence and sweeps once. */
+.deep__stratum[data-active] .deep__rule {
+  background: var(--oil-lit);
+  background-size: 300% 100%;
+  opacity: 0.9;
+  animation: rule-sweep 1200ms var(--ease-out) both;
+}
+
+@keyframes rule-sweep {
+  0% { background-position: 120% 50%; transform: scaleX(0.1); transform-origin: left center; }
+  55% { transform: scaleX(1); }
+  100% { background-position: -20% 50%; transform: scaleX(1); }
+}
+
+/* The heading of the stratum you are inside stays iridescent. Everything
+   above and below it is plain, so the live section is always obvious. */
+.deep__stratum[data-active] .deep__h2 {
+  background: var(--oil-lit);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: h2-wash 1400ms var(--ease-out) both, holo-drift 16s linear 1.4s infinite;
+}
+
+@keyframes h2-wash {
+  0% { background-position: 160% 50%; transform: translate3d(0, 10px, 0); opacity: 0.4; }
+  100% { background-position: 0% 50%; transform: none; opacity: 1; }
+}
+
+.deep__stratum[data-active] .deep__depth {
+  animation: depth-pop 760ms var(--ease-out) both;
+}
+
+@keyframes depth-pop {
+  0% { transform: scale(0.85); opacity: 0.4; }
+  45% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.deep__stratum[data-active] .deep__label {
+  color: var(--ink-1);
+  transition: color 500ms var(--ease-soft);
+}
+
+/* ---------- Chrome ---------- */
+
+.deep__surface-btn {
+  position: absolute;
+  top: clamp(16px, 2.4vw, 28px);
+  left: clamp(18px, 3vw, 44px);
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--ink-2);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: color 240ms, border-color 240ms, transform 240ms;
+}
+
+.deep__surface-btn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+/* ---------- Depth gauge ---------- */
+
+.deep__gauge {
+  position: absolute;
+  right: clamp(14px, 3vw, 40px);
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 30;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  transition: transform 360ms var(--ease-out);
+}
+
+/* The gauge takes the hit too, and flares. */
+.deep__gauge[data-flare] {
+  animation: gauge-flare 900ms var(--ease-out);
+}
+
+@keyframes gauge-flare {
+  0% { transform: scale(1); }
+  12% { transform: scale(1.28); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.deep__gauge-rail {
+  position: relative;
+  width: 3px;
+  height: clamp(130px, 30vh, 240px);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.deep__gauge-fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(var(--dive, 0) * 100%);
+  border-radius: 3px;
+  background: var(--oil);
+  filter: brightness(1.5);
+  box-shadow: 0 0 14px rgba(180, 150, 210, 0.6);
+  transition: height 220ms linear;
+}
+
+/* The glow is a separate element so the flare animates opacity, not a
+   box-shadow on the fill itself. */
+.deep__gauge-fill::after {
+  content: '';
+  position: absolute;
+  inset: -5px -7px;
+  border-radius: 8px;
+  background: var(--oil-lit);
+  filter: blur(7px);
+  opacity: 0;
+}
+
+.deep__gauge[data-flare] .deep__gauge-fill::after {
+  animation: fill-flare 900ms var(--ease-out);
+}
+
+@keyframes fill-flare {
+  0% { opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* One tick per stratum; the one you just reached lights up. */
+.deep__gauge-tick {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--tp) * 100%);
+  translate: -50% -50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #14121f;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  transition: border-color 320ms, box-shadow 320ms, width 320ms, height 320ms;
+}
+
+.deep__gauge-tick[data-passed] {
+  border-color: rgba(215, 195, 245, 0.75);
+}
+
+.deep__gauge-tick[data-current] {
+  width: 12px;
+  height: 12px;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(200, 170, 240, 0.2), 0 0 20px 3px rgba(210, 185, 250, 0.8);
+}
+
+.deep__gauge[data-flare] .deep__gauge-tick[data-current] {
+  animation: tick-pop 900ms var(--ease-out);
+}
+
+@keyframes tick-pop {
+  0% { transform: scale(1); }
+  14% { transform: scale(2.2); }
+  100% { transform: scale(1); }
+}
+
+.deep__gauge-read {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  transition: color 300ms;
+}
+
+.deep__gauge-read b {
+  color: var(--ink-1);
+  font-size: 0.82rem;
+}
+
+.deep__gauge[data-flare] .deep__gauge-read b {
+  animation: read-pop 900ms var(--ease-out);
+}
+
+@keyframes read-pop {
+  0% { transform: scale(1); color: var(--ink-1); }
+  14% { transform: scale(1.55); color: #fff; }
+  100% { transform: scale(1); color: var(--ink-1); }
+}
+
+.deep__gauge-read b {
+  display: inline-block;
+}
+
+.deep__gauge-label {
+  font-size: 0.54rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  writing-mode: vertical-rl;
+}
+
+/* ---------- Scroll body ---------- */
+
+.deep__scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.deep__scroll::-webkit-scrollbar { width: 8px; }
+.deep__scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+}
+
+/* Wide by default. Content is placed inside, not centred by default. */
+.deep__intro,
+.deep__stratum,
+.deep__outro {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  padding: 12vh clamp(24px, 6vw, 96px);
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.deep__intro {
+  gap: 18px;
+  justify-items: start;
+}
+
+.deep__block {
+  display: grid;
+  gap: 18px;
+}
+
+/* Blocks sit where the stratum tells them to — left rail, right rail, or
+   running the full width. Nothing is stuck in a centred column. */
+.deep__stratum[data-align='left'] .deep__block {
+  max-width: 62ch;
+  margin-right: auto;
+}
+
+.deep__stratum[data-align='right'] .deep__block {
+  max-width: 62ch;
+  margin-left: auto;
+  text-align: right;
+  justify-items: end;
+}
+
+.deep__stratum[data-align='right'] .deep__head {
+  flex-direction: row-reverse;
+}
+
+.deep__stratum[data-align='right'] .deep__rule {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.26), transparent);
+}
+
+.deep__stratum[data-align='wide'] .deep__block {
+  max-width: none;
+}
+
+/* The hairline you just broke through. */
+.deep__stratum::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 4%;
+  right: 4%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+}
+
+/* ---------- Type ---------- */
+
+.deep__kicker {
+  font-size: 0.62rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deep__title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(2.1rem, 6.6vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--ink-1);
+  max-width: 16ch;
+}
+
+.deep__h2 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(1.7rem, 4.2vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink-1);
+}
+
+.deep__lede {
+  margin: 0;
+  font-size: clamp(1rem, 1.9vw, 1.22rem);
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 54ch;
+}
+
+.deep__updated {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deep__prose {
+  display: grid;
+  gap: 16px;
+  max-width: 62ch;
+  font-size: 1.02rem;
+  line-height: 1.78;
+  color: var(--ink-2);
+}
+
+.deep__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deep__hint i {
+  display: block;
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent);
+  animation: hint-drop 2.4s ease-in-out infinite;
+}
+
+@keyframes hint-drop {
+  0%, 100% { opacity: 0.25; transform: translateY(-6px); }
+  50% { opacity: 1; transform: translateY(4px); }
+}
+
+/* ---------- Stratum header ---------- */
+
+.deep__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.deep__depth {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--ink-1);
+}
+
+.deep__rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.26), transparent);
+}
+
+.deep__label {
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- Facts ---------- */
+
+.deep__facts {
+  display: grid;
+  margin: 8px 0 0;
+  min-width: min(46ch, 100%);
+}
+
+.deep__facts > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.deep__facts dt {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deep__facts dd {
+  margin: 0;
+  color: var(--ink-1);
+}
+
+/* ---------- /now ---------- */
+
+.deep__now {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.deep__now-row {
+  display: grid;
+  grid-template-columns: 36px minmax(96px, 130px) 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: padding-left 300ms, border-color 300ms;
+}
+
+.deep__now-row:hover {
+  padding-left: 14px;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deep__now-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--ink-2);
+}
+
+.deep__now-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deep__now-body {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+/* ---------- Hobby cards ---------- */
+
+.deep__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.deep__card {
+  position: relative;
+  display: grid;
+  gap: 9px;
+  padding: 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  transition: border-color 320ms, background 320ms, transform 320ms;
+}
+
+.deep__card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--oil);
+  filter: brightness(1.5);
+  opacity: 0.4;
+  transition: opacity 320ms;
+}
+
+.deep__card:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.055);
+  transform: translateY(-3px);
+}
+
+.deep__card:hover::before { opacity: 1; }
+
+.deep__card-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  color: var(--ink-2);
+}
+
+.deep__card h3 {
+  margin: 0;
+  font-size: 1.04rem;
+  color: var(--ink-1);
+}
+
+.deep__card p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.62;
+  color: var(--ink-2);
+}
+
+/* ---------- /uses ---------- */
+
+.deep__kit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 22px 30px;
+  margin-top: 12px;
+}
+
+.deep__kit-col h3 {
+  margin: 0 0 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deep__kit-col ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.deep__kit-col li {
+  font-size: 0.96rem;
+  color: var(--ink-1);
+}
+
+/* ---------- The vault: logs as cards ---------- */
+
+.deep__logs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.deep__log {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 22px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.028);
+  overflow: hidden;
+  transition: border-color 340ms, background 340ms, transform 340ms;
+}
+
+/* Every card carries an oil-slick edge along the top. */
+.deep__log-edge {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--oil);
+  filter: brightness(1.5);
+  opacity: 0.42;
+  transition: opacity 340ms;
+}
+
+.deep__log:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.055);
+  transform: translateY(-4px);
+}
+
+.deep__log:hover .deep__log-edge { opacity: 1; }
+
+.deep__log header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.deep__log-tag {
+  padding: 3px 9px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.54rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-1);
+}
+
+.deep__log[data-tag='NOTE'] .deep__log-tag { border-color: rgba(120, 190, 210, 0.5); }
+.deep__log[data-tag='IDEA'] .deep__log-tag { border-color: rgba(215, 180, 100, 0.5); }
+
+.deep__log-date {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+
+.deep__log h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  color: var(--ink-1);
+}
+
+.deep__log p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.62;
+  color: var(--ink-2);
+}
+
+/* ---------- Outro ---------- */
+
+.deep__outro {
+  min-height: 80svh;
+  text-align: center;
+  justify-items: center;
+  gap: 16px;
+}
+
+.deep__rise {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-1);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: transform 260ms, border-color 260ms, background 260ms;
+}
+
+.deep__rise:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 860px) {
+  .deep__gauge-label { display: none; }
+  .deep__gauge { right: 10px; }
+
+  .deep__stratum[data-align='right'] .deep__block {
+    text-align: left;
+    justify-items: start;
+  }
+  .deep__stratum[data-align='right'] .deep__head {
+    flex-direction: row;
+  }
+  .deep__now-row {
+    grid-template-columns: 30px 1fr;
+    gap: 10px 12px;
+  }
+  .deep__now-body { grid-column: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deep__silt,
+  .deep__oil,
+  .deep__surface-layer,
+  .deep__hint i {
+    animation: none;
+  }
+  .deep__stratum[data-active] .deep__head,
+  .deep__stratum[data-active] .deep__rule,
+  .deep__stratum[data-active] .deep__h2,
+  .deep__stratum[data-active] .deep__depth,
+  .deep__gauge[data-flare],
+  .deep__gauge[data-flare] .deep__gauge-fill::after,
+  .deep__gauge[data-flare] .deep__gauge-tick[data-current],
+  .deep__gauge[data-flare] .deep__gauge-read b {
+    animation: none;
+  }
+  .deep__scroll { scroll-behavior: auto; }
+}
+
+/* ---------- Arrival ---------- */
+
+/* The deep page powers on the way the surface powered off, run backwards:
+   a point opens into a scan line, the line opens into the picture. */
+.deep {
+  /* `backwards`, not `both`: the last keyframe already matches the base
+     style, and holding it forwards would leave an identity transform behind
+     — enough to make this a containing block for the fixed children. */
+  animation: deep-power-on 560ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transform-origin: 50% 50%;
+}
+
+@keyframes deep-power-on {
+  0% {
+    transform: scaleY(0.006) scaleX(0.0015);
+    opacity: 0;
+  }
+  /* the point strikes */
+  12% {
+    transform: scaleY(0.006) scaleX(0.0015);
+    opacity: 1;
+  }
+  /* out to the scan line */
+  44% {
+    transform: scaleY(0.006) scaleX(1);
+    opacity: 1;
+  }
+  /* and the picture fills back in. `none` rather than an identity scale:
+     a transform of any kind would make this a containing block for the
+     fixed-position children inside. */
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deep {
+    animation: none;
+  }
+}

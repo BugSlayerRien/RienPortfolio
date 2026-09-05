@@ -1,0 +1,255 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-deep);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  font-weight: 400;
+  line-height: 1.55;
+  overflow: hidden; /* the XMB owns the viewport; blades scroll internally */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: var(--iri-3);
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+iframe {
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--iri-3);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* ============================================================
+   Shared holographic utilities
+   ============================================================ */
+
+/* Text filled with the moving iridescent sweep. */
+.holo-text {
+  background: var(--holo);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holo-drift 14s linear infinite;
+}
+
+/* A thin pearlescent hairline that catches light along an edge. */
+.holo-rule {
+  height: 1px;
+  border: 0;
+  background: var(--holo);
+  background-size: 300% 100%;
+  opacity: 0.55;
+  animation: holo-drift 18s linear infinite;
+}
+
+/* Frosted pearl panel. */
+.pearl-panel {
+  position: relative;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.02) 42%, rgba(255, 255, 255, 0.055));
+  border: 1px solid var(--edge);
+  border-radius: var(--r-lg);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Oil-slick film across a panel — the pearlescent tint. */
+.pearl-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--holo-soft);
+  background-size: 220% 220%;
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  animation: holo-wander 22s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* A travelling specular band — the "shimmer" pass. */
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent calc(var(--sheen) + 8%),
+    rgba(255, 255, 255, 0.34) calc(var(--sheen) + 16%),
+    rgba(255, 255, 255, 0.05) calc(var(--sheen) + 24%),
+    transparent calc(var(--sheen) + 34%),
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: sheen-pass 6.5s var(--ease-soft) infinite;
+}
+
+/* Fine metallic grain so large fills do not band. */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: var(--track-ui);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ============================================================
+   Keyframes
+   ============================================================ */
+
+@keyframes holo-drift {
+  to {
+    background-position: 260% 50%;
+  }
+}
+
+@keyframes holo-wander {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes holo-spin {
+  to {
+    --holo-angle: 360deg;
+  }
+}
+
+@keyframes sheen-pass {
+  0% {
+    --sheen: -60%;
+  }
+  55%,
+  100% {
+    --sheen: 130%;
+  }
+}
+
+/* Idle float — used on cards and stray light motes. */
+@keyframes float-idle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0);
+  }
+}
+
+/* Breathing glow on the current selection. */
+@keyframes breathe {
+  0%,
+  100% {
+    --glow: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    --glow: 1;
+    transform: scale(1.035);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

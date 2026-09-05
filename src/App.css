@@ -1,0 +1,148 @@
+.app {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* The whole interface eases in once the boot screen hands over. */
+.app .xmb,
+.app .hud {
+  opacity: 0;
+  transition: opacity 800ms var(--ease-out), transform 800ms var(--ease-out);
+}
+
+.app .xmb {
+  transform: translateY(18px) scale(0.985);
+}
+
+.app[data-booted] .xmb,
+.app[data-booted] .hud {
+  opacity: 1;
+}
+
+.app[data-booted] .xmb {
+  transform: none;
+}
+
+/* The dimmed state during a blade must still win over the entry transform. */
+.app[data-booted] .xmb[data-dimmed] {
+  transform: scale(0.97) translateX(-3%);
+}
+
+/* ============================================================
+   The fall into the deep page.
+
+   A CRT losing power. The picture squeezes down onto the scan line, the
+   line is pulled in from both ends to a single point, and the point winks
+   out — except the discharge comes through iridescent instead of white.
+
+   Only transform and opacity are animated, so the whole sequence stays on
+   the compositor rather than relayouting the interface every frame.
+   ============================================================ */
+
+/* Nothing should be clickable mid-collapse, and the tube goes dark behind
+   the picture as it shrinks away from the edges. */
+.app[data-dropping] {
+  pointer-events: none;
+  background: #04010c;
+}
+
+/* The interface is the tube: every layer collapses as one surface, so no
+   stagger here — a CRT does not lose its picture in pieces. */
+.app[data-dropping] .xmb,
+.app[data-dropping] .hud,
+.app[data-dropping] .wavefield {
+  animation: crt-collapse 520ms cubic-bezier(0.72, 0, 0.84, 0) forwards;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+@keyframes crt-collapse {
+  0% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+  }
+  /* down onto the scan line */
+  58% {
+    transform: scaleY(0.006) scaleX(1);
+    opacity: 1;
+  }
+  /* and in from both ends */
+  90% {
+    transform: scaleY(0.006) scaleX(0.0015);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(0.006) scaleX(0.0015);
+    opacity: 0;
+  }
+}
+
+/* The discharge. Rides the same collapse and supplies the flash — a hot
+   core running through an oil-slick sweep, so the line reads iridescent
+   rather than white. */
+.app[data-dropping]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 43%,
+      rgba(255, 255, 255, 0.92) 50%,
+      transparent 57%,
+      transparent 100%
+    ),
+    linear-gradient(
+      90deg,
+      #00f0ff 0%,
+      #6a5cff 17%,
+      #c04eff 33%,
+      #ff4ecd 50%,
+      #ffb347 67%,
+      #6affc8 83%,
+      #00f0ff 100%
+    );
+  animation: crt-discharge 520ms cubic-bezier(0.72, 0, 0.84, 0) forwards;
+}
+
+@keyframes crt-discharge {
+  0% {
+    opacity: 0;
+    transform: scaleY(1) scaleX(1);
+  }
+  28% {
+    opacity: 0.5;
+    transform: scaleY(0.3) scaleX(1);
+  }
+  58% {
+    opacity: 1;
+    transform: scaleY(0.006) scaleX(1);
+  }
+  90% {
+    opacity: 1;
+    transform: scaleY(0.006) scaleX(0.0015);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0.006) scaleX(0.0015);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app[data-dropping] .xmb,
+  .app[data-dropping] .hud,
+  .app[data-dropping] .wavefield {
+    animation: fade-in 200ms reverse forwards;
+  }
+
+  .app[data-dropping]::after {
+    animation: none;
+    opacity: 0;
+  }
+}

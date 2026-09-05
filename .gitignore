@@ -1,0 +1,19 @@
+node_modules
+dist
+.vercel
+.DS_Store
+*.local
+
+# Local environment files. Anything VITE_-prefixed is inlined into the client
+# bundle at build time, so treat a committed .env as published either way.
+.env
+.env.*
+!.env.example
+
+# Local audit notes. Names live credentials, their files and their commit
+# hashes across the other repos — a map worth more to an attacker than any
+# single key. Keep it off any remote.
+SECURITY-FINDINGS.md
+
+# Local agent/editor config
+.claude/

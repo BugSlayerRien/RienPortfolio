@@ -1,0 +1,220 @@
+.blade {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-blade);
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.blade__scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 100% at 20% 50%, rgba(4, 6, 14, 0.32), rgba(3, 5, 12, 0.68));
+  opacity: 0;
+  transition: opacity var(--dur-blade) var(--ease-out);
+  cursor: default;
+}
+
+.blade[data-open] {
+  pointer-events: auto;
+}
+
+.blade[data-open] .blade__scrim {
+  opacity: 1;
+}
+
+/* ---------- Panel ---------- */
+
+/* .blade__panel wins over .pearl-panel for the surface it overrides — both are
+   single-class selectors, so the blade needs the extra specificity. */
+.blade .blade__panel {
+  position: relative;
+  width: min(880px, 68vw);
+  height: 100%;
+  border-radius: 0;
+  border-width: 0 0 0 1px;
+  display: flex;
+  flex-direction: column;
+
+  /* Frosted pearl over an opaque base — the wave must not compete with body
+     text. The pearl gradient stays on top so the surface still reads as glass. */
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015) 45%, rgba(255, 255, 255, 0.06)),
+    linear-gradient(180deg, rgba(11, 15, 30, 0.94), rgba(7, 10, 22, 0.975));
+  backdrop-filter: blur(34px) saturate(160%);
+  -webkit-backdrop-filter: blur(34px) saturate(160%);
+  transform: translate3d(6%, 0, 0);
+  opacity: 0;
+
+  /* opacity:0 does not stop backdrop-filter from painting, so a closed blade
+     would keep blurring the whole viewport. visibility does stop it — flipped
+     only after the fade-out finishes. */
+  visibility: hidden;
+  transition: transform var(--dur-blade) var(--ease-out), opacity var(--dur-blade) var(--ease-out),
+    visibility 0s linear var(--dur-blade);
+  outline: none;
+}
+
+.blade[data-open] .blade__panel {
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  transition: transform var(--dur-blade) var(--ease-out), opacity var(--dur-blade) var(--ease-out),
+    visibility 0s;
+}
+
+/* Iridescent hairline down the leading edge. */
+.blade__edge {
+  position: absolute;
+  inset: 0 auto 0 -1px;
+  width: 2px;
+  background: var(--holo);
+  background-size: 100% 300%;
+  animation: edge-drift 12s linear infinite;
+  box-shadow: 0 0 24px rgba(150, 200, 255, 0.5);
+  z-index: 2;
+}
+
+@keyframes edge-drift {
+  to {
+    background-position: 50% 300%;
+  }
+}
+
+/* ---------- Header ---------- */
+
+.blade__head {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: clamp(26px, 4vw, 46px) clamp(24px, 4vw, 54px) 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
+}
+
+.blade__head-text {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.blade__title {
+  font-family: var(--font-mono);
+  font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.08;
+}
+
+.blade__subtitle {
+  font-size: var(--fs-sm);
+  color: var(--ink-mute);
+  letter-spacing: var(--track-ui);
+}
+
+.blade__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  color: var(--ink-soft);
+  transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft),
+    transform var(--dur-tick) var(--ease-out);
+}
+
+.blade__close:hover {
+  border-color: var(--edge-bright);
+  color: var(--pearl-100);
+  transform: rotate(90deg);
+}
+
+/* Reading-progress rule fed by --scroll-p from the body. */
+.blade__progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--edge), transparent);
+}
+
+.blade__progress::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--scroll-p, 0) * 100%);
+  background: var(--holo);
+  background-size: 300% 100%;
+  animation: holo-drift 8s linear infinite;
+  box-shadow: 0 0 12px rgba(160, 210, 255, 0.6);
+  transition: width 120ms linear;
+}
+
+/* ---------- Body ---------- */
+
+.blade__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.blade__body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.blade__body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(183, 156, 255, 0.5), rgba(111, 220, 255, 0.5));
+  border-radius: 4px;
+}
+
+.blade__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.blade__inner {
+  display: grid;
+  gap: clamp(22px, 3vw, 34px);
+  padding: 8px clamp(24px, 4vw, 54px) clamp(80px, 12vh, 130px);
+}
+
+/* ---------- Reveal-on-scroll ---------- */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * 55ms);
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 900px) {
+  .blade__panel {
+    width: 100vw;
+    border-left: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .blade__edge {
+    animation: none;
+  }
+}

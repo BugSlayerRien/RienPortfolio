@@ -1,0 +1,433 @@
+.hud {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-hud);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(16px, 2.4vw, 30px) clamp(18px, 3vw, 44px);
+}
+
+.hud__top,
+.hud__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  pointer-events: none;
+  transition: opacity var(--dur-blade) var(--ease-out), transform var(--dur-blade) var(--ease-out);
+}
+
+.hud__top > *,
+.hud__bottom > * {
+  pointer-events: auto;
+}
+
+/* The bottom legend slides down a touch when a blade takes over. */
+.hud[data-blade] .hud__crumbs {
+  opacity: 0.4;
+}
+
+/* ---------- Brand ---------- */
+
+.hud__brand {
+  display: grid;
+  gap: 1px;
+  line-height: 1.05;
+}
+
+.hud__brand-mark {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+.hud__brand-sub {
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-mute);
+}
+
+/* ---------- Status cluster ---------- */
+
+.hud__status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+}
+
+/* Download CV — the one call to action in the chrome, so it reads brighter
+   than the status chips beside it. */
+.hud__cv {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pearl-100);
+  text-decoration: none;
+  transition: transform var(--dur-tick) var(--ease-out), background var(--dur-tick) var(--ease-soft);
+}
+
+.hud__cv-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--holo);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: holo-drift 8s linear infinite;
+  pointer-events: none;
+}
+
+.hud__cv:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hud__cv:active {
+  transform: translateY(0);
+}
+
+.hud__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft);
+}
+
+.hud__chip:hover {
+  border-color: var(--edge-bright);
+  color: var(--pearl-100);
+}
+
+.hud__chip[aria-pressed='true'] {
+  color: var(--iri-4);
+}
+
+/* Signal bars */
+.hud__signal {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.hud__signal i {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--pearl-600);
+  transition: background 300ms var(--ease-soft), opacity 300ms var(--ease-soft);
+  opacity: 0.4;
+}
+
+.hud__signal i[data-on] {
+  background: var(--iri-3);
+  opacity: 1;
+}
+
+.hud__signal i:nth-child(1) {
+  height: 4px;
+}
+.hud__signal i:nth-child(2) {
+  height: 8px;
+}
+.hud__signal i:nth-child(3) {
+  height: 12px;
+}
+
+.hud__signal[data-offline] {
+  color: var(--iri-1);
+  height: auto;
+}
+
+/* Battery */
+.hud__battery {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud__battery::before {
+  content: '';
+  display: block;
+  width: 26px;
+  height: 13px;
+  border: 1px solid var(--pearl-500);
+  border-radius: 3px;
+}
+
+.hud__battery::after {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 4px;
+  width: 2.5px;
+  height: 5px;
+  border-radius: 0 2px 2px 0;
+  background: var(--pearl-500);
+}
+
+/* Width is set inline from the real charge level. */
+.hud__battery-cell {
+  position: absolute;
+  left: 1.5px;
+  top: 1.5px;
+  height: 10px;
+  max-width: 23px;
+  border-radius: 1px;
+  background: var(--holo);
+  background-size: 300% 100%;
+  animation: holo-drift 9s linear infinite;
+  transition: width 600ms var(--ease-soft);
+}
+
+.hud__battery[data-low] .hud__battery-cell {
+  background: var(--iri-1);
+  animation: none;
+}
+
+.hud__battery[data-charging] .hud__battery-cell {
+  animation: holo-drift 3s linear infinite;
+}
+
+.hud__battery-pct {
+  font-size: 0.62rem;
+  color: var(--ink-mute);
+  min-width: 2ch;
+}
+
+.hud__battery[data-charging] .hud__battery-pct::after {
+  content: '⚡';
+  margin-left: 2px;
+  color: var(--iri-5);
+}
+
+.hud__date {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.hud__clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--pearl-200);
+  letter-spacing: 0.08em;
+}
+
+.hud__clock em {
+  font-style: normal;
+  font-size: 0.6rem;
+  color: var(--ink-mute);
+}
+
+/* ---------- Breadcrumb ---------- */
+
+.hud__crumbs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  transition: opacity var(--dur-slide) var(--ease-soft);
+}
+
+.hud__crumb-cat {
+  color: var(--ink-mute);
+}
+
+.hud__crumb-sep {
+  color: var(--pearl-600);
+}
+
+.hud__crumb-item {
+  color: var(--pearl-200);
+}
+
+/* ---------- Button legend ---------- */
+
+.hud__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.hud__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  transition: color var(--dur-tick) var(--ease-soft);
+}
+
+button.hud__key:hover {
+  color: var(--pearl-100);
+}
+
+.hud__glyph {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid var(--edge-bright);
+  background: var(--glass);
+  color: var(--pearl-200);
+}
+
+/* PlayStation face-button marks, drawn rather than typed. */
+.hud__glyph--circle::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--iri-1);
+  border-radius: 50%;
+}
+
+.hud__glyph--cross {
+  position: relative;
+}
+
+.hud__glyph--cross::before,
+.hud__glyph--cross::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 1.5px;
+  background: var(--iri-3);
+  border-radius: 1px;
+}
+
+.hud__glyph--cross::before {
+  transform: rotate(45deg);
+}
+
+.hud__glyph--cross::after {
+  transform: rotate(-45deg);
+}
+
+.hud__glyph--dpad {
+  width: auto;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  gap: 1px;
+  display: inline-flex;
+  height: 19px;
+}
+
+@media (max-width: 860px) {
+  .hud__cv span.mono {
+    display: none;
+  }
+
+  .hud__cv {
+    padding: 7px 10px;
+  }
+}
+
+@media (max-width: 720px) {
+  .hud__brand-sub,
+  .hud__signal,
+  .hud__battery-pct,
+  .hud__date {
+    display: none;
+  }
+
+  .hud__legend .hud__key:first-child {
+    display: none;
+  }
+
+  .hud__crumb-cat,
+  .hud__crumb-sep {
+    display: none;
+  }
+}
+
+/* ---------- The cat ---------- */
+
+/* An easter egg that looks like nothing. No border, no fill, no pointer
+   affordance at rest — it sits in the status row as if it belonged there.
+   It only comes alive once someone is already curious enough to hover. */
+.hud__cat {
+  display: grid;
+  place-items: center;
+  padding: 2px;
+  color: var(--pearl-600);
+  opacity: 0.5;
+  cursor: default;
+  transition: color 400ms var(--ease-soft), opacity 400ms var(--ease-soft),
+    transform 400ms var(--ease-out);
+}
+
+.hud__cat:hover {
+  color: var(--iri-2);
+  opacity: 1;
+  cursor: pointer;
+  transform: translateY(-1px) rotate(-4deg);
+  filter: drop-shadow(0 0 10px rgba(183, 156, 255, 0.6));
+}
+
+.hud__cat:hover svg {
+  animation: cat-stir 1.5s var(--ease-soft) infinite;
+}
+
+/* A tail-flick / ear-twitch, nothing more. */
+@keyframes cat-stir {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(5deg) scale(1.06); }
+  60% { transform: rotate(-3deg) scale(1.02); }
+}
+
+/* Once every few minutes it blinks, in case nobody ever hovers. */
+.hud__cat svg {
+  animation: cat-blink 23s steps(1, end) infinite;
+}
+
+@keyframes cat-blink {
+  0%, 96% { opacity: 1; }
+  97%, 98% { opacity: 0.25; }
+  99%, 100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud__cat svg,
+  .hud__cat:hover svg {
+    animation: none;
+  }
+}
