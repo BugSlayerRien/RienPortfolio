@@ -5,8 +5,23 @@
   display: flex;
   justify-content: flex-end;
   pointer-events: none;
+
+  /* Docked, the panel is inset so the HUD's top status cluster and bottom
+     legend stay readable around it. Reading flattens the inset to zero and the
+     panel goes edge to edge. */
+  --pad-y: calc(clamp(16px, 2.4vw, 30px) + 54px);
+  --pad-x: clamp(18px, 3vw, 44px);
+  padding: var(--pad-y) var(--pad-x) var(--pad-y) 0;
+  transition: padding var(--dur-blade) var(--ease-out);
 }
 
+.blade[data-reading] {
+  --pad-y: 0px;
+  --pad-x: 0px;
+}
+
+/* The scrim only exists in reading mode. In the docked state the bar behind
+   must stay both visible and clickable, so nothing covers it. */
 .blade__scrim {
   position: absolute;
   inset: 0;
@@ -14,14 +29,12 @@
   opacity: 0;
   transition: opacity var(--dur-blade) var(--ease-out);
   cursor: default;
+  pointer-events: none;
 }
 
-.blade[data-open] {
-  pointer-events: auto;
-}
-
-.blade[data-open] .blade__scrim {
+.blade[data-reading] .blade__scrim {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* ---------- Panel ---------- */
@@ -30,10 +43,12 @@
    single-class selectors, so the blade needs the extra specificity. */
 .blade .blade__panel {
   position: relative;
-  width: min(880px, 68vw);
+  /* Docked, it leaves the bar room to breathe; reading, it takes the room. */
+  width: var(--panel-w, min(620px, 46vw));
   height: 100%;
-  border-radius: 0;
-  border-width: 0 0 0 1px;
+  border-radius: var(--r-lg);
+  border-width: 1px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 
@@ -52,7 +67,7 @@
      only after the fade-out finishes. */
   visibility: hidden;
   transition: transform var(--dur-blade) var(--ease-out), opacity var(--dur-blade) var(--ease-out),
-    visibility 0s linear var(--dur-blade);
+    width var(--dur-blade) var(--ease-out), visibility 0s linear var(--dur-blade);
   outline: none;
 }
 
@@ -60,8 +75,15 @@
   transform: none;
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
   transition: transform var(--dur-blade) var(--ease-out), opacity var(--dur-blade) var(--ease-out),
-    visibility 0s;
+    width var(--dur-blade) var(--ease-out), visibility 0s;
+}
+
+.blade[data-reading] .blade__panel {
+  --panel-w: min(880px, 68vw);
+  border-radius: 0;
+  border-width: 0 0 0 1px;
 }
 
 /* Iridescent hairline down the leading edge. */
@@ -201,10 +223,45 @@
   transform: none;
 }
 
+/* Narrow screens have no room for a side-by-side split, so the panel becomes a
+   bottom sheet and the bar keeps the upper half of the screen to itself.
+   Reading pulls the sheet up over the bar. */
 @media (max-width: 900px) {
-  .blade__panel {
-    width: 100vw;
-    border-left: none;
+  .blade {
+    justify-content: stretch;
+    align-items: flex-end;
+    --pad-y: 0px;
+    --pad-x: 0px;
+    padding: 0;
+  }
+
+  .blade .blade__panel {
+    width: 100%;
+    height: var(--panel-h, 52vh);
+    border-width: 1px 0 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    transform: translate3d(0, 8%, 0);
+    transition: transform var(--dur-blade) var(--ease-out), opacity var(--dur-blade) var(--ease-out),
+      height var(--dur-blade) var(--ease-out), visibility 0s linear var(--dur-blade);
+  }
+
+  .blade[data-open] .blade__panel {
+    transition: transform var(--dur-blade) var(--ease-out), opacity var(--dur-blade) var(--ease-out),
+      height var(--dur-blade) var(--ease-out), visibility 0s;
+  }
+
+  .blade[data-reading] .blade__panel {
+    --panel-h: 100%;
+    border-radius: 0;
+    border-width: 0;
+  }
+
+  /* The iridescent hairline runs along the top edge here, not the side. */
+  .blade__edge {
+    inset: -1px 0 auto 0;
+    width: auto;
+    height: 2px;
+    background-size: 300% 100%;
   }
 }
 

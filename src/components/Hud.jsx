@@ -145,7 +145,7 @@ export default function Hud({ breadcrumb, soundOn, onToggleSound, bladeOpen, onB
               </span>
               <span className="hud__key">
                 <span className="hud__glyph hud__glyph--cross" aria-hidden="true" />
-                <span className="mono">Enter</span>
+                <span className="mono">Enter to read</span>
               </span>
             </>
           )}

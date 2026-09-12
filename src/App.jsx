@@ -19,7 +19,8 @@ export default function App() {
   const [booted, setBooted] = useState(false);
   const [catIndex, setCatIndex] = useState(1); // open on Profile, not Settings
   const [itemIndex, setItemIndex] = useState(0);
-  const [open, setOpen] = useState(null); // { ci, ii }
+  const [settled, setSettled] = useState({ ci: 1, ii: 0 }); // what the panel is showing
+  const [reading, setReading] = useState(false); // panel has the keyboard
   const [dropping, setDropping] = useState(false); // the fall into /deep
 
   const [soundOn, setSoundOnState] = useState(true);
@@ -30,12 +31,26 @@ export default function App() {
 
   const systemReduced = useReducedMotion();
   const reduced = systemReduced || !motionOn;
-  const idle = useIdle(6500) && !open;
+  const idle = useIdle(6500) && !reading;
 
   const category = categories[catIndex];
   const item = category.items[clamp(itemIndex, 0, category.items.length - 1)];
-  const openItem = open ? categories[open.ci].items[open.ii] : null;
-  const openCategory = open ? categories[open.ci] : null;
+
+  /**
+   * The panel follows the cursor with no confirm step — landing on an item is
+   * enough to read it. It lags the cursor by a beat so holding a direction down
+   * does not tear through a dozen panels on the way past.
+   */
+  useEffect(() => {
+    if (settled.ci === catIndex && settled.ii === itemIndex) return undefined;
+    const id = setTimeout(() => setSettled({ ci: catIndex, ii: itemIndex }), 180);
+    return () => clearTimeout(id);
+  }, [catIndex, itemIndex, settled]);
+
+  const panelCategory = categories[settled.ci];
+  const panelItem = panelCategory.items[settled.ii];
+  // Socials fans out on the bar itself, so it has nothing to show here.
+  const panelOpen = booted && !isDeep && !dropping && panelCategory.mode !== 'burst';
 
   /* ---------- audio plumbing ---------- */
 
@@ -119,9 +134,12 @@ export default function App() {
   );
 
   /**
-   * Confirm. A burst column (Socials) has no blade — its entries are links.
-   * A real click on the anchor navigates on its own, so we only open the URL
-   * ourselves when the press came from the keyboard.
+   * Confirm. The panel is already showing, so this hands it the keyboard for
+   * reading rather than opening it.
+   *
+   * A burst column (Socials) has no panel — its entries are links. A real click
+   * on the anchor navigates on its own, so we only open the URL ourselves when
+   * the press came from the keyboard.
    */
   const activate = useCallback((ci, ii, fromKeyboard = false) => {
     const cat = categories[ci];
@@ -139,14 +157,16 @@ export default function App() {
       return;
     }
 
-    setOpen({ ci, ii });
+    // Confirming skips the settle delay — you asked for this one.
+    setSettled({ ci, ii });
+    setReading(true);
     psp.play('enter');
   }, []);
 
   const close = useCallback(() => {
-    setOpen((o) => {
-      if (o) psp.play('back');
-      return null;
+    setReading((r) => {
+      if (r) psp.play('back');
+      return false;
     });
   }, []);
 
@@ -163,8 +183,8 @@ export default function App() {
 
       const k = e.key.toLowerCase();
 
-      if (open) {
-        // Inside a blade: Escape and Backspace close; let arrows scroll.
+      if (reading) {
+        // The panel owns the arrows in here (useKeyScroll); we own the way out.
         if (k === 'escape' || k === 'backspace' || k === 'o') {
           e.preventDefault();
           close();
@@ -210,16 +230,20 @@ export default function App() {
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [booted, isDeep, open, catIndex, itemIndex, soundOn, moveCategory, moveItem, activate, close, setSoundOn]);
+  }, [booted, isDeep, reading, catIndex, itemIndex, soundOn, moveCategory, moveItem, activate, close, setSoundOn]);
 
-  /* ---------- wheel drives the cursor when no blade is open ---------- */
+  /* ---------- wheel drives the cursor, unless it is over the panel ---------- */
 
   const wheelLock = useRef(0);
 
   useEffect(() => {
-    if (!booted || open || isDeep) return undefined;
+    if (!booted || reading || isDeep) return undefined;
 
     const onWheel = (e) => {
+      // The panel is always on screen now, so scrolling it must stay scrolling
+      // it rather than walking the cursor down the bar underneath.
+      if (e.target?.closest?.('.blade__panel')) return;
+
       const now = performance.now();
       if (now - wheelLock.current < 190) return;
 
@@ -234,21 +258,24 @@ export default function App() {
 
     window.addEventListener('wheel', onWheel, { passive: true });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [booted, isDeep, open, moveCategory, moveItem]);
+  }, [booted, isDeep, reading, moveCategory, moveItem]);
 
   /* ---------- touch: swipe the bar ---------- */
 
   useEffect(() => {
-    if (!booted || open || isDeep) return undefined;
+    if (!booted || reading || isDeep) return undefined;
     let sx = 0;
     let sy = 0;
+    let onPanel = false;
 
     const start = (e) => {
+      onPanel = Boolean(e.target?.closest?.('.blade__panel'));
       sx = e.changedTouches[0].clientX;
       sy = e.changedTouches[0].clientY;
     };
 
     const end = (e) => {
+      if (onPanel) return;
       const dx = e.changedTouches[0].clientX - sx;
       const dy = e.changedTouches[0].clientY - sy;
       if (Math.max(Math.abs(dx), Math.abs(dy)) < 42) return;
@@ -262,7 +289,7 @@ export default function App() {
       window.removeEventListener('touchstart', start);
       window.removeEventListener('touchend', end);
     };
-  }, [booted, isDeep, open, moveCategory, moveItem]);
+  }, [booted, isDeep, reading, moveCategory, moveItem]);
 
   /* ---------- boot ---------- */
 
@@ -286,7 +313,7 @@ export default function App() {
     if (dropping) return;
     psp.play('drop');
     psp.stopAmbient();
-    setOpen(null);
+    setReading(false);
     setDropping(true);
     setTimeout(() => {
       go('/deep');
@@ -303,13 +330,14 @@ export default function App() {
   /** Settings -> Power Off. Winds the console back to the start screen. */
   const powerOff = useCallback(() => {
     psp.play('back');
-    setOpen(null);
+    setReading(false);
     psp.stopAmbient();
     // Let the cancel blip land before the screen goes dark.
     setTimeout(() => {
       setBooted(false);
       setCatIndex(1);
       setItemIndex(0);
+      setSettled({ ci: 1, ii: 0 });
     }, 260);
   }, []);
 
@@ -321,7 +349,13 @@ export default function App() {
   const columns = categories.length > 1 ? catIndex / (categories.length - 1) : 0;
 
   return (
-    <div className="app" data-booted={booted || undefined} data-dropping={dropping || undefined}>
+    <div
+      className="app"
+      data-booted={booted || undefined}
+      data-dropping={dropping || undefined}
+      data-panel={panelOpen || undefined}
+      data-reading={reading || undefined}
+    >
       <WaveField
         columns={columns}
         intensity={reduced ? 0.55 : 1}
@@ -336,7 +370,7 @@ export default function App() {
         onHoverCategory={hoverCategory}
         onHoverItem={hoverItem}
         onActivate={activate}
-        dimmed={Boolean(open)}
+        dimmed={reading}
         idle={idle && !reduced}
       />
 
@@ -344,19 +378,20 @@ export default function App() {
         breadcrumb={{ category: category.label, item: item.title }}
         soundOn={soundOn}
         onToggleSound={() => setSoundOn(!soundOn)}
-        bladeOpen={Boolean(open)}
+        bladeOpen={reading}
         onBack={close}
         onCat={dive}
       />
 
       <Blade
-        open={Boolean(open)}
-        category={openCategory?.label ?? ''}
-        title={openItem?.title ?? ''}
-        subtitle={openItem?.subtitle ?? ''}
+        open={panelOpen}
+        reading={reading}
+        category={panelCategory.label}
+        title={panelItem.title}
+        subtitle={panelItem.subtitle}
         onClose={close}
       >
-        {openItem && <BladeContent item={openItem} settings={settings} />}
+        <BladeContent item={panelItem} settings={settings} />
       </Blade>
 
       {!booted && <Boot onStart={onBootStart} onFinish={onBootFinish} reduced={systemReduced} />}

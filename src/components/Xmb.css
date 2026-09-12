@@ -408,7 +408,8 @@
 @media (max-width: 860px) {
   .xmb {
     --cross-x: 92px;
-    --cross-y: 44vh;
+    /* The docked panel is a bottom sheet here, so the bar lives above it. */
+    --cross-y: 25vh;
     --col-gap: 74px;
     --row-gap: 88px;
     --icon: 48px;

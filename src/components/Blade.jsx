@@ -5,35 +5,57 @@ import useKeyScroll from '../hooks/useKeyScroll';
 import './Blade.css';
 
 /**
- * A content panel launched from the bar.
+ * The content panel docked beside the bar.
  *
- * It slides in over the dimmed XMB and takes keyboard focus. Its body is the
- * one scrolling surface in the app, so this is where the scroll-driven work
- * happens: children marked `data-reveal` rise into place as they enter view,
- * and the panel publishes `--scroll-p` (0 to 1) for the header rule and the
- * ambient tint to track.
+ * It is not something you open — it simply shows whatever the cursor is
+ * sitting on, so moving along the bar is enough to read an item. The bar stays
+ * lit and live next to it, which is the point: you can see where you are and
+ * what is there at the same time.
+ *
+ * `reading` is the second gear. Confirming an item dims the bar and hands the
+ * panel the keyboard so the arrows scroll the article instead of walking the
+ * cursor; Escape gives the bar back.
+ *
+ * Its body is the one scrolling surface in the app, so this is where the
+ * scroll-driven work happens: children marked `data-reveal` rise into place as
+ * they enter view, and the panel publishes `--scroll-p` (0 to 1) for the header
+ * rule and the ambient tint to track.
  */
-export default function Blade({ open, category, title, subtitle, onClose, children }) {
+export default function Blade({ open, reading, category, title, subtitle, onClose, children }) {
   const bodyRef = useReveal([title]);
   const panelRef = useRef(null);
 
   // The body is an inner scroll box that never takes focus, so the browser
-  // will not scroll it from the keyboard on its own.
-  useKeyScroll(bodyRef, open);
+  // will not scroll it from the keyboard on its own. Only bind the keys while
+  // reading — otherwise the panel would swallow the arrows that drive the bar.
+  useKeyScroll(bodyRef, open && reading);
 
-  // Move focus into the panel so Escape and arrow keys land here.
+  // A new item starts at the top; the previous one may have been scrolled deep.
   useEffect(() => {
-    if (open && panelRef.current) panelRef.current.focus({ preventScroll: true });
-  }, [open, title]);
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [bodyRef, title]);
+
+  // Focus follows the gear: into the panel to read, back out to the bar.
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    if (reading) panel.focus({ preventScroll: true });
+    else if (document.activeElement === panel) panel.blur();
+  }, [reading]);
 
   return (
-    <div className="blade" data-open={open || undefined} aria-hidden={!open}>
+    <div
+      className="blade"
+      data-open={open || undefined}
+      data-reading={reading || undefined}
+      aria-hidden={!open}
+    >
       <button
         type="button"
         className="blade__scrim"
         onClick={onClose}
         tabIndex={-1}
-        aria-label="Close panel"
+        aria-label="Back to the bar"
       />
 
       <section
@@ -41,8 +63,8 @@ export default function Blade({ open, category, title, subtitle, onClose, childr
         ref={panelRef}
         data-scroll-scope=""
         tabIndex={-1}
-        role="dialog"
-        aria-modal="true"
+        role={reading ? 'dialog' : 'region'}
+        aria-modal={reading || undefined}
         aria-label={title}
       >
         <span className="blade__edge" aria-hidden="true" />
@@ -54,9 +76,11 @@ export default function Blade({ open, category, title, subtitle, onClose, childr
             {subtitle && <p className="blade__subtitle">{subtitle}</p>}
           </div>
 
-          <button type="button" className="blade__close" onClick={onClose} aria-label="Close (Esc)">
-            <Icon name="close" size={18} />
-          </button>
+          {reading && (
+            <button type="button" className="blade__close" onClick={onClose} aria-label="Back (Esc)">
+              <Icon name="close" size={18} />
+            </button>
+          )}
 
           <span className="blade__progress" aria-hidden="true" />
         </header>

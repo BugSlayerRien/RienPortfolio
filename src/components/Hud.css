@@ -361,6 +361,16 @@ button.hud__key:hover {
   }
 }
 
+/* The docked panel is a bottom sheet at this width and sits on top of the
+   bottom row. Its header carries the same category and title, so the row is
+   redundant here rather than hidden. */
+@media (max-width: 900px) {
+  .app[data-panel] .hud__bottom {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 @media (max-width: 720px) {
   .hud__brand-sub,
   .hud__signal,
