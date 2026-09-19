@@ -44,10 +44,12 @@ export const categories = [
     label: 'Projects',
     icon: 'folder',
     items: [
-      { id: 'barberya', title: 'Barberya ni Tatis', subtitle: 'Barbershop system · AI haircut scan', icon: 'folder', blade: 'project' },
-      { id: 'gocollab', title: 'GoCollab', subtitle: 'Community management platform', icon: 'folder', blade: 'project' },
+      { id: 'barberya', title: 'Barberya ni Tatis', subtitle: 'Barbershop system · AI haircut scan', icon: 'folder', logo: '/img/barberya.png', blade: 'project' },
+      // The GoCollab artwork carries a wide transparent margin of its own, so it
+      // needs scaling up to sit at the same visual weight as the other marks.
+      { id: 'gocollab', title: 'GoCollab', subtitle: 'Community management platform', icon: 'folder', logo: '/img/gocollab.webp', logoScale: 1.55, blade: 'project' },
       { id: 'asknu', title: 'AskNU', subtitle: 'AI image analysis app', icon: 'folder', blade: 'project' },
-      { id: 'medeasyna', title: 'MedEasyna', subtitle: 'Clinic scheduling system', icon: 'folder', blade: 'project' },
+      { id: 'medeasyna', title: 'MedEasyna', subtitle: 'Clinic scheduling system', icon: 'folder', logo: '/img/medeasyna.png', blade: 'project' },
       { id: 'ckresort', title: 'CK Resort', subtitle: 'Resort booking and operations', icon: 'folder', blade: 'project' },
       { id: 'readthat', title: 'ReadThat', subtitle: 'Book discovery and reviews', icon: 'folder', blade: 'project' },
     ],

@@ -239,6 +239,42 @@
     border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft);
 }
 
+/* --- Brand marks --- */
+
+/* These logos are black-on-transparent artwork, so the dark glass would eat
+   them. A pearl plate gives them the light ground they were drawn for. */
+.xmb__item-glyph[data-logo] {
+  background: linear-gradient(155deg, #fff, #eef1f8 60%, #e3e8f4);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.xmb__item-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 9%;
+  /* Each mark brings its own built-in margin; --logo-scale evens them out. */
+  scale: var(--logo-scale, 1);
+  /* The marks carry their own colour; the tile's holo film must not tint it. */
+  mix-blend-mode: normal;
+  position: relative;
+  z-index: 1;
+}
+
+/* Both effects are tuned for a dark tile. Over a white plate the screen blend
+   blows the mark out, so they run much quieter here. */
+.xmb__item-glyph[data-logo]::before {
+  opacity: 0.16;
+}
+
+.xmb__item[data-selected] .xmb__item-glyph[data-logo]::before {
+  opacity: 0.24;
+}
+
+.xmb__item[data-selected] .xmb__item-glyph[data-logo] .xmb__item-sheen {
+  opacity: 0.45;
+}
+
 /* Holographic film inside each tile. */
 .xmb__item-glyph::before {
   content: '';

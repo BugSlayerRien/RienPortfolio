@@ -3,8 +3,19 @@ import Icon from '../components/Icon';
 import psp from '../audio/psp';
 import useReducedMotion from '../hooks/useReducedMotion';
 import useKeyScroll from '../hooks/useKeyScroll';
-import { intro, strata, outro } from './deepContent';
+import Vault from './Vault';
+import { intro, strata, outro, sealed, sealedOutro } from './deepContent';
 import './DeepPage.css';
+
+const VAULT_KEY = 'xmb:vault-open';
+
+function readUnlocked() {
+  try {
+    return sessionStorage.getItem(VAULT_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 /**
  * The deep dive — the page behind the cat.
@@ -31,14 +42,45 @@ export default function DeepPage({ onExit }) {
   const [level, setLevel] = useState(0);
   const [depth, setDepth] = useState(0);
   const [breaking, setBreaking] = useState(false);
+  const [unlocked, setUnlocked] = useState(readUnlocked);
   const lastLevel = useRef(0);
   const breakTimer = useRef(null);
+  const diveTimer = useRef(null);
   const reduced = useReducedMotion();
+
+  // The vault lets the page go further down: the sealed strata join the
+  // gauge and the scroll the moment it opens.
+  const visible = unlocked ? [...strata, ...sealed] : strata;
+  const maxDepth = visible[visible.length - 1].depth;
 
   // Descend with the keyboard as well as the wheel.
   useKeyScroll(scrollRef, true, { step: 120 });
 
-  useEffect(() => () => clearTimeout(breakTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(breakTimer.current);
+      clearTimeout(diveTimer.current);
+    },
+    [],
+  );
+
+  const unlock = useCallback(() => {
+    setUnlocked(true);
+    try {
+      sessionStorage.setItem(VAULT_KEY, '1');
+    } catch {
+      // Private mode: it just will not be remembered.
+    }
+    // Let the cube burst before the page carries you away from it.
+    diveTimer.current = setTimeout(
+      () => {
+        scrollRef.current
+          ?.querySelector(`[data-stratum="${sealed[0].id}"]`)
+          ?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      },
+      reduced ? 0 : 1300,
+    );
+  }, [reduced]);
 
   const surfaceBreak = useCallback(() => {
     psp.play('impact');
@@ -71,7 +113,7 @@ export default function DeepPage({ onExit }) {
         const p = max > 0 ? root.scrollTop / max : 0;
         // On the element, so every layer and the gauge can read it.
         root.parentElement.style.setProperty('--dive', p.toFixed(4));
-        setDepth(Math.round(p * strata[strata.length - 1].depth));
+        setDepth(Math.round(p * maxDepth));
 
         if (current !== lastLevel.current) {
           if (current > lastLevel.current) surfaceBreak();
@@ -87,7 +129,7 @@ export default function DeepPage({ onExit }) {
       root.removeEventListener('scroll', onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [surfaceBreak]);
+  }, [surfaceBreak, maxDepth]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -100,7 +142,7 @@ export default function DeepPage({ onExit }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onExit]);
 
-  const stratum = strata[level];
+  const stratum = visible[level];
 
   return (
     <div className="deep" data-breaking={breaking || undefined} data-level={level}>
@@ -123,13 +165,13 @@ export default function DeepPage({ onExit }) {
       <aside className="deep__gauge" data-flare={breaking || undefined} aria-hidden="true">
         <span className="deep__gauge-rail">
           <span className="deep__gauge-fill" />
-          {strata.map((s, i) => (
+          {visible.map((s, i) => (
             <span
               key={s.id}
               className="deep__gauge-tick"
               data-passed={i <= level || undefined}
               data-current={i === level || undefined}
-              style={{ '--tp': i / (strata.length - 1) }}
+              style={{ '--tp': i / (visible.length - 1) }}
             />
           ))}
         </span>
@@ -151,119 +193,150 @@ export default function DeepPage({ onExit }) {
         </section>
 
         {strata.map((s, i) => (
-          <section
-            className="deep__stratum"
-            data-stratum={s.id}
-            data-align={s.align}
-            data-active={i === level || undefined}
-            key={s.id}
-            style={{ '--si': i }}
-          >
-            <div className="deep__block">
-              <header className="deep__head">
-                <span className="deep__depth mono">{String(s.depth).padStart(3, '0')}m</span>
-                <span className="deep__rule" />
-                <span className="deep__label mono">{s.label}</span>
-              </header>
-
-              <h2 className="deep__h2">{s.title}</h2>
-              <p className="deep__lede">{s.lede}</p>
-              {s.updated && <p className="deep__updated mono">Last updated {s.updated}</p>}
-
-              {s.paragraphs && (
-                <div className="deep__prose">
-                  {s.paragraphs.map((t) => (
-                    <p key={t.slice(0, 26)}>{t}</p>
-                  ))}
-                </div>
-              )}
-
-              {s.facts && (
-                <dl className="deep__facts">
-                  {s.facts.map(([k, v]) => (
-                    <div key={k}>
-                      <dt className="mono">{k}</dt>
-                      <dd>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-
-              {/* /now */}
-              {s.now && (
-                <div className="deep__now">
-                  {s.now.map((n) => (
-                    <article className="deep__now-row" key={n.label}>
-                      <span className="deep__now-icon">
-                        <Icon name={n.icon} size={17} />
-                      </span>
-                      <span className="deep__now-label mono">{n.label}</span>
-                      <p className="deep__now-body">{n.body}</p>
-                    </article>
-                  ))}
-                </div>
-              )}
-
-              {/* hobbies */}
-              {s.items && (
-                <div className="deep__grid">
-                  {s.items.map((it) => (
-                    <article className="deep__card" key={it.name}>
-                      <span className="deep__card-icon">
-                        <Icon name={it.icon} size={20} />
-                      </span>
-                      <h3>{it.name}</h3>
-                      <p>{it.body}</p>
-                    </article>
-                  ))}
-                </div>
-              )}
-
-              {/* /uses */}
-              {s.groups && (
-                <div className="deep__kit">
-                  {s.groups.map((g) => (
-                    <article className="deep__kit-col" key={g.name}>
-                      <h3 className="mono">{g.name}</h3>
-                      <ul>
-                        {g.items.map((it) => (
-                          <li key={it}>{it}</li>
-                        ))}
-                      </ul>
-                    </article>
-                  ))}
-                </div>
-              )}
-
-              {/* the vault */}
-              {s.logs && (
-                <div className="deep__logs">
-                  {s.logs.map((l) => (
-                    <article className="deep__log" key={l.title} data-tag={l.tag}>
-                      <header>
-                        <span className="deep__log-tag mono">{l.tag}</span>
-                        <time className="deep__log-date mono">{l.date}</time>
-                      </header>
-                      <h3>{l.title}</h3>
-                      <p>{l.body}</p>
-                      <span className="deep__log-edge" aria-hidden="true" />
-                    </article>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
+          <Stratum key={s.id} s={s} i={i} active={i === level} />
         ))}
 
         <section className="deep__outro">
           <h2 className="deep__h2">{outro.title}</h2>
           <p className="deep__lede">{outro.body}</p>
-          <button type="button" className="deep__rise" onClick={onExit}>
-            <Icon name="power" size={15} />
-            <span className="mono">{outro.back}</span>
-          </button>
+          <Vault unlocked={unlocked} onUnlock={unlock} />
+          {!unlocked && (
+            <button type="button" className="deep__rise" onClick={onExit}>
+              <Icon name="power" size={15} />
+              <span className="mono">{outro.back}</span>
+            </button>
+          )}
         </section>
+
+        {unlocked && (
+          <>
+            {sealed.map((s, j) => (
+              <Stratum
+                key={s.id}
+                s={s}
+                i={strata.length + j}
+                active={strata.length + j === level}
+              />
+            ))}
+
+            <section className="deep__outro">
+              <h2 className="deep__h2">{sealedOutro.title}</h2>
+              <p className="deep__lede">{sealedOutro.body}</p>
+              <button type="button" className="deep__rise" onClick={onExit}>
+                <Icon name="power" size={15} />
+                <span className="mono">{sealedOutro.back}</span>
+              </button>
+            </section>
+          </>
+        )}
       </div>
     </div>
+  );
+}
+
+/** One full-height stratum. Renders whichever content blocks it carries. */
+function Stratum({ s, i, active }) {
+  return (
+    <section
+      className="deep__stratum"
+      data-stratum={s.id}
+      data-align={s.align}
+      data-active={active || undefined}
+      style={{ '--si': i }}
+    >
+      <div className="deep__block">
+        <header className="deep__head">
+          <span className="deep__depth mono">{String(s.depth).padStart(3, '0')}m</span>
+          <span className="deep__rule" />
+          <span className="deep__label mono">{s.label}</span>
+        </header>
+
+        <h2 className="deep__h2">{s.title}</h2>
+        <p className="deep__lede">{s.lede}</p>
+        {s.updated && <p className="deep__updated mono">Last updated {s.updated}</p>}
+
+        {s.paragraphs && (
+          <div className="deep__prose">
+            {s.paragraphs.map((t) => (
+              <p key={t.slice(0, 26)}>{t}</p>
+            ))}
+          </div>
+        )}
+
+        {s.facts && (
+          <dl className="deep__facts">
+            {s.facts.map(([k, v]) => (
+              <div key={k}>
+                <dt className="mono">{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        {/* /now */}
+        {s.now && (
+          <div className="deep__now">
+            {s.now.map((n) => (
+              <article className="deep__now-row" key={n.label}>
+                <span className="deep__now-icon">
+                  <Icon name={n.icon} size={17} />
+                </span>
+                <span className="deep__now-label mono">{n.label}</span>
+                <p className="deep__now-body">{n.body}</p>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* hobbies */}
+        {s.items && (
+          <div className="deep__grid">
+            {s.items.map((it) => (
+              <article className="deep__card" key={it.name}>
+                <span className="deep__card-icon">
+                  <Icon name={it.icon} size={20} />
+                </span>
+                <h3>{it.name}</h3>
+                <p>{it.body}</p>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* /uses */}
+        {s.groups && (
+          <div className="deep__kit">
+            {s.groups.map((g) => (
+              <article className="deep__kit-col" key={g.name}>
+                <h3 className="mono">{g.name}</h3>
+                <ul>
+                  {g.items.map((it) => (
+                    <li key={it}>{it}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* the vault */}
+        {s.logs && (
+          <div className="deep__logs">
+            {s.logs.map((l) => (
+              <article className="deep__log" key={l.title} data-tag={l.tag}>
+                <header>
+                  <span className="deep__log-tag mono">{l.tag}</span>
+                  <time className="deep__log-date mono">{l.date}</time>
+                </header>
+                <h3>{l.title}</h3>
+                <p>{l.body}</p>
+                <span className="deep__log-edge" aria-hidden="true" />
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

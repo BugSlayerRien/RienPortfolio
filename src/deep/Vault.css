@@ -1,0 +1,274 @@
+/* ============================================================
+   The vault — a cube that turns to show its passcode face.
+   Only transform and opacity animate, and only on this small stage.
+   ============================================================ */
+
+.vault {
+  --size: 150px;
+  --half: 75px;
+  display: grid;
+  justify-items: center;
+  gap: 26px;
+  margin-top: 30px;
+}
+
+/* Margin covers the cube's projected overhang, which layout does not see. */
+.vault__stage {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  margin: 34px 0 30px;
+  perspective: 1100px;
+  animation: vault-float 5.5s ease-in-out infinite;
+}
+
+@keyframes vault-float {
+  0%,
+  100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.vault__cube {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  /* Leaning the same way it will turn: opening carries on the motion rather
+     than swinging back through the front. */
+  transform: rotateX(-20deg) rotateY(-30deg);
+  transition: transform 900ms var(--ease-out);
+}
+
+.vault[data-state='sealed'] .vault__stage:hover .vault__cube,
+.vault[data-state='sealed'] .vault__stage:focus-within .vault__cube {
+  transform: rotateX(-22deg) rotateY(-42deg);
+}
+
+/* A quarter turn brings the passcode face round to the front. */
+.vault[data-state='open'] .vault__cube,
+.vault[data-state='unlocked'] .vault__cube {
+  transform: rotateX(0deg) rotateY(-90deg);
+}
+
+/* ---------- Faces ---------- */
+
+.vault__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(150deg, rgba(38, 38, 60, 0.94), rgba(9, 9, 18, 0.97));
+  box-shadow: inset 0 0 34px rgba(130, 170, 230, 0.1);
+  color: var(--ink-2);
+  transform: var(--face) translateZ(var(--half));
+  backface-visibility: hidden;
+  transition: transform 900ms var(--ease-out), opacity 700ms var(--ease-out),
+    border-color 240ms ease;
+}
+
+/* The oil edge every surface on this page carries. */
+.vault__face::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--oil-lit);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.vault__face--front { --face: rotateY(0deg); }
+.vault__face--right { --face: rotateY(90deg); }
+.vault__face--back { --face: rotateY(180deg); }
+.vault__face--left { --face: rotateY(-90deg); }
+.vault__face--top { --face: rotateX(90deg); }
+.vault__face--bottom { --face: rotateX(-90deg); }
+
+.vault__face--front svg {
+  filter: drop-shadow(0 0 14px rgba(170, 210, 255, 0.45));
+}
+
+/* ---------- Passcode face ---------- */
+
+/* minmax(0, 1fr): an auto track would grow to the input's intrinsic width
+   and push the field off the face. */
+.vault__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 12px;
+  width: 82%;
+}
+
+.vault__label {
+  font-size: 0.54rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.vault__field {
+  display: flex;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.vault__field:focus-within {
+  border-color: rgba(170, 215, 255, 0.7);
+  box-shadow: 0 0 18px rgba(140, 190, 255, 0.25);
+}
+
+.vault__field input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  padding: 9px 4px 9px 10px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+.vault__go {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: color 200ms ease, background 200ms ease;
+}
+
+.vault__go:hover,
+.vault__go:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+/* ---------- Wrong code ---------- */
+
+.vault[data-wrong] .vault__stage {
+  animation: vault-shake 420ms var(--ease-out);
+}
+
+.vault[data-wrong] .vault__face {
+  border-color: rgba(255, 120, 150, 0.7);
+}
+
+@keyframes vault-shake {
+  0%, 100% { transform: translateX(0); }
+  18% { transform: translateX(-10px); }
+  36% { transform: translateX(8px); }
+  54% { transform: translateX(-6px); }
+  72% { transform: translateX(3px); }
+}
+
+/* ---------- Unlocked: the faces burst off, the core stays lit ---------- */
+
+.vault[data-state='unlocked'] .vault__face {
+  transform: var(--face) translateZ(calc(var(--half) * 3.4));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vault__core {
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(190, 215, 255, 0.85) 22%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.2);
+  transition: opacity 700ms var(--ease-out) 250ms, transform 900ms var(--ease-out) 250ms;
+  pointer-events: none;
+}
+
+/* The oil ring around the core. */
+.vault__core::after {
+  content: '';
+  position: absolute;
+  inset: -34%;
+  border-radius: 50%;
+  padding: 2px;
+  background: var(--oil-lit);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.8;
+  animation: core-spin 9s linear infinite;
+}
+
+@keyframes core-spin {
+  to { rotate: 360deg; }
+}
+
+.vault[data-state='unlocked'] .vault__core {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---------- The click target ---------- */
+
+.vault__trigger {
+  position: absolute;
+  inset: -12px;
+  z-index: 2;
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.vault__trigger:focus-visible {
+  outline: 1px solid rgba(170, 215, 255, 0.7);
+  outline-offset: 4px;
+}
+
+/* ---------- Caption ---------- */
+
+.vault__note {
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+
+.vault__note--open {
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  background: var(--oil-lit);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vault__stage,
+  .vault__core::after {
+    animation: none;
+  }
+
+  .vault__cube,
+  .vault__face,
+  .vault__core {
+    transition-duration: 1ms;
+    transition-delay: 0ms;
+  }
+}

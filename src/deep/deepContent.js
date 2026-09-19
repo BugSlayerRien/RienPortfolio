@@ -178,3 +178,54 @@ export const outro = {
   body: 'That is as deep as it goes. Thanks for scrolling all the way down — most people do not.',
   back: 'Surface',
 };
+
+/**
+ * The vault at the bottom. Only the SHA-256 of the passcode is stored, so the
+ * word itself is not sitting in the bundle — but this is a gate, not security:
+ * the sealed strata below ship to every visitor either way.
+ *
+ * Input is trimmed and lower-cased before hashing. To change the passcode:
+ *   node -e "console.log(require('crypto').createHash('sha256').update('newcode').digest('hex'))"
+ * TODO(rien): the current passcode is a placeholder — "abyss".
+ */
+export const vault = {
+  hash: '0e062e4c2ee475679d9cfd9cd30c295dec2a0eb7a02ffb0c5b239d2617022a8a',
+  note: 'you may ask directly to me for the passcode :)',
+};
+
+/** What the vault opens onto. Same shape as `strata`. */
+// TODO(rien): all of this is scaffolding. It is the part only people who asked
+// get to read, so it should be the most personal thing on the site.
+export const sealed = [
+  {
+    id: 'trench',
+    depth: 480,
+    label: 'The Trench',
+    align: 'left',
+    title: 'You asked',
+    lede: 'Which already says something. Thanks for that.',
+    paragraphs: [
+      'Everything above the vault is written for anyone. This part is written for people who bothered to message me first — so it gets to be less tidy.',
+      'TODO(rien): the unpolished version. What you are actually proud of, what you are still unsure about, what you would say if nobody were grading it.',
+    ],
+  },
+  {
+    id: 'hadal',
+    depth: 700,
+    label: 'Hadal',
+    align: 'right',
+    title: 'Still figuring out',
+    lede: 'Open questions, kept honest.',
+    facts: [
+      ['After graduation', 'TODO(rien)'],
+      ['Want to get good at', 'TODO(rien)'],
+      ['Would build if I had a year', 'TODO(rien)'],
+    ],
+  },
+];
+
+export const sealedOutro = {
+  title: 'Actual bottom',
+  body: 'This time it really is. You are one of very few people who have seen this far down.',
+  back: 'Surface',
+};

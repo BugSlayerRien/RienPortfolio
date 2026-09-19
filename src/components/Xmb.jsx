@@ -12,6 +12,10 @@ import './Xmb.css';
  *
  * Mouse mirrors the d-pad: hovering moves the cursor, clicking confirms.
  *
+ * An item carrying a `logo` shows that brand mark in place of the line icon.
+ * Those marks are drawn for light backgrounds, so their tile swaps the dark
+ * glass for a pearl plate rather than losing the artwork into the background.
+ *
  * One category breaks the pattern. A category with `mode: 'burst'` — Socials,
  * the last stop on the bar — has no blade. Landing on it detonates the column:
  * the nodes fly out from the cross point into a legible cluster, already open,
@@ -132,8 +136,18 @@ export default function Xmb({
                           {/* Fixed-width slot keeps the tile centred on the
                               cross point even as it grows on selection. */}
                           <span className="xmb__item-slot">
-                            <span className="xmb__item-glyph">
-                              <Icon name={item.icon} size={30} strokeWidth={1.4} />
+                            <span className="xmb__item-glyph" data-logo={item.logo ? '' : undefined}>
+                              {item.logo ? (
+                                <img
+                                  className="xmb__item-logo"
+                                  style={item.logoScale ? { '--logo-scale': item.logoScale } : undefined}
+                                  src={item.logo}
+                                  alt=""
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <Icon name={item.icon} size={30} strokeWidth={1.4} />
+                              )}
                               <span className="xmb__item-sheen" aria-hidden="true" />
                             </span>
                           </span>
