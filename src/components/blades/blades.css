@@ -187,6 +187,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* The photo is a half-length shot; zoom onto the face for the circle. */
+  transform: scale(1.75);
+  transform-origin: 49% 30%;
 }
 
 .hero__portrait::after {
@@ -196,7 +199,8 @@
   background: var(--holo-soft);
   background-size: 200% 200%;
   mix-blend-mode: overlay;
-  opacity: 0.55;
+  /* Light enough to read as a sheen on a photo rather than a tint on skin. */
+  opacity: 0.22;
   animation: holo-wander 12s ease-in-out infinite;
 }
 
@@ -1136,5 +1140,297 @@
 @media (prefers-reduced-motion: reduce) {
   .wall__item {
     animation: none;
+  }
+}
+
+/* ============================================================
+   Role badges — sit on the same row as the project status
+   ============================================================ */
+
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.rbadge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  overflow: hidden;
+  isolation: isolate;
+  animation: rbadge-in 520ms var(--ease-out) both;
+  animation-delay: calc(120ms + var(--n) * 90ms);
+}
+
+@keyframes rbadge-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.9);
+  }
+}
+
+/* A specular band that crosses every badge now and then. */
+.rbadge__shine {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.75) 48%, transparent 64%);
+  transform: translateX(-130%);
+  animation: rbadge-shine 4.2s var(--ease-soft) infinite;
+  animation-delay: calc(1.2s + var(--n) * 0.35s);
+  pointer-events: none;
+}
+
+@keyframes rbadge-shine {
+  0%,
+  62% { transform: translateX(-130%); }
+  88%,
+  100% { transform: translateX(130%); }
+}
+
+/* Frontend: pearl white. */
+.rbadge[data-tone='white'] {
+  background: linear-gradient(180deg, #ffffff, #dde2ee);
+  border-color: rgba(255, 255, 255, 0.95);
+  color: #1b1e2c;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12), 0 2px 10px rgba(200, 215, 255, 0.18);
+}
+
+/* Backend: metallic black — a hard light break across the middle. */
+.rbadge[data-tone='black'] {
+  background: linear-gradient(180deg, #5a5d68 0%, #25262d 46%, #0b0b0f 54%, #34363f 100%);
+  border-color: #6b6e7a;
+  color: #eceef5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+.rbadge[data-tone='black'] .rbadge__shine {
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.4) 48%, transparent 64%);
+}
+
+/* ---- Special badges: moving foil and a breathing halo ---- */
+
+.rbadge[data-special] {
+  padding: 3px 12px 3px 9px;
+  background-size: 220% 100%;
+  animation: rbadge-in 520ms var(--ease-out) both, rbadge-foil 5s linear infinite;
+  animation-delay: calc(120ms + var(--n) * 90ms), 0s;
+}
+
+@keyframes rbadge-foil {
+  to { background-position: 220% 0; }
+}
+
+/* Full stack: shiny gold. */
+.rbadge[data-tone='gold'] {
+  background-image: linear-gradient(
+    110deg,
+    #a8741a 0%,
+    #f7d774 18%,
+    #fff6c8 28%,
+    #e8b93c 42%,
+    #a8741a 56%,
+    #f7d774 74%,
+    #fff6c8 84%,
+    #a8741a 100%
+  );
+  border-color: #ffe58a;
+  color: #3a2402;
+  text-shadow: 0 1px 0 rgba(255, 245, 200, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 0 16px rgba(255, 196, 70, 0.45);
+}
+
+/* Capstone: red. */
+.rbadge[data-tone='red'] {
+  background-image: linear-gradient(
+    110deg,
+    #7e0816 0%,
+    #e0233a 20%,
+    #ff7a86 30%,
+    #d4142a 44%,
+    #7e0816 58%,
+    #e0233a 76%,
+    #ff7a86 86%,
+    #7e0816 100%
+  );
+  border-color: #ff9aa5;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(80, 0, 10, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 16px rgba(255, 50, 75, 0.45);
+}
+
+/* Breathing halo as its own layer, so it animates opacity rather than repainting a shadow. */
+.rbadge[data-special]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  box-shadow: 0 0 22px 2px currentColor;
+  opacity: 0.3;
+  animation: rbadge-halo 2.8s var(--ease-soft) infinite;
+}
+
+@keyframes rbadge-halo {
+  50% { opacity: 0.85; }
+}
+
+.rbadge[data-tone='gold']::after { color: #ffcc55; }
+.rbadge[data-tone='red']::after { color: #ff3b55; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rbadge,
+  .rbadge[data-special],
+  .rbadge__shine,
+  .rbadge[data-special]::after {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Tech stack — one labelled row per group
+   ============================================================ */
+
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.stack__row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.stack__row .chips {
+  margin: 0;
+}
+
+.stack__group {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+@media (max-width: 560px) {
+  .stack__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   Certificate carousel
+   ============================================================ */
+
+.ccar {
+  display: grid;
+  gap: 16px;
+}
+
+.ccar__viewport {
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  /* Room for the hovered frame's lift and shadow. */
+  padding: 4px 0 10px;
+  margin: -4px 0 -10px;
+}
+
+.ccar__track {
+  display: flex;
+  transform: translateX(calc(var(--i) * -100%));
+  transition: transform 720ms var(--ease-xmb);
+}
+
+.ccar__slide {
+  flex: 0 0 100%;
+}
+
+.ccar__slide img {
+  aspect-ratio: 1.414;
+  object-fit: cover;
+}
+
+.ccar__bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.ccar__step {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  color: var(--ink-soft);
+  transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft);
+}
+
+.ccar__step:hover,
+.ccar__step:focus-visible {
+  border-color: var(--edge-bright);
+  color: var(--pearl-100);
+}
+
+.ccar__dots {
+  display: flex;
+  gap: 8px;
+}
+
+.ccar__dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--edge-bright);
+  background: transparent;
+  overflow: hidden;
+  transition: width 420ms var(--ease-out), background 240ms var(--ease-soft);
+}
+
+.ccar__dot[data-active] {
+  width: 34px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* The dwell timer, filling the active dot. */
+.ccar__dot i {
+  position: absolute;
+  inset: 0;
+  background: var(--holo);
+  background-size: 300% 100%;
+  transform-origin: left;
+  animation: ccar-fill var(--dwell) linear forwards;
+}
+
+.ccar[data-held] .ccar__dot i {
+  animation-play-state: paused;
+}
+
+@keyframes ccar-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ccar__track {
+    transition: none;
   }
 }

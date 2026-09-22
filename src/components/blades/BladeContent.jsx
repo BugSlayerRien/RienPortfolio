@@ -1,13 +1,17 @@
 import Icon from '../Icon';
 import { Section, Card, Chips, Prose, Row } from './Parts';
 import CommentBlade from './CommentBlade';
+import CertCarousel from './CertCarousel';
 import {
   profile,
   about,
+  stack,
   education,
   location as campus,
   projects,
   certificates,
+  certificateSets,
+  roleBadges,
   honors,
   experience,
   system,
@@ -40,6 +44,17 @@ function AboutBlade() {
             <p key={p.slice(0, 24)}>{p}</p>
           ))}
         </Prose>
+      </Section>
+
+      <Section title="Tech stack" note="Compiled from what my project repos are built with.">
+        <div className="stack">
+          {stack.map((g) => (
+            <div className="stack__row" key={g.group} data-reveal>
+              <span className="stack__group mono">{g.group}</span>
+              <Chips items={g.items} />
+            </div>
+          ))}
+        </div>
       </Section>
 
       <Section>
@@ -116,9 +131,14 @@ function ProjectBlade({ id }) {
   return (
     <>
       <Section>
-        <span className="status" data-state={p.status}>
-          {p.status}
-        </span>
+        <div className="status-row">
+          <span className="status" data-state={p.status}>
+            {p.status}
+          </span>
+          {p.roles?.map((r, n) => (
+            <RoleBadge key={r} role={r} n={n} />
+          ))}
+        </div>
         <Prose>
           <p>
             <strong>{p.tagline}</strong>
@@ -222,6 +242,33 @@ function CertificateBlade({ id }) {
         </div>
       </Section>
     </>
+  );
+}
+
+/** What I did on a project. Full Stack and Capstone get the special finish. */
+function RoleBadge({ role, n }) {
+  const b = roleBadges[role];
+  return (
+    <span
+      className="rbadge"
+      data-tone={b.tone}
+      data-special={b.special || undefined}
+      style={{ '--n': n }}
+    >
+      {b.special && <Icon name={b.tone === 'gold' ? 'star' : 'award'} size={11} strokeWidth={2} />}
+      {b.label}
+      <span className="rbadge__shine" aria-hidden="true" />
+    </span>
+  );
+}
+
+/** A group of certificates rotating through one frame. */
+function CertificateSetBlade({ id }) {
+  const set = certificateSets[id];
+  return (
+    <Section note={set.note}>
+      <CertCarousel ids={set.members} />
+    </Section>
   );
 }
 
@@ -423,6 +470,8 @@ export default function BladeContent({ item, settings }) {
       return <ProjectBlade id={item.id} />;
     case 'certificate':
       return <CertificateBlade id={item.id} />;
+    case 'certificateSet':
+      return <CertificateSetBlade id={item.id} />;
     case 'honors':
       return <HonorsBlade />;
     case 'experience':

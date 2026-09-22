@@ -12,7 +12,7 @@ export const profile = {
   fullName: 'Rien Miro Gappi',
   occupation: 'Web Developer & Designer',
   tagline: '4th year BSIT student',
-  avatar: '/img/rien.png',
+  avatar: '/img/rien-photo.webp',
   cv: '/cv/Rien-Miro-Gappi-CV.pdf',
   cvFileName: 'Rien-Miro-Gappi-CV.pdf',
 };
@@ -60,10 +60,11 @@ export const categories = [
     icon: 'trophy',
     items: [
       { id: 'honors', title: 'Academic Honors', subtitle: 'Dean’s List and awards', icon: 'medal', blade: 'honors' },
+      { id: 'gdg-secretary', title: 'GDG Secretary — Recognition', subtitle: 'Recognition · Jun 2026', icon: 'award', blade: 'certificate' },
+      { id: 'deans-list', title: 'Dean’s List Awards', subtitle: '2 certificates · 2023–2024', icon: 'medal', blade: 'certificateSet' },
+      { id: 'memberships', title: 'GDG & GDSC Memberships', subtitle: '3 terms · 2023–2026', icon: 'users', blade: 'certificateSet' },
       { id: 'infosession-2026', title: 'InfoSession 2026', subtitle: 'Participation · Jul 2026', icon: 'certificate', blade: 'certificate' },
       { id: 'gem-in-ai', title: 'Gem in AI: A Gemini Workshop', subtitle: 'Appreciation · Mar 2026', icon: 'certificate', blade: 'certificate' },
-      { id: 'gdg-term-2', title: 'GDG Membership — 2nd Term', subtitle: 'Membership · Mar 2026', icon: 'certificate', blade: 'certificate' },
-      { id: 'gdg-term-1', title: 'GDG Membership — 1st Term', subtitle: 'Membership · Jan 2026', icon: 'certificate', blade: 'certificate' },
       { id: 'gather-2025', title: 'GATHER 2025', subtitle: 'Appreciation · Nov 2025', icon: 'certificate', blade: 'certificate' },
       { id: 'stug-flutter', title: 'StuG! Flutter & Firebase', subtitle: 'Participation · Dec 2023', icon: 'certificate', blade: 'certificate' },
       { id: 'study-jam', title: 'Study Jam — Resource Speaker', subtitle: 'Appreciation · Sep 2023', icon: 'certificate', blade: 'certificate' },
@@ -107,6 +108,18 @@ export const about = {
   ],
 };
 
+/**
+ * What I can build with, compiled from the stacks of my project repos. They
+ * are private, so this is a hand-kept summary rather than a live GitHub pull.
+ */
+export const stack = [
+  { group: 'Languages', items: ['JavaScript', 'Dart', 'PHP', 'Python', 'SQL', 'HTML', 'CSS'] },
+  { group: 'Frameworks', items: ['React', 'Flutter', 'Vite', 'React Router'] },
+  { group: 'Data', items: ['Supabase', 'PostgreSQL', 'MySQL'] },
+  { group: 'AI & services', items: ['Gemini API', 'MediaPipe', 'PayMongo', 'Google OAuth'] },
+  { group: 'Ship it', items: ['Git', 'GitHub', 'Vercel'] },
+];
+
 export const education = [
   { id: 'stpaul', period: 'Elementary & Junior High School', institution: 'St. Paul College' },
   { id: 'sti', period: 'Senior High School', institution: 'STI Baliuag' },
@@ -121,7 +134,8 @@ export const location = {
 };
 
 /**
- * Projects, ordered by how much they matter. `repo` is the GitHub URL and
+ * Projects, ordered by how much they matter. `roles` is what I did on each and
+ * keys into `roleBadges`. `repo` is the GitHub URL and
  * `repoPrivate` controls whether the portfolio renders a link or a
  * "private repository" note — flip it to false once a repo goes public.
  */
@@ -133,6 +147,7 @@ export const projects = {
       'A full barbershop system built around a face scan. A customer photographs themselves in the mobile app, a Python computer-vision pipeline runs MediaPipe face detection and face mesh to derive face shape and hair attributes, and that reading is ranked by an LLM into the top five hairstyle suggestions with front, side and back previews. From there the customer picks a barber and a time slot and books. Separate portals cover the receptionist desk, walk-ins, an in-store kiosk, and an admin view with analytics and an audit log.',
     tech: ['Flutter', 'Dart', 'PHP', 'MySQL', 'Python', 'MediaPipe', 'Gemini API'],
     status: 'In development',
+    roles: ['fullstack', 'capstone'],
     repo: 'https://github.com/BugSlayerRien/barberyanitatis',
     repoPrivate: true,
     demoUrl: '',
@@ -144,6 +159,7 @@ export const projects = {
       'Writeup pending. Replace this entry in src/data/content.js — what it does, who it is for, and what you built it with.',
     tech: [],
     status: 'In development',
+    roles: ['frontend', 'backend'],
     repo: 'https://github.com/BugSlayerRien/GoCollab',
     repoPrivate: true,
     demoUrl: '',
@@ -155,6 +171,7 @@ export const projects = {
       'A Flutter app that sends an image to Google Gemini and reads back a description of what is in it. Pick a photo from the gallery or shoot one on the spot, and the analyzer returns the model output in the app. The Gemini key is loaded from a local env file rather than compiled into the build.',
     tech: ['Flutter', 'Dart', 'Google Gemini API'],
     status: 'Shipped',
+    roles: ['frontend', 'backend'],
     repo: 'https://github.com/BugSlayerRien/AskNU',
     repoPrivate: true,
     demoUrl: '',
@@ -166,6 +183,7 @@ export const projects = {
       'A clinic appointment and scheduling platform built to cut down the paper trail in small practices. Patients book slots, staff manage the day at a glance, and the whole schedule stays in one place instead of a notebook behind the counter. Includes Google sign-in and email-based password recovery.',
     tech: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS', 'Google OAuth'],
     status: 'Shipped',
+    roles: ['frontend', 'backend'],
     repo: 'https://github.com/BugSlayerRien/Medeasyna',
     repoPrivate: true,
     demoUrl: '',
@@ -177,6 +195,7 @@ export const projects = {
       'A resort platform with a portal for each role: guests book rooms, day tours and events; the front desk takes payments and reconciles proof-of-payment uploads; operations staff track room status and dispatch; and a manager view handles rates, tiers and users. Payments run through PayMongo, and the whole data layer is Supabase with row-level security separating what each role can see.',
     tech: ['React', 'Vite', 'Supabase', 'PostgreSQL', 'PayMongo'],
     status: 'In development',
+    roles: ['backend'],
     repo: 'https://github.com/BugSlayerRien/CKResort',
     repoPrivate: true,
     demoUrl: '',
@@ -188,17 +207,36 @@ export const projects = {
       'A web app for finding books and keeping track of what you have read. Readers browse titles, leave ratings and reviews with spoiler flags and helpful votes, and move books through a wishlist, currently-reading, finished or did-not-finish state. An admin dashboard handles the catalogue, review moderation, user roles and site settings.',
     tech: ['React', 'Vite', 'React Router', 'Supabase', 'PostgreSQL'],
     status: 'Shipped',
+    roles: ['frontend', 'backend'],
     repo: 'https://github.com/BugSlayerRien/ReadThat',
     repoPrivate: true,
     demoUrl: '',
   },
 };
 
+/** Role badges on project pages. `tone` picks the finish; `special` adds the shimmer. */
+export const roleBadges = {
+  fullstack: { label: 'Full Stack', tone: 'gold', special: true },
+  capstone: { label: 'Capstone', tone: 'red', special: true },
+  frontend: { label: 'Frontend', tone: 'white' },
+  backend: { label: 'Backend', tone: 'black' },
+};
+
 /**
- * Certificates, newest first. Every `file` is a real PDF in public/certificates
- * and every `thumb` is a JPEG render of its first page.
+ * Certificates, newest first. Most `file`s are PDFs with a JPEG `thumb` of the
+ * first page; the ones that only exist as photos use the photo for both.
  */
 export const certificates = {
+  'gdg-secretary': {
+    title: 'GDG on Campus — Secretary',
+    kind: 'Certificate of Recognition',
+    issuer: 'National University Baliwag',
+    dateLabel: 'June 29, 2026',
+    date: '2026-06-29',
+    note: 'Recognised for leadership and service as Secretary of Google Developer Group on Campus — NU Baliwag Chapter.',
+    file: '/certificates/thumbs/2026-06-29-gdg-secretary-recognition.webp',
+    thumb: '/certificates/thumbs/2026-06-29-gdg-secretary-recognition.webp',
+  },
   'infosession-2026': {
     title: 'InfoSession 2026',
     kind: 'Certificate of Participation',
@@ -268,6 +306,50 @@ export const certificates = {
     note: 'Resource speaker for the ITE233 freshman review session.',
     file: '/certificates/2023-09-24-study-jam-resource-speaker.pdf',
     thumb: '/certificates/thumbs/2023-09-24-study-jam-resource-speaker.jpg',
+  },
+  'deans-list-2324-t2': {
+    title: 'Dean’s List — Second Honors',
+    kind: 'Certificate of Academic Excellence',
+    issuer: 'National University Baliwag',
+    dateLabel: 'April 24, 2024',
+    date: '2024-04-24',
+    note: 'Second Term, AY 2023–2024 — GWA of 3.33.',
+    file: '/certificates/thumbs/2024-04-24-deans-list-ay2023-2024-t2.webp',
+    thumb: '/certificates/thumbs/2024-04-24-deans-list-ay2023-2024-t2.webp',
+  },
+  'deans-list-2223-t1': {
+    title: 'Dean’s List — Second Honors',
+    kind: 'Certificate of Academic Excellence',
+    issuer: 'National University Baliwag',
+    dateLabel: 'November 29, 2023',
+    date: '2023-11-29',
+    note: 'First Term, AY 2022–2023 — GWA of 3.25.',
+    file: '/certificates/thumbs/2023-11-29-deans-list-ay2022-2023-t1.webp',
+    thumb: '/certificates/thumbs/2023-11-29-deans-list-ay2022-2023-t1.webp',
+  },
+  'gdsc-membership-2324': {
+    title: 'GDSC Membership — First Term',
+    kind: 'Certificate of Membership',
+    issuer: 'Google Developer Student Clubs — NU Baliwag',
+    dateLabel: 'October 25, 2023',
+    date: '2023-10-25',
+    note: 'Recognised member for the First Term of AY 2023–2024.',
+    file: '/certificates/thumbs/2023-10-25-gdsc-membership-ay2023-2024.webp',
+    thumb: '/certificates/thumbs/2023-10-25-gdsc-membership-ay2023-2024.webp',
+  },
+};
+
+/** Groups of certificates shown as one auto-advancing carousel. */
+export const certificateSets = {
+  'deans-list': {
+    title: 'Dean’s List Awards',
+    note: 'Second Honors, twice — NU Baliwag, BSIT.',
+    members: ['deans-list-2324-t2', 'deans-list-2223-t1'],
+  },
+  memberships: {
+    title: 'GDG & GDSC Memberships',
+    note: 'A member of the campus Google developer community every term since 2023.',
+    members: ['gdg-term-2', 'gdg-term-1', 'gdsc-membership-2324'],
   },
 };
 
