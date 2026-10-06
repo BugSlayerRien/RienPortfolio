@@ -1434,3 +1434,19 @@
     transition: none;
   }
 }
+
+/* Screenshot carousel: a wide frame that suits desktop screenshots, and a
+   small caption in place of the certificate details card. */
+.ccar--shots .ccar__slide img {
+  aspect-ratio: 2 / 1;
+  background: #0e1224;
+}
+
+.ccar__caption {
+  margin: 0;
+  text-align: center;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}

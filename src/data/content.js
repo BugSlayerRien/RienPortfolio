@@ -52,6 +52,7 @@ export const categories = [
       { id: 'medeasyna', title: 'MedEasyna', subtitle: 'Clinic scheduling system', icon: 'folder', logo: '/img/medeasyna.png', blade: 'project' },
       { id: 'ckresort', title: 'CK Resort', subtitle: 'Resort booking and operations', icon: 'folder', blade: 'project' },
       { id: 'readthat', title: 'ReadThat', subtitle: 'Book discovery and reviews', icon: 'folder', blade: 'project' },
+      { id: 'tastetrails', title: 'Taste Trails', subtitle: 'Bulacan culinary adventure game', icon: 'gamepad', blade: 'project' },
     ],
   },
   {
@@ -137,7 +138,8 @@ export const location = {
 
 /**
  * Projects, ordered by how much they matter. `roles` is what I did on each and
- * keys into `roleBadges`. `repo` is the GitHub URL and
+ * keys into `roleBadges`. `shots` is an optional screenshot carousel: each
+ * entry is a WebP in public/img/projects plus a short caption. `repo` is the GitHub URL and
  * `repoPrivate` controls whether the portfolio renders a link or a
  * "private repository" note — flip it to false once a repo goes public.
  */
@@ -186,6 +188,12 @@ export const projects = {
     tech: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS', 'Google OAuth'],
     status: 'Shipped',
     roles: ['frontend', 'backend'],
+    shots: [
+      { src: '/img/projects/medeasyna-1.webp', alt: 'Landing page' },
+      { src: '/img/projects/medeasyna-2.webp', alt: 'Scheduling an appointment' },
+      { src: '/img/projects/medeasyna-3.webp', alt: 'Nurse dashboard' },
+      { src: '/img/projects/medeasyna-4.webp', alt: 'Doctor dashboard' },
+    ],
     repo: 'https://github.com/BugSlayerRien/Medeasyna',
     repoPrivate: true,
     demoUrl: '',
@@ -214,6 +222,27 @@ export const projects = {
     repoPrivate: true,
     demoUrl: '',
   },
+  // TODO(rien): drafted from the screenshots only. Fix the status, add what it
+  // is built with, and set `roles` (keys of `roleBadges`) once you know them.
+  tastetrails: {
+    title: 'Taste Trails',
+    tagline: 'Bulacan Culinary Adventure',
+    description:
+      'A pixel-art cooking game set in Bulacan. Lola Ising welcomes you into her kitchen, you pick through the market for ingredients, cook your first Bulacan dish, and hear the stories behind it from Mang Perdy along the way.',
+    tech: [],
+    status: 'In development',
+    shots: [
+      { src: '/img/projects/tastetrails-1.webp', alt: 'Title screen' },
+      { src: '/img/projects/tastetrails-2.webp', alt: 'Lola Ising welcomes you' },
+      { src: '/img/projects/tastetrails-3.webp', alt: 'Picking ingredients at the market' },
+      { src: '/img/projects/tastetrails-4.webp', alt: 'Your first Bulacan dish' },
+      { src: '/img/projects/tastetrails-5.webp', alt: 'Mang Perdy shares a legend' },
+    ],
+    repo: '',
+    repoPrivate: false,
+    demoUrl: '',
+  },
+
 };
 
 /** Role badges on project pages. `tone` picks the finish; `special` adds the shimmer. */

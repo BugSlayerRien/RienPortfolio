@@ -1,10 +1,7 @@
-import { useEffect, useState } from 'react';
 import Icon from '../Icon';
 import { Card, Row } from './Parts';
-import useReducedMotion from '../../hooks/useReducedMotion';
+import useCarousel, { DWELL } from '../../hooks/useCarousel';
 import { certificates } from '../../data/content';
-
-const DWELL = 4200;
 
 /**
  * Several certificates in one slot, advancing on their own.
@@ -16,18 +13,7 @@ const DWELL = 4200;
  */
 export default function CertCarousel({ ids }) {
   const items = ids.map((id) => ({ id, ...certificates[id] }));
-  const [index, setIndex] = useState(0);
-  const [held, setHeld] = useState(false);
-  const reduced = useReducedMotion();
-  const auto = !reduced && items.length > 1;
-
-  useEffect(() => {
-    if (!auto || held) return undefined;
-    const id = setTimeout(() => setIndex((n) => (n + 1) % items.length), DWELL);
-    return () => clearTimeout(id);
-  }, [auto, held, index, items.length]);
-
-  const go = (n) => setIndex((n + items.length) % items.length);
+  const { index, go, held, auto, holdProps } = useCarousel(items.length);
   const current = items[index];
 
   return (
@@ -38,10 +24,7 @@ export default function CertCarousel({ ids }) {
       aria-label={`${items.length} certificates`}
       data-held={held || undefined}
       style={{ '--dwell': `${DWELL}ms` }}
-      onMouseEnter={() => setHeld(true)}
-      onMouseLeave={() => setHeld(false)}
-      onFocus={() => setHeld(true)}
-      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setHeld(false)}
+      {...holdProps}
     >
       <div className="ccar__viewport">
         <div className="ccar__track" style={{ '--i': index }}>

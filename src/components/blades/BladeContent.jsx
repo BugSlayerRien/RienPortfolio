@@ -2,6 +2,7 @@ import Icon from '../Icon';
 import { Section, Card, Chips, Prose, Row } from './Parts';
 import CommentBlade from './CommentBlade';
 import CertCarousel from './CertCarousel';
+import ShotCarousel from './ShotCarousel';
 import {
   profile,
   about,
@@ -146,6 +147,12 @@ function ProjectBlade({ id }) {
           <p>{p.description}</p>
         </Prose>
       </Section>
+
+      {p.shots?.length > 0 && (
+        <Section title="Screenshots">
+          <ShotCarousel shots={p.shots} label={`${p.title} screenshots`} />
+        </Section>
+      )}
 
       {p.tech.length > 0 && (
         <Section title="Stack">
