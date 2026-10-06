@@ -209,24 +209,6 @@
   animation: sheen-pass 5s var(--ease-soft) infinite;
 }
 
-.boot__tagline {
-  font-size: var(--fs-xs);
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  opacity: 0;
-}
-
-.boot[data-phase='booting'] .boot__tagline,
-.boot[data-phase='done'] .boot__tagline,
-.boot[data-phase='prompt'] .boot__tagline {
-  animation: fade-in 1.2s var(--ease-out) 1.7s forwards;
-}
-
-.boot[data-phase='prompt'] .boot__tagline {
-  animation-delay: 0.3s;
-}
-
 /* ---------- Start prompt ---------- */
 
 .boot__dock {

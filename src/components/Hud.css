@@ -311,35 +311,20 @@ button.hud__key:hover {
   color: var(--pearl-200);
 }
 
-/* PlayStation face-button marks, drawn rather than typed. */
-.hud__glyph--circle::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border: 1.5px solid var(--iri-1);
-  border-radius: 50%;
-}
-
-.hud__glyph--cross {
-  position: relative;
-}
-
-.hud__glyph--cross::before,
-.hud__glyph--cross::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 1.5px;
-  background: var(--iri-3);
-  border-radius: 1px;
-}
-
-.hud__glyph--cross::before {
-  transform: rotate(45deg);
-}
-
-.hud__glyph--cross::after {
-  transform: rotate(-45deg);
+/* A keyboard keycap, matching the ones on the start screen. */
+.hud__kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 19px;
+  padding: 0 6px;
+  border-radius: 5px;
+  border: 1px solid var(--edge-bright);
+  border-bottom-width: 2px;
+  background: var(--glass);
+  color: var(--pearl-200);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
 }
 
 .hud__glyph--dpad {

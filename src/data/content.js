@@ -80,14 +80,16 @@ export const categories = [
       { id: 'gdsc', title: 'Google Developer Student Clubs', subtitle: 'Event Lead · 2024', icon: 'star', blade: 'experience' },
     ],
   },
-  {
-    id: 'comments',
-    label: 'Comments',
-    icon: 'chat',
-    items: [
-      { id: 'wall', title: 'Leave a Comment', subtitle: 'Sign the wall', icon: 'chat', blade: 'comments' },
-    ],
-  },
+  // Hidden for now. Paste this category back in above Socials to bring the
+  // comment wall back; CommentBlade and src/data/comments.js are untouched.
+  // {
+  //   id: 'comments',
+  //   label: 'Comments',
+  //   icon: 'chat',
+  //   items: [
+  //     { id: 'wall', title: 'Leave a Comment', subtitle: 'Sign the wall', icon: 'chat', blade: 'comments' },
+  //   ],
+  // },
   {
     id: 'socials',
     label: 'Socials',
@@ -457,9 +459,10 @@ export const contacts = [
     icon: 'linkedin',
   },
   { id: 'github', label: 'GitHub', value: 'BugSlayerRien', href: 'https://github.com/BugSlayerRien', icon: 'github' },
-  { id: 'facebook', label: 'Facebook', value: 'Rien Miro Gappi', href: '', icon: 'facebook' },
-  { id: 'instagram', label: 'Instagram', value: '@4mrrien', href: 'https://instagram.com/4mrrien', icon: 'instagram' },
-  { id: 'league', label: 'League', value: '엄마Shyvana #1213', href: '', icon: 'gamepad' },
+  // Hidden for now; uncomment to show them in the Socials burst again.
+  // { id: 'facebook', label: 'Facebook', value: 'Rien Miro Gappi', href: '', icon: 'facebook' },
+  // { id: 'instagram', label: 'Instagram', value: '@4mrrien', href: 'https://instagram.com/4mrrien', icon: 'instagram' },
+  // { id: 'league', label: 'League', value: '엄마Shyvana #1213', href: '', icon: 'gamepad' },
 ];
 
 // The Socials column is the contact list — same data, rendered as a burst.

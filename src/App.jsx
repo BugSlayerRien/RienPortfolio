@@ -6,6 +6,7 @@ import Boot from './components/Boot';
 import Blade from './components/Blade';
 import BladeContent from './components/blades/BladeContent';
 import useIdle from './hooks/useIdle';
+import useHideCursor from './hooks/useHideCursor';
 import useReducedMotion from './hooks/useReducedMotion';
 import useRoute from './hooks/useRoute';
 import DeepPage from './deep/DeepPage';
@@ -28,6 +29,8 @@ export default function App() {
   const [motionOn, setMotionOn] = useState(true);
 
   const { go, back, isDeep } = useRoute();
+
+  useHideCursor(5000);
 
   const systemReduced = useReducedMotion();
   const reduced = systemReduced || !motionOn;

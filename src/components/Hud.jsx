@@ -131,7 +131,7 @@ export default function Hud({ breadcrumb, soundOn, onToggleSound, bladeOpen, onB
         <div className="hud__legend">
           {bladeOpen ? (
             <button type="button" className="hud__key" onClick={onBack}>
-              <span className="hud__glyph hud__glyph--circle" aria-hidden="true" />
+              <kbd className="hud__kbd mono" aria-hidden="true">Esc</kbd>
               <span className="mono">Back</span>
             </button>
           ) : (
@@ -144,7 +144,9 @@ export default function Hud({ breadcrumb, soundOn, onToggleSound, bladeOpen, onB
                 <span className="mono">Arrows / WASD</span>
               </span>
               <span className="hud__key">
-                <span className="hud__glyph hud__glyph--cross" aria-hidden="true" />
+                <kbd className="hud__kbd" aria-hidden="true">
+                  <Icon name="enter" size={12} strokeWidth={2} />
+                </kbd>
                 <span className="mono">Enter to read</span>
               </span>
             </>

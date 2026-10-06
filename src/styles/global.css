@@ -253,3 +253,10 @@ iframe {
     scroll-behavior: auto !important;
   }
 }
+
+/* Set by useHideCursor after a few seconds without mouse movement. The
+   universal selector is needed because buttons and links set their own cursor. */
+html.cursor-idle,
+html.cursor-idle * {
+  cursor: none !important;
+}

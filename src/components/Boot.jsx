@@ -52,7 +52,6 @@ export default function Boot({ onStart, onFinish, reduced }) {
           <span className="boot__logo-text holo-text">RIEN</span>
           <span className="boot__logo-sheen" aria-hidden="true" />
         </h1>
-        <p className="boot__tagline mono">Cross Media Bar Portfolio</p>
       </div>
 
       {phase === 'prompt' && (
