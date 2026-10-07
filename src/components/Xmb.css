@@ -263,6 +263,23 @@
 
 /* Both effects are tuned for a dark tile. Over a white plate the screen blend
    blows the mark out, so they run much quieter here. */
+/* Opaque artwork (a wordmark on its own background) fills the whole tile
+   instead of sitting on the plate. */
+.xmb__item-glyph[data-logo='cover'] {
+  background: #0b0e1c;
+  border-color: var(--edge-bright);
+}
+
+.xmb__item-logo {
+  /* Stays within the tile when --logo-scale zooms in on a detail. */
+  max-width: none;
+}
+
+.xmb__item-glyph[data-logo='cover'] .xmb__item-logo {
+  padding: 0;
+  object-fit: cover;
+}
+
 .xmb__item-glyph[data-logo]::before {
   opacity: 0.16;
 }
@@ -488,10 +505,10 @@
   top: var(--cross-y);
   left: 0;
   translate: 0 -50%;
-  width: min(680px, 56vw);
+  width: min(880px, 64vw);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 16px;
+  gap: 20px 22px;
   padding-left: 26px;
   pointer-events: none;
 }
@@ -539,9 +556,9 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 11px 15px;
-  border-radius: var(--r-md);
+  gap: 18px;
+  padding: 22px 26px;
+  border-radius: var(--r-lg);
   border: 1px solid var(--edge);
   /* Glass over a dark base — the wave runs straight behind these nodes and
      would otherwise wash the label out wherever a bright ribbon crosses. */
@@ -606,9 +623,9 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
   border: 1px solid var(--edge);
   background: rgba(255, 255, 255, 0.07);
   color: var(--pearl-200);
@@ -617,20 +634,20 @@
 
 .xmb__node-text {
   display: grid;
-  gap: 1px;
+  gap: 4px;
   min-width: 0;
 }
 
 .xmb__node-label {
   font-family: var(--font-mono);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
   color: var(--ink-mute);
 }
 
 .xmb__node-value {
-  font-size: 0.95rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--pearl-100);
   overflow: hidden;
@@ -673,24 +690,25 @@
 
 @media (max-width: 900px) {
   .xmb__burst {
-    width: min(420px, 68vw);
+    width: min(480px, 78vw);
     grid-template-columns: minmax(0, 1fr);
-    gap: 9px;
+    gap: 12px;
     padding-left: 18px;
   }
 
   .xmb__node {
-    padding: 9px 12px;
-    gap: 10px;
+    padding: 15px 18px;
+    gap: 14px;
   }
 
   .xmb__node-glyph {
-    width: 34px;
-    height: 34px;
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
   }
 
   .xmb__node-value {
-    font-size: 0.86rem;
+    font-size: 1.05rem;
   }
 }
 

@@ -5,6 +5,7 @@
   display: grid;
   place-items: center;
   background: radial-gradient(120% 100% at 50% 50%, #0a0f22 0%, #04060e 70%, #020308 100%);
+  transition: background 600ms var(--ease-soft);
   transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
 }
 
@@ -505,4 +506,212 @@
     transform: none !important;
     filter: none !important;
   }
+}
+
+/* The alternate theme reaches the start screen too. */
+:root[data-theme='malevolent'] .boot {
+  background: radial-gradient(120% 100% at 50% 50%, #1a070d 0%, #0b0407 70%, #050204 100%);
+}
+
+/* ---------- Pointer field ---------- */
+
+/* Each letter carries a slice of one gradient, so the sweep still reads as
+   continuous across the word even though they move independently. */
+.boot__ch {
+  display: inline-block;
+  background-size: 400% 100%;
+  background-position: calc(var(--ci) * 100%) 0;
+  will-change: transform;
+}
+
+/* The shared holo-drift animates background-position outright, which would
+   wipe out the per-letter offset — so the letters get their own, starting
+   from their own slice. */
+.boot__ch {
+  animation: ch-drift 14s linear infinite;
+}
+
+@keyframes ch-drift {
+  to {
+    background-position: calc(var(--ci) * 100% + 400%) 0;
+  }
+}
+
+
+/* ---------- Scanner frame ---------- */
+
+/* A fixed instrument frame: a hairline border, ruler ticks along the top and
+   bottom, and a bracket at each corner. Deliberately solid rather than faint —
+   it is furniture, not atmosphere. */
+.boot__frame {
+  position: absolute;
+  inset: clamp(14px, 2.2vw, 30px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--pearl-300);
+  pointer-events: none;
+}
+
+/* Ruler ticks. */
+.boot__frame::before,
+.boot__frame::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 18px);
+  opacity: 0.45;
+}
+
+.boot__frame::before {
+  top: 0;
+}
+
+.boot__frame::after {
+  bottom: 0;
+  transform: scaleY(-1);
+}
+
+/* Corner brackets. */
+.boot__frame span {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 0 solid rgba(255, 255, 255, 0.72);
+}
+
+.boot__frame span:nth-child(1) {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.boot__frame span:nth-child(2) {
+  top: -1px;
+  right: -1px;
+  border-width: 2px 2px 0 0;
+}
+.boot__frame span:nth-child(3) {
+  bottom: -1px;
+  left: -1px;
+  border-width: 0 0 2px 2px;
+}
+.boot__frame span:nth-child(4) {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+/* ---------- Scan reveal ---------- */
+
+/* The cursor is the scanner head: it uncovers a measurement grid that is
+   otherwise invisible, drags a slower wake behind it, and carries crosshairs
+   and a ranging ring. Everything reads --mx/--my (live) or --tx/--ty (lagging)
+   from usePointerField, so none of it costs a React render.
+
+   Hidden until the pointer has actually moved — see [data-pointer]. */
+.boot__scan {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-soft);
+}
+
+.boot[data-pointer] .boot__scan {
+  opacity: 1;
+}
+
+.boot__scan > span {
+  position: absolute;
+  inset: 0;
+}
+
+/* The grid itself: 1px lines every 36px, shown only through the mask. */
+.boot__scan-grid,
+.boot__scan-wake {
+  background-image: linear-gradient(90deg, var(--iri-3) 0 1px, transparent 1px 100%),
+    linear-gradient(0deg, var(--iri-3) 0 1px, transparent 1px 100%);
+  background-size: 36px 36px;
+}
+
+.boot__scan-grid {
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(circle 180px at var(--mx) var(--my), #000 0%, transparent 72%);
+  mask-image: radial-gradient(circle 180px at var(--mx) var(--my), #000 0%, transparent 72%);
+}
+
+/* The wake trails the cursor and widens with speed, so a flick smears the
+   grid open behind you and it closes again as you slow. */
+.boot__scan-wake {
+  opacity: calc(0.18 + var(--speed, 0) * 0.5);
+  -webkit-mask-image: radial-gradient(
+    circle calc(150px + var(--speed, 0) * 320px) at var(--tx) var(--ty),
+    #000 0%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    circle calc(150px + var(--speed, 0) * 320px) at var(--tx) var(--ty),
+    #000 0%,
+    transparent 70%
+  );
+}
+
+/* Crosshairs, on the lagging point so they visibly settle. */
+.boot__scan-x,
+.boot__scan-y {
+  background: var(--iri-3);
+  opacity: 0.42;
+}
+
+.boot__scan .boot__scan-x {
+  inset: 0 auto 0 0;
+  width: 1px;
+  transform: translateX(var(--tx, -100px));
+}
+
+.boot__scan .boot__scan-y {
+  inset: 0 0 auto 0;
+  height: 1px;
+  transform: translateY(var(--ty, -100px));
+}
+
+/* The ranging ring: snaps tight when still, opens up as you move. */
+.boot__scan .boot__scan-ring {
+  inset: 0 auto auto 0;
+  width: 86px;
+  height: 86px;
+  margin: -43px 0 0 -43px;
+  border-radius: 50%;
+  border: 1px solid var(--iri-3);
+  opacity: calc(0.3 + var(--speed, 0) * 0.45);
+  transform: translate3d(var(--mx, -200px), var(--my, -200px), 0)
+    scale(calc(0.6 + var(--speed, 0) * 0.7));
+  transition: opacity 200ms linear;
+}
+
+.boot__scan-ring::after {
+  content: '';
+  position: absolute;
+  inset: 34px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  color: var(--iri-1);
+  opacity: 0.8;
+}
+
+@media (hover: none) {
+  .boot__scan {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot__scan {
+    display: none;
+  }
+}
+
+:root[data-theme='mono'] .boot {
+  background: radial-gradient(120% 100% at 50% 50%, #101013 0%, #050506 70%, #000000 100%);
 }

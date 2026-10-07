@@ -17,7 +17,7 @@ import './WaveField.css';
 
 const RIBBONS = 6;
 const MOTES = 46;
-const HUES = [
+const FALLBACK_HUES = [
   [255, 143, 209],
   [183, 156, 255],
   [111, 220, 255],
@@ -27,25 +27,34 @@ const HUES = [
 
 const lerp = (a, b, t) => a + (b - a) * t;
 
-function mixHue(t) {
-  const scaled = ((t % 1) + 1) % 1;
-  const span = scaled * HUES.length;
-  const i = Math.floor(span);
-  const f = span - i;
-  const a = HUES[i % HUES.length];
-  const b = HUES[(i + 1) % HUES.length];
-  return [
-    Math.round(lerp(a[0], b[0], f)),
-    Math.round(lerp(a[1], b[1], f)),
-    Math.round(lerp(a[2], b[2], f)),
-  ];
-}
-
-export default function WaveField({ columns = 0, intensity = 1, idle = false, reduced = false }) {
+export default function WaveField({
+  columns = 0,
+  intensity = 1,
+  idle = false,
+  reduced = false,
+  palette,
+}) {
   const canvasRef = useRef(null);
   // Live values the animation loop reads without re-subscribing.
-  const live = useRef({ columns, intensity, idle, reduced });
-  live.current = { columns, intensity, idle, reduced };
+  const live = useRef({ columns, intensity, idle, reduced, palette });
+  live.current = { columns, intensity, idle, reduced, palette };
+
+  // Reads the palette live, so switching theme recolours the wave in place
+  // rather than restarting the animation.
+  const mixHue = (t) => {
+    const hues = live.current.palette || FALLBACK_HUES;
+    const scaled = ((t % 1) + 1) % 1;
+    const span = scaled * hues.length;
+    const i = Math.floor(span);
+    const f = span - i;
+    const a = hues[i % hues.length];
+    const b = hues[(i + 1) % hues.length];
+    return [
+      Math.round(lerp(a[0], b[0], f)),
+      Math.round(lerp(a[1], b[1], f)),
+      Math.round(lerp(a[2], b[2], f)),
+    ];
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;

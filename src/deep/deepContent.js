@@ -17,7 +17,7 @@
 
 export const intro = {
   kicker: 'Unlisted',
-  title: 'Want to know more about me?',
+  title: 'Welcome, still looking for more?',
   lede: 'The front page is the professional one. This one is just me, going a bit deeper.',
   hint: 'Keep scrolling',
 };
@@ -48,14 +48,13 @@ export const strata = [
     title: 'More about me',
     lede: 'What I actually spend my time on.',
     paragraphs: [
-      'My favourite part of building something is when it starts to feel alive: when a layout stops being a bunch of boxes, or an interaction finally feels right instead of just working. I spend a lot of time on that last ten percent that nobody asked for.',
-      'Helping run GDG turned out to be the same thing, just with people instead of pixels. Figure out what the room needs, then quietly sort it out before anyone has to ask.',
+      'My favourite part of building something is when it starts to feel ALIVE: when a layout stops being a bunch of boxes, or an interaction finally feels right instead of just working. I spend a lot of time on that last ten percent that nobody asked for.',
       // TODO(rien): replace with the real thing.
     ],
     facts: [
-      ['Most at home in', 'Front-end'],
+      ['Most at home in', 'Front-end, Back-end'],
       ['Works best', 'Late at night, with music on'],
-      ['Biggest weakness', 'Rewriting things that already worked'],
+      ['Biggest weakness', 'Doubting too much'],
     ],
   },
   {
@@ -70,12 +69,12 @@ export const strata = [
     align: 'wide',
     title: 'What I am up to lately',
     lede: 'I update this by hand, so if the date below looks old, so is this.',
-    updated: 'September 2026',
+    updated: 'October 2026',
     now: [
-      { icon: 'briefcase', label: 'Building', body: 'Barberya ni Tatis. The face scan works now; the admin side is next.' },
-      { icon: 'star', label: 'Learning', body: 'Getting properly good at animation timing instead of just guessing at easing curves.' },
+      { icon: 'briefcase', label: 'Building', body: 'Brilyantis. My final project before graduation, almost done.' },
+      { icon: 'star', label: 'Learning', body: '...' },
       { icon: 'users', label: 'Organising', body: 'GDG on Campus NU Baliwag as Co-Chapter Organizer. The next event is still in the works.' },
-      { icon: 'music', label: 'On repeat', body: 'TODO(rien): whatever is actually on repeat this month.' },
+      { icon: 'music', label: 'On repeat', body: 'Aries, Quadeca, and Brakence are currently on repeat.' },
     ],
   },
   {
@@ -90,12 +89,12 @@ export const strata = [
       {
         icon: 'music',
         name: 'Music while building',
-        body: 'Something is always playing. The right album can turn a four-hour coding session into one long thought.',
+        body: 'Something is always playing.',
       },
       {
         icon: 'gamepad',
         name: 'League of Legends',
-        body: 'I play as 엄마Shyvana. Mostly for the thrill of watching a plan fall apart because four other people never agreed to it.',
+        body: 'I play as Wiyen#1213, I barely touch this anymore.',
       },
       {
         icon: 'display',
@@ -148,7 +147,7 @@ export const outro = {
  */
 export const vault = {
   hash: '0e062e4c2ee475679d9cfd9cd30c295dec2a0eb7a02ffb0c5b239d2617022a8a',
-  note: 'you may ask directly to me for the passcode :)',
+  note: 'you may ask me directly for the passcode =)',
 };
 
 /**
@@ -165,44 +164,32 @@ export const sealed = [
     label: 'Notes & Logs',
     align: 'wide',
     title: 'Stuff I wrote down',
-    lede: 'Little notes and logs I kept because they might matter later.',
+    lede: 'Little notes and logs I kept',
     // TODO(rien): the real notes go here.
     logs: [
       {
         tag: 'LOG',
         date: '2026-07-29',
-        title: 'InfoSession, afterwards',
-        body: 'I ran the room this time instead of sitting in it. A different kind of tired: the kind where you replay the first ten minutes on the ride home.',
+        title: 'Music',
+        body: 'I really love listening to tunes, makes everything more alive',
       },
       {
         tag: 'NOTE',
-        date: '2026-03-25',
-        title: 'On demoing AI to a room',
-        body: 'Everyone wants to see it fail first. So build the demo where the failure is the interesting part, and you get to keep the room.',
-      },
-      {
-        tag: 'LOG',
-        date: '2026-02-02',
-        title: 'The face scan finally worked',
-        body: 'MediaPipe mesh into a heuristic into a ranked list. Three weeks of nonsense, then one afternoon it just worked, and I honestly could not tell you what I changed.',
+        date: '2026-08-25',
+        title: 'project',
+        body: 'Im really tired but my ego says otherwise',
       },
       {
         tag: 'NOTE',
-        date: '2025-11-15',
-        title: 'GATHER',
-        body: 'The first event where I knew everyone in the room by name. Worth writing down, because it will not always be like that.',
+        date: '2026-9-9',
+        title: '',
+        body: 'I have so many wasted thoughts, and nothing comes up when actually writing something.',
       },
       {
         tag: 'IDEA',
         date: '2025-08-04',
         title: 'Portfolio as an XMB',
         body: 'Nobody remembers a portfolio that looks like a portfolio. They remember the one that looks like a PSP.',
-      },
-      {
-        tag: 'LOG',
-        date: '2023-09-24',
-        title: 'First time speaking',
-        body: 'I was a resource speaker for a freshman review session, a year into being a freshman myself. I was terrified. I did it anyway.',
       },
     ],
   },
@@ -215,7 +202,6 @@ export const sealed = [
     lede: 'Thanks for actually messaging me. That already says something.',
     paragraphs: [
       'Everything above the vault is written for anyone. This part is for people who bothered to ask first, so it gets to be a bit messier and a lot more honest.',
-      'TODO(rien): the unpolished version. What you are actually proud of, what you are still unsure about, what you would say if nobody were grading it.',
     ],
   },
   {
@@ -226,15 +212,15 @@ export const sealed = [
     title: 'Still figuring it out',
     lede: 'Some open questions, kept honest.',
     facts: [
-      ['After graduation', 'TODO(rien)'],
-      ['Want to get good at', 'TODO(rien)'],
-      ['Would build if I had a year', 'TODO(rien)'],
+      ['After graduation', 'Create Content'],
+      ['Want to get good at', 'Everything that catches my interest'],
+      ['Would build if I had a year', 'similar game to boshy'],
     ],
   },
 ];
 
 export const sealedOutro = {
   title: 'This time it really is the bottom',
-  body: 'Seriously, that is everything. Not many people get this far down, so thanks for sticking around.',
+  body: 'Seriously, that is everything. Not many people get this far down, so thanks for sticking around!',
   back: 'Surface',
 };

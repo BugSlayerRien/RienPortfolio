@@ -1450,3 +1450,188 @@
   text-transform: uppercase;
   color: var(--ink-mute);
 }
+
+/* Portrait screenshots: show the whole shot, centred over a blurred, dimmed
+   copy of itself so the wide frame does not look empty. */
+.ccar--shots[data-fit='contain'] .ccar__slide {
+  aspect-ratio: 16 / 9;
+  background: #0b0e1c;
+}
+
+.ccar--shots[data-fit='contain'] .ccar__slide::before {
+  content: '';
+  position: absolute;
+  inset: -24px;
+  background: var(--bg) center / cover;
+  filter: blur(26px) brightness(0.5) saturate(1.2);
+  z-index: -1;
+}
+
+.ccar--shots[data-fit='contain'] .ccar__slide img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: contain;
+  background: none;
+}
+
+/* ============================================================
+   Clickable portrait + photo lightbox
+   ============================================================ */
+
+.hero__portrait--btn {
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  transition: scale 320ms var(--ease-out), border-color 240ms var(--ease-soft);
+}
+
+.hero__portrait--btn:hover,
+.hero__portrait--btn:focus-visible {
+  scale: 1.06;
+  border-color: #fff;
+  outline: none;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 4vh 4vw;
+  background: radial-gradient(120% 100% at 50% 40%, rgba(6, 8, 18, 0.78), rgba(2, 3, 8, 0.94));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: zoom-out;
+  animation: lightbox-in 320ms var(--ease-out);
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; }
+}
+
+.lightbox__frame {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  max-width: min(92vw, 720px);
+  cursor: default;
+  animation: lightbox-pop 420ms var(--ease-out);
+}
+
+@keyframes lightbox-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+  }
+}
+
+.lightbox__frame img {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  margin: 0 auto;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--edge-bright);
+  box-shadow: var(--shadow-lg), var(--shadow-holo);
+}
+
+.lightbox__cap {
+  text-align: center;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.lightbox__close {
+  position: absolute;
+  top: clamp(14px, 3vh, 28px);
+  right: clamp(14px, 3vw, 28px);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  color: var(--ink-soft);
+  transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft),
+    transform var(--dur-tick) var(--ease-out);
+}
+
+.lightbox__close:hover,
+.lightbox__close:focus-visible {
+  border-color: var(--edge-bright);
+  color: var(--pearl-100);
+  transform: rotate(90deg);
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox__frame {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Tech stack chips — bigger than ordinary chips, with brand marks
+   ============================================================ */
+
+.tchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--pearl-100);
+  transition: border-color var(--dur-tick) var(--ease-soft),
+    background var(--dur-tick) var(--ease-soft), transform var(--dur-tick) var(--ease-out);
+}
+
+.tchip:hover {
+  border-color: var(--edge-bright);
+  background: var(--glass-strong);
+  transform: translateY(-2px);
+}
+
+.tchip__mark {
+  flex: none;
+  width: 19px;
+  height: 19px;
+  /* The brand colour lifts off the glass; the line icons inherit pearl. */
+  filter: drop-shadow(0 0 7px currentColor);
+}
+
+svg.tchip__mark {
+  opacity: 0.95;
+}
+
+.stack {
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .tchip {
+    font-size: 0.84rem;
+    padding: 6px 12px 6px 9px;
+  }
+}

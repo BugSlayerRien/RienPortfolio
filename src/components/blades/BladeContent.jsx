@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import Icon from '../Icon';
 import { Section, Card, Chips, Prose, Row } from './Parts';
 import CommentBlade from './CommentBlade';
 import CertCarousel from './CertCarousel';
 import ShotCarousel from './ShotCarousel';
+import PhotoLightbox from './PhotoLightbox';
+import TechChips from './TechChips';
 import {
   profile,
   about,
@@ -21,13 +24,23 @@ import {
 /* ---------------------------------------------------------- */
 
 function AboutBlade() {
+  const [zoomed, setZoomed] = useState(false);
+
   return (
     <>
       <Card tilt={false}>
         <div className="hero">
-          <div className="hero__portrait">
+          <button
+            type="button"
+            className="hero__portrait hero__portrait--btn"
+            onClick={() => setZoomed(true)}
+            aria-label="View photo larger"
+          >
             <img src={profile.avatar} alt="" width="136" height="136" />
-          </div>
+          </button>
+          {zoomed && (
+            <PhotoLightbox src={profile.avatar} alt={profile.fullName} onClose={() => setZoomed(false)} />
+          )}
           <div className="hero__meta">
             <p className="hero__name holo-text">{profile.fullName}</p>
             <p className="hero__role">{profile.occupation}</p>
@@ -52,7 +65,7 @@ function AboutBlade() {
           {stack.map((g) => (
             <div className="stack__row" key={g.group} data-reveal>
               <span className="stack__group mono">{g.group}</span>
-              <Chips items={g.items} />
+              <TechChips items={g.items} />
             </div>
           ))}
         </div>
@@ -150,7 +163,7 @@ function ProjectBlade({ id }) {
 
       {p.shots?.length > 0 && (
         <Section title="Screenshots">
-          <ShotCarousel shots={p.shots} label={`${p.title} screenshots`} />
+          <ShotCarousel key={id} shots={p.shots} fit={p.shotsFit} label={`${p.title} screenshots`} />
         </Section>
       )}
 
@@ -274,7 +287,7 @@ function CertificateSetBlade({ id }) {
   const set = certificateSets[id];
   return (
     <Section note={set.note}>
-      <CertCarousel ids={set.members} />
+      <CertCarousel key={id} ids={set.members} />
     </Section>
   );
 }

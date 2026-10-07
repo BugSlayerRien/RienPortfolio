@@ -47,24 +47,24 @@ SUMMARY = (
 
 # Skills first: it is the section that gets scanned, and keyword-matched.
 SKILLS = [
-    ("Languages", "JavaScript, Dart, PHP, Python, SQL, HTML5, CSS3"),
-    ("Frameworks", "React, Vite, Flutter, React Router"),
-    ("Backend &amp; Data", "Supabase, PostgreSQL, MySQL, REST APIs, Row-Level Security"),
+    ("Languages", "JavaScript, TypeScript, Dart, PHP, Python, SQL, HTML5, CSS3"),
+    ("Frameworks", "React, Next.js, Flutter, Bootstrap, Vite, React Router"),
+    ("Backend &amp; Data", "Node.js, REST APIs, Supabase, Firebase, PostgreSQL, MySQL, Row-Level Security"),
     ("AI &amp; Vision", "Google Gemini API, MediaPipe"),
-    ("Tools", "Git, GitHub, Vercel, Figma, PayMongo"),
+    ("Tools &amp; Hosting", "Git, GitHub, Docker, Figma, Vercel, Render, PayMongo"),
 ]
 
 # (name, stack, one-line description)
 PROJECTS = [
     (
-        "Barberya ni Tatis",
+        "Brilyantis",
         "Flutter, Dart, PHP, MySQL, Python, MediaPipe, Gemini API",
         "Barbershop platform built around an AI face scan: a Python pipeline runs MediaPipe face "
         "detection and mesh to derive face shape and hair attributes, then an LLM ranks the top five "
         "hairstyles with previews. Separate portals for customers, reception, walk-ins, kiosk and admin.",
     ),
     (
-        "CK Resort",
+        "CK Resort &amp; Events Place",
         "React, Vite, Supabase, PostgreSQL, PayMongo",
         "Resort booking and operations with a portal per role. Live payments through PayMongo with "
         "proof-of-payment uploads; Postgres row-level security separates what each role can read and write.",

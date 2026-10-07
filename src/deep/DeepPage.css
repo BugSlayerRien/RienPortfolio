@@ -943,3 +943,144 @@
     animation: none;
   }
 }
+
+/* ---------- Alternate theme ---------- */
+
+/* The deep page keeps its own oil slick, so it needs its own swap: the five
+   hues go to ember and dried blood, and the ground drops warmer. */
+:root[data-theme='malevolent'] .deep {
+  background: #070305;
+
+  --oil: linear-gradient(
+    100deg,
+    #7a2130 0%,
+    #5e1726 20%,
+    #8a3a2a 42%,
+    #6b2a22 62%,
+    #8a6a3e 80%,
+    #7a2130 100%
+  );
+
+  --oil-lit: linear-gradient(
+    100deg,
+    #ff8a94 0%,
+    #e4697e 20%,
+    #f09a6a 42%,
+    #e5a07a 62%,
+    #e8cf9a 80%,
+    #ff8a94 100%
+  );
+
+  --ink-1: color-mix(in oklab, #fff6f5 calc((1 - var(--dive)) * 100%), #efe3e3);
+  --ink-2: color-mix(in oklab, #dcc6c8 calc((1 - var(--dive)) * 100%), #b49ca0);
+  --ink-3: color-mix(in oklab, #ab9194 calc((1 - var(--dive)) * 100%), #86727a);
+}
+
+/* The ground layers carry their own literal colours, so the theme has to
+   restate them: surface to oxblood, abyss warmer, both slicks to ember. */
+:root[data-theme='malevolent'] .deep__surface-layer {
+  background:
+    radial-gradient(120% 90% at 18% 8%, rgba(140, 40, 60, 0.5), transparent 58%),
+    radial-gradient(100% 80% at 84% 22%, rgba(120, 52, 34, 0.42), transparent 60%),
+    radial-gradient(120% 100% at 50% 108%, rgba(96, 22, 48, 0.38), transparent 62%),
+    linear-gradient(180deg, #120609 0%, #1b0a10 45%, #0b0407 100%);
+}
+
+:root[data-theme='malevolent'] .deep__abyss-layer {
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(96, 48, 56, 0.2), transparent 62%),
+    linear-gradient(180deg, #0b0508 0%, #060305 50%, #020101 100%);
+}
+
+:root[data-theme='malevolent'] .deep__oil {
+  background: conic-gradient(
+    from var(--holo-angle) at 50% 50%,
+    rgba(200, 70, 86, 0.3),
+    rgba(150, 40, 60, 0.26),
+    rgba(190, 96, 54, 0.3),
+    rgba(150, 70, 44, 0.24),
+    rgba(205, 165, 110, 0.26),
+    rgba(200, 70, 86, 0.3)
+  );
+}
+
+:root[data-theme='malevolent'] .deep__oil-deep {
+  background: conic-gradient(
+    from calc(var(--holo-angle) * -1) at 42% 58%,
+    rgba(160, 56, 70, 0.55),
+    rgba(120, 32, 50, 0.5),
+    rgba(150, 76, 44, 0.55),
+    rgba(118, 58, 36, 0.45),
+    rgba(165, 132, 86, 0.5),
+    rgba(160, 56, 70, 0.55)
+  );
+}
+
+/* ---------- Mono theme ---------- */
+
+/* No colour at all down here either: the oil slick becomes wet graphite. */
+:root[data-theme='mono'] .deep {
+  background: #000000;
+
+  --oil: linear-gradient(
+    100deg,
+    #6e6e76 0%,
+    #4a4a52 20%,
+    #85858e 42%,
+    #5c5c64 62%,
+    #9a9aa3 80%,
+    #6e6e76 100%
+  );
+
+  --oil-lit: linear-gradient(
+    100deg,
+    #ffffff 0%,
+    #d2d2d9 20%,
+    #f2f2f6 42%,
+    #c0c0c8 62%,
+    #eaeaef 80%,
+    #ffffff 100%
+  );
+
+  --ink-1: color-mix(in oklab, #ffffff calc((1 - var(--dive)) * 100%), #e8e8ec);
+  --ink-2: color-mix(in oklab, #d5d5d9 calc((1 - var(--dive)) * 100%), #a6a6ad);
+  --ink-3: color-mix(in oklab, #9e9ea5 calc((1 - var(--dive)) * 100%), #76767d);
+}
+
+:root[data-theme='mono'] .deep__surface-layer {
+  background:
+    radial-gradient(120% 90% at 18% 8%, rgba(120, 120, 130, 0.28), transparent 58%),
+    radial-gradient(100% 80% at 84% 22%, rgba(90, 90, 100, 0.26), transparent 60%),
+    radial-gradient(120% 100% at 50% 108%, rgba(70, 70, 78, 0.24), transparent 62%),
+    linear-gradient(180deg, #0d0d10 0%, #141418 45%, #08080a 100%);
+}
+
+:root[data-theme='mono'] .deep__abyss-layer {
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(90, 90, 100, 0.16), transparent 62%),
+    linear-gradient(180deg, #060607 0%, #030304 50%, #000000 100%);
+}
+
+:root[data-theme='mono'] .deep__oil {
+  background: conic-gradient(
+    from var(--holo-angle) at 50% 50%,
+    rgba(190, 190, 200, 0.22),
+    rgba(130, 130, 140, 0.2),
+    rgba(220, 220, 230, 0.22),
+    rgba(150, 150, 160, 0.18),
+    rgba(200, 200, 210, 0.2),
+    rgba(190, 190, 200, 0.22)
+  );
+}
+
+:root[data-theme='mono'] .deep__oil-deep {
+  background: conic-gradient(
+    from calc(var(--holo-angle) * -1) at 42% 58%,
+    rgba(160, 160, 172, 0.42),
+    rgba(110, 110, 120, 0.38),
+    rgba(190, 190, 200, 0.42),
+    rgba(130, 130, 140, 0.34),
+    rgba(175, 175, 186, 0.38),
+    rgba(160, 160, 172, 0.42)
+  );
+}

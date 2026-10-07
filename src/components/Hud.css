@@ -426,3 +426,65 @@ button.hud__key:hover {
     animation: none;
   }
 }
+
+/* ---------- Theme switch ---------- */
+
+/* The dot previews the palette you get by pressing it, so the button says
+   what it does without a label change. */
+.hud__theme-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--edge-bright);
+  background: var(--holo);
+  background-size: 260% 100%;
+  animation: holo-drift 7s linear infinite;
+  box-shadow: 0 0 10px rgba(160, 200, 255, 0.5);
+}
+
+.hud__theme[data-theme='malevolent'] .hud__theme-dot {
+  box-shadow: 0 0 10px rgba(255, 90, 102, 0.55);
+}
+
+.hud__theme[data-theme='mono'] .hud__theme-dot {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+}
+
+/* ---------- Download CV, enlarged ---------- */
+
+.hud__cv {
+  padding: 9px 20px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  gap: 9px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-sm);
+}
+
+.hud__cv:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 860px) {
+  .hud__cv {
+    padding: 8px 12px;
+  }
+}
+
+/* The extra switch has to fit: below 720 the chips go icon-only, and the
+   whole cluster tightens, so the clock and the cat stay on screen. */
+@media (max-width: 720px) {
+  .hud__status {
+    gap: 7px;
+  }
+
+  .hud__chip span.mono,
+  .hud__theme span.mono {
+    display: none;
+  }
+
+  .hud__chip {
+    padding: 5px 8px;
+  }
+}

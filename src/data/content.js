@@ -36,7 +36,8 @@ export const categories = [
     items: [
       { id: 'about', title: 'About Me', subtitle: 'Who is behind the terminal', icon: 'user', blade: 'about' },
       { id: 'education', title: 'Education Timeline', subtitle: 'St. Paul to STI to NU Baliuag', icon: 'timeline', blade: 'education' },
-      { id: 'location', title: 'Campus Location', subtitle: 'National University Baliwag', icon: 'map', blade: 'location' },
+      // Hidden for now; uncomment to bring the campus map back.
+      // { id: 'location', title: 'Campus Location', subtitle: 'National University Baliwag', icon: 'map', blade: 'location' },
     ],
   },
   {
@@ -44,15 +45,19 @@ export const categories = [
     label: 'Projects',
     icon: 'folder',
     items: [
-      { id: 'barberya', title: 'Barberya ni Tatis', subtitle: 'Barbershop system · AI haircut scan', icon: 'folder', logo: '/img/barberya.png', blade: 'project' },
+      { id: 'barberya', title: 'Brilyantis', subtitle: 'Barbershop system · AI haircut scan', icon: 'folder', logo: '/img/barberya.png', blade: 'project' },
+      // Logo fields: `logo` is the image; with `logoFit: 'cover'` it fills the whole
+      // tile (for opaque artwork), steered by `logoFocus` (CSS object-position) and
+      // `logoZoom`. Without it the mark sits on a light plate.
       // The GoCollab artwork carries a wide transparent margin of its own, so it
       // needs scaling up to sit at the same visual weight as the other marks.
       { id: 'gocollab', title: 'GoCollab', subtitle: 'Community management platform', icon: 'folder', logo: '/img/gocollab.webp', logoScale: 1.55, blade: 'project' },
+      { id: 'musika', title: 'MUSIKA', subtitle: 'Classic English songs of the world', icon: 'music', logo: '/img/musika.webp', logoFit: 'cover', logoZoom: 2.15, logoFocus: '50% 21%', blade: 'project' },
+      { id: 'ckresort', title: 'CK', subtitle: 'Resort booking and operations', icon: 'folder', logo: '/img/ck.webp', logoFit: 'cover', blade: 'project' },
+      { id: 'tastetrails', title: 'Taste Trails', subtitle: 'Bulacan culinary adventure game', icon: 'gamepad', logo: '/img/tastetrails.webp', logoFit: 'cover', logoFocus: '22% 50%', blade: 'project' },
       { id: 'asknu', title: 'AskNU', subtitle: 'AI image analysis app', icon: 'folder', blade: 'project' },
-      { id: 'medeasyna', title: 'MedEasyna', subtitle: 'Clinic scheduling system', icon: 'folder', logo: '/img/medeasyna.png', blade: 'project' },
-      { id: 'ckresort', title: 'CK Resort', subtitle: 'Resort booking and operations', icon: 'folder', blade: 'project' },
       { id: 'readthat', title: 'ReadThat', subtitle: 'Book discovery and reviews', icon: 'folder', blade: 'project' },
-      { id: 'tastetrails', title: 'Taste Trails', subtitle: 'Bulacan culinary adventure game', icon: 'gamepad', blade: 'project' },
+      { id: 'medeasyna', title: 'MedEasyna', subtitle: 'Clinic scheduling system', icon: 'folder', logo: '/img/medeasyna.png', blade: 'project' },
     ],
   },
   {
@@ -60,7 +65,8 @@ export const categories = [
     label: 'Credentials',
     icon: 'trophy',
     items: [
-      { id: 'honors', title: 'Academic Honors', subtitle: 'Dean’s List and awards', icon: 'medal', blade: 'honors' },
+      // Hidden for now; uncomment to bring the Academic Honors page back.
+      // { id: 'honors', title: 'Academic Honors', subtitle: 'Dean’s List and awards', icon: 'medal', blade: 'honors' },
       { id: 'gdg-secretary', title: 'GDG Secretary — Recognition', subtitle: 'Recognition · Jun 2026', icon: 'award', blade: 'certificate' },
       { id: 'deans-list', title: 'Dean’s List Awards', subtitle: '2 certificates · 2023–2024', icon: 'medal', blade: 'certificateSet' },
       { id: 'memberships', title: 'GDG & GDSC Memberships', subtitle: '3 terms · 2023–2026', icon: 'users', blade: 'certificateSet' },
@@ -116,11 +122,11 @@ export const about = {
  * are private, so this is a hand-kept summary rather than a live GitHub pull.
  */
 export const stack = [
-  { group: 'Languages', items: ['JavaScript', 'Dart', 'PHP', 'Python', 'SQL', 'HTML', 'CSS'] },
-  { group: 'Frameworks', items: ['React', 'Flutter', 'Vite', 'React Router'] },
-  { group: 'Data', items: ['Supabase', 'PostgreSQL', 'MySQL'] },
+  { group: 'Languages', items: ['JavaScript', 'TypeScript', 'Dart', 'PHP', 'Python', 'SQL', 'HTML', 'CSS'] },
+  { group: 'Frameworks', items: ['React', 'Next.js', 'Flutter', 'Bootstrap', 'Vite', 'React Router'] },
+  { group: 'Backend & data', items: ['Node.js', 'REST API', 'Supabase', 'Firebase', 'PostgreSQL', 'MySQL'] },
   { group: 'AI & services', items: ['Gemini API', 'MediaPipe', 'PayMongo', 'Google OAuth'] },
-  { group: 'Ship it', items: ['Git', 'GitHub', 'Vercel'] },
+  { group: 'Tools & hosting', items: ['Git', 'GitHub', 'Docker', 'Figma', 'Vercel', 'Render'] },
 ];
 
 export const education = [
@@ -139,13 +145,14 @@ export const location = {
 /**
  * Projects, ordered by how much they matter. `roles` is what I did on each and
  * keys into `roleBadges`. `shots` is an optional screenshot carousel: each
- * entry is a WebP in public/img/projects plus a short caption. `repo` is the GitHub URL and
+ * entry is a WebP in public/img/projects plus a short caption. Set
+ * `shotsFit: 'contain'` for portrait (phone) screenshots so they are not cropped. `repo` is the GitHub URL and
  * `repoPrivate` controls whether the portfolio renders a link or a
  * "private repository" note — flip it to false once a repo goes public.
  */
 export const projects = {
   barberya: {
-    title: 'Barberya ni Tatis',
+    title: 'Brilyantis',
     tagline: 'Barbershop Management System with AI-Powered Haircut and Styling Recommendation',
     description:
       'A full barbershop system built around a face scan. A customer photographs themselves in the mobile app, a Python computer-vision pipeline runs MediaPipe face detection and face mesh to derive face shape and hair attributes, and that reading is ranked by an LLM into the top five hairstyle suggestions with front, side and back previews. From there the customer picks a barber and a time slot and books. Separate portals cover the receptionist desk, walk-ins, an in-store kiosk, and an admin view with analytics and an audit log.',
@@ -159,13 +166,84 @@ export const projects = {
   gocollab: {
     title: 'GoCollab',
     tagline: 'A Community Management Platform',
+    // TODO(rien): drafted from the screenshots. Fix anything that is off and add
+    // what it is built with to `tech`.
     description:
-      'Writeup pending. Replace this entry in src/data/content.js — what it does, who it is for, and what you built it with.',
+      'A mobile home for the GDGoC Philippines community. Members sign in with email or Google, earn community points, register for events, browse a Career Hub of internships, scholarships and certifications, and read announcements. Organizers get their own dashboard with analytics, partners, announcements and member verification.',
     tech: [],
     status: 'In development',
     roles: ['frontend', 'backend'],
+    shotsFit: 'contain',
+    shots: [
+      { src: '/img/projects/gocollab-1.webp', alt: 'Sign in' },
+      { src: '/img/projects/gocollab-2.webp', alt: 'Member home' },
+      { src: '/img/projects/gocollab-3.webp', alt: 'Career Hub' },
+      { src: '/img/projects/gocollab-4.webp', alt: 'Organizer home' },
+      { src: '/img/projects/gocollab-5.webp', alt: 'Community announcements' },
+    ],
     repo: 'https://github.com/BugSlayerRien/GoCollab',
     repoPrivate: true,
+    demoUrl: '',
+  },
+  // TODO(rien): drafted from the repo README. Check the status and roles, and
+  // set `demoUrl` if it is deployed anywhere.
+  musika: {
+    title: 'MUSIKA',
+    tagline: 'A Community Atlas of Classic English-Language Songs',
+    description:
+      'A shelf no chart would give you: classic songs sung in English, filed by the country the band came from. Members browse a country atlas and a filterable catalogue, hear real 30-second previews, and file songs of their own. It is built as a Frutiger Aero revival, with glossy glass, particle weather and a retro sound layer synthesised in the browser, plus ten selectable styles in a Profile Studio.',
+    tech: ['React', 'Vite', 'React Router', 'iTunes Search API'],
+    status: 'In development',
+    roles: ['frontend'],
+    shots: [
+      { src: '/img/projects/musika-1.webp', alt: 'Entering the listening room' },
+      { src: '/img/projects/musika-2.webp', alt: 'The listening room' },
+      { src: '/img/projects/musika-3.webp', alt: 'Country atlas' },
+      { src: '/img/projects/musika-4.webp', alt: 'Profile Studio, Aero style' },
+      { src: '/img/projects/musika-5.webp', alt: 'The catalogue' },
+    ],
+    repo: 'https://github.com/BugSlayerRien/Musika',
+    repoPrivate: true,
+    demoUrl: '',
+  },
+  ckresort: {
+    title: 'CK',
+    tagline: 'Resort Booking and Operations Management System',
+    description:
+      'A resort platform with a portal for each role: guests book rooms, day tours and events; the front desk takes payments and reconciles proof-of-payment uploads; operations staff track room status and dispatch; and a manager view handles rates, tiers and users. Payments run through PayMongo, and the whole data layer is Supabase with row-level security separating what each role can see.',
+    tech: ['React', 'Vite', 'Supabase', 'PostgreSQL', 'PayMongo'],
+    status: 'In development',
+    roles: ['backend'],
+    shots: [
+      { src: '/img/projects/ck-1.webp', alt: 'Landing page' },
+      { src: '/img/projects/ck-2.webp', alt: 'Sign in' },
+      { src: '/img/projects/ck-3.webp', alt: 'Guest home and rates' },
+      { src: '/img/projects/ck-4.webp', alt: 'Front desk: rental dispatch' },
+      { src: '/img/projects/ck-5.webp', alt: 'Manager analytics' },
+    ],
+    repo: 'https://github.com/BugSlayerRien/CKResort',
+    repoPrivate: true,
+    demoUrl: '',
+  },
+  // TODO(rien): the description is drafted from the screenshots only, and the
+  // stack and repo are still empty.
+  tastetrails: {
+    title: 'Taste Trails',
+    tagline: 'Bulacan Culinary Adventure',
+    description:
+      'A pixel-art cooking game set in Bulacan. Lola Ising welcomes you into her kitchen, you pick through the market for ingredients, cook your first Bulacan dish, and hear the stories behind it from Mang Perdy along the way.',
+    tech: [],
+    status: 'Shipped',
+    roles: ['frontend', 'backend'],
+    shots: [
+      { src: '/img/projects/tastetrails-1.webp', alt: 'Title screen' },
+      { src: '/img/projects/tastetrails-2.webp', alt: 'Lola Ising welcomes you' },
+      { src: '/img/projects/tastetrails-3.webp', alt: 'Picking ingredients at the market' },
+      { src: '/img/projects/tastetrails-4.webp', alt: 'Your first Bulacan dish' },
+      { src: '/img/projects/tastetrails-5.webp', alt: 'Mang Perdy shares a legend' },
+    ],
+    repo: '',
+    repoPrivate: false,
     demoUrl: '',
   },
   asknu: {
@@ -176,7 +254,31 @@ export const projects = {
     tech: ['Flutter', 'Dart', 'Google Gemini API'],
     status: 'Shipped',
     roles: ['frontend', 'backend'],
+    shotsFit: 'contain',
+    shots: [
+      { src: '/img/projects/asknu-1.webp', alt: 'Home screen' },
+      { src: '/img/projects/asknu-2.webp', alt: 'Chatting with AskNU' },
+      { src: '/img/projects/asknu-3.webp', alt: 'Browsing FAQs by category' },
+      { src: '/img/projects/asknu-4.webp', alt: 'About AskNU' },
+    ],
     repo: 'https://github.com/BugSlayerRien/AskNU',
+    repoPrivate: true,
+    demoUrl: '',
+  },
+  readthat: {
+    title: 'ReadThat',
+    tagline: 'Book Discovery Platform with Reviews and Reading Progress Tracking',
+    description:
+      'A web app for finding books and keeping track of what you have read. Readers browse titles, leave ratings and reviews with spoiler flags and helpful votes, and move books through a wishlist, currently-reading, finished or did-not-finish state. An admin dashboard handles the catalogue, review moderation, user roles and site settings.',
+    tech: ['React', 'Vite', 'React Router', 'Supabase', 'PostgreSQL'],
+    status: 'Shipped',
+    roles: ['frontend', 'backend'],
+    shots: [
+      { src: '/img/projects/readthat-1.webp', alt: 'Home page' },
+      { src: '/img/projects/readthat-2.webp', alt: 'Browsing books' },
+      { src: '/img/projects/readthat-3.webp', alt: 'A book page' },
+    ],
+    repo: 'https://github.com/BugSlayerRien/ReadThat',
     repoPrivate: true,
     demoUrl: '',
   },
@@ -198,51 +300,6 @@ export const projects = {
     repoPrivate: true,
     demoUrl: '',
   },
-  ckresort: {
-    title: 'CK Resort',
-    tagline: 'Resort Booking and Operations Management System',
-    description:
-      'A resort platform with a portal for each role: guests book rooms, day tours and events; the front desk takes payments and reconciles proof-of-payment uploads; operations staff track room status and dispatch; and a manager view handles rates, tiers and users. Payments run through PayMongo, and the whole data layer is Supabase with row-level security separating what each role can see.',
-    tech: ['React', 'Vite', 'Supabase', 'PostgreSQL', 'PayMongo'],
-    status: 'In development',
-    roles: ['backend'],
-    repo: 'https://github.com/BugSlayerRien/CKResort',
-    repoPrivate: true,
-    demoUrl: '',
-  },
-  readthat: {
-    title: 'ReadThat',
-    tagline: 'Book Discovery Platform with Reviews and Reading Progress Tracking',
-    description:
-      'A web app for finding books and keeping track of what you have read. Readers browse titles, leave ratings and reviews with spoiler flags and helpful votes, and move books through a wishlist, currently-reading, finished or did-not-finish state. An admin dashboard handles the catalogue, review moderation, user roles and site settings.',
-    tech: ['React', 'Vite', 'React Router', 'Supabase', 'PostgreSQL'],
-    status: 'Shipped',
-    roles: ['frontend', 'backend'],
-    repo: 'https://github.com/BugSlayerRien/ReadThat',
-    repoPrivate: true,
-    demoUrl: '',
-  },
-  // TODO(rien): drafted from the screenshots only. Fix the status, add what it
-  // is built with, and set `roles` (keys of `roleBadges`) once you know them.
-  tastetrails: {
-    title: 'Taste Trails',
-    tagline: 'Bulacan Culinary Adventure',
-    description:
-      'A pixel-art cooking game set in Bulacan. Lola Ising welcomes you into her kitchen, you pick through the market for ingredients, cook your first Bulacan dish, and hear the stories behind it from Mang Perdy along the way.',
-    tech: [],
-    status: 'In development',
-    shots: [
-      { src: '/img/projects/tastetrails-1.webp', alt: 'Title screen' },
-      { src: '/img/projects/tastetrails-2.webp', alt: 'Lola Ising welcomes you' },
-      { src: '/img/projects/tastetrails-3.webp', alt: 'Picking ingredients at the market' },
-      { src: '/img/projects/tastetrails-4.webp', alt: 'Your first Bulacan dish' },
-      { src: '/img/projects/tastetrails-5.webp', alt: 'Mang Perdy shares a legend' },
-    ],
-    repo: '',
-    repoPrivate: false,
-    demoUrl: '',
-  },
-
 };
 
 /** Role badges on project pages. `tone` picks the finish; `special` adds the shimmer. */

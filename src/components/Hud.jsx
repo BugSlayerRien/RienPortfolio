@@ -24,7 +24,17 @@ const pad = (n) => String(n).padStart(2, '0');
  * the Network Information API, and the clock. Where the battery API is missing
  * (Firefox, Safari) the slot shows the date instead of faking a charge level.
  */
-export default function Hud({ breadcrumb, soundOn, onToggleSound, bladeOpen, onBack, onCat }) {
+export default function Hud({
+  breadcrumb,
+  soundOn,
+  onToggleSound,
+  theme,
+  nextTheme,
+  onCycleTheme,
+  bladeOpen,
+  onBack,
+  onCat,
+}) {
   const now = useClock();
   const { battery, network, bars } = useSystemStatus();
 
@@ -45,16 +55,18 @@ export default function Hud({ breadcrumb, soundOn, onToggleSound, bladeOpen, onB
         </div>
 
         <div className="hud__status">
-          <a
-            className="hud__cv"
-            href={profile.cv}
-            download={profile.cvFileName}
-            title="Download CV (PDF)"
+          {/* Colour theme. One button for three: it names the theme you are
+              in, and its tooltip names the one you get next. */}
+          <button
+            type="button"
+            className="hud__chip hud__theme"
+            onClick={onCycleTheme}
+            data-theme={theme.id}
+            title={`Theme: ${theme.label} — switch to ${nextTheme.label}`}
           >
-            <span className="hud__cv-ring" aria-hidden="true" />
-            <Icon name="download" size={14} />
-            <span className="mono">Download CV</span>
-          </a>
+            <span className="hud__theme-dot" aria-hidden="true" />
+            <span className="mono">{theme.label}</span>
+          </button>
 
           <button
             type="button"
@@ -66,6 +78,19 @@ export default function Hud({ breadcrumb, soundOn, onToggleSound, bladeOpen, onB
             <Icon name="sound" size={15} />
             <span className="mono">{soundOn ? 'ON' : 'OFF'}</span>
           </button>
+
+          {/* Pinned last in this group — the end of the "left side" cluster,
+              right before the real device status readouts. */}
+          <a
+            className="hud__cv"
+            href={profile.cv}
+            download={profile.cvFileName}
+            title="Download CV (PDF)"
+          >
+            <span className="hud__cv-ring" aria-hidden="true" />
+            <Icon name="download" size={16} />
+            <span className="mono">Download CV</span>
+          </a>
 
           {/* Real connection state. */}
           <span

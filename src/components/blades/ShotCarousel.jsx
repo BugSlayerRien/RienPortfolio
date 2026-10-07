@@ -5,13 +5,17 @@ import useCarousel, { DWELL } from '../../hooks/useCarousel';
  * Screenshots in one frame, advancing on their own. Same behaviour and styling
  * as the certificate carousel (`ccar`), with a caption in place of the details
  * card. Clicking a frame opens the full image.
+ *
+ * `fit="contain"` is for portrait screenshots: the whole shot is shown inside a
+ * wide frame over a blurred copy of itself, instead of being cropped to fit.
  */
-export default function ShotCarousel({ shots, label }) {
+export default function ShotCarousel({ shots, label, fit = 'cover' }) {
   const { index, go, held, auto, holdProps } = useCarousel(shots.length);
 
   return (
     <div
       className="ccar ccar--shots"
+      data-fit={fit}
       role="group"
       aria-roledescription="carousel"
       aria-label={label}
@@ -26,6 +30,7 @@ export default function ShotCarousel({ shots, label }) {
               key={s.src}
               className="certframe ccar__slide"
               href={s.src}
+              style={{ '--bg': `url(${s.src})` }}
               target="_blank"
               rel="noreferrer"
               aria-hidden={n !== index}

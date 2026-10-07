@@ -8,6 +8,7 @@ import BladeContent from './components/blades/BladeContent';
 import useIdle from './hooks/useIdle';
 import useHideCursor from './hooks/useHideCursor';
 import useReducedMotion from './hooks/useReducedMotion';
+import useTheme from './hooks/useTheme';
 import useRoute from './hooks/useRoute';
 import DeepPage from './deep/DeepPage';
 import psp from './audio/psp';
@@ -31,6 +32,8 @@ export default function App() {
   const { go, back, isDeep } = useRoute();
 
   useHideCursor(5000);
+
+  const { theme, next: nextTheme, cycleTheme, palette } = useTheme();
 
   const systemReduced = useReducedMotion();
   const reduced = systemReduced || !motionOn;
@@ -360,6 +363,7 @@ export default function App() {
       data-reading={reading || undefined}
     >
       <WaveField
+        palette={palette}
         columns={columns}
         intensity={reduced ? 0.55 : 1}
         idle={idle && !reduced}
@@ -381,6 +385,9 @@ export default function App() {
         breadcrumb={{ category: category.label, item: item.title }}
         soundOn={soundOn}
         onToggleSound={() => setSoundOn(!soundOn)}
+        theme={theme}
+        nextTheme={nextTheme}
+        onCycleTheme={cycleTheme}
         bladeOpen={reading}
         onBack={close}
         onCat={dive}

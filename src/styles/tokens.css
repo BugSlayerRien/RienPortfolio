@@ -150,3 +150,112 @@
     --dur-blade: 1ms;
   }
 }
+
+/* ============================================================
+   Alternate theme — "malevolent"
+   ============================================================
+
+   Set as data-theme on <html>, so it reaches the boot screen and the deep
+   page as well as the XMB. Only colour changes: every size, easing and
+   geometry token above is shared.
+
+   Where the default palette is a soap bubble, this one is dried blood and
+   ember on charcoal — darker, warmer, and a good deal more serious.
+   ------------------------------------------------------------ */
+
+:root[data-theme='malevolent'] {
+  --bg-deep: #050306;
+  --bg-base: #0d0609;
+  --bg-raise: #1a0b11;
+  --bg-veil: rgba(13, 6, 9, 0.66);
+
+  /* Warm ash instead of cool pearl. */
+  --pearl-100: #fff6f5;
+  --pearl-200: #f2e3e3;
+  --pearl-300: #dcc6c8;
+  --pearl-400: #ab9194;
+  --pearl-500: #8e777b;
+  --pearl-600: #655257;
+
+  /* Blood, crimson, wine, ember, ash gold. */
+  --iri-1: #ff5a66;
+  --iri-2: #c2203f;
+  --iri-3: #7a1030;
+  --iri-4: #e07a3c;
+  --iri-5: #f0c89a;
+
+  --holo-soft: linear-gradient(
+    var(--holo-angle),
+    rgba(255, 90, 102, 0.42) 0%,
+    rgba(194, 32, 63, 0.4) 25%,
+    rgba(122, 16, 48, 0.44) 50%,
+    rgba(224, 122, 60, 0.38) 75%,
+    rgba(240, 200, 154, 0.4) 100%
+  );
+
+  --metal: linear-gradient(
+    170deg,
+    rgba(255, 240, 238, 0.82) 0%,
+    rgba(255, 240, 238, 0.16) 12%,
+    rgba(180, 120, 130, 0.1) 34%,
+    rgba(255, 240, 238, 0.36) 50%,
+    rgba(150, 90, 100, 0.08) 66%,
+    rgba(255, 240, 238, 0.2) 88%,
+    rgba(255, 240, 238, 0.64) 100%
+  );
+
+  --glass: rgba(255, 228, 226, 0.05);
+  --glass-strong: rgba(255, 228, 226, 0.095);
+  --edge: rgba(255, 220, 218, 0.14);
+  --edge-bright: rgba(255, 220, 218, 0.34);
+
+  --shadow-holo: 0 0 0 1px rgba(255, 190, 190, 0.14), 0 8px 34px rgba(190, 40, 60, 0.26),
+    0 0 60px rgba(255, 90, 102, 0.14);
+}
+
+/* ============================================================
+   Alternate theme — "mono"
+   ============================================================
+
+   The formal one: black, white and brushed silver, nothing else. The
+   iridescent stops all collapse to neutrals, so every holographic gradient in
+   the app still sweeps — it just sweeps through metal instead of colour.
+   ------------------------------------------------------------ */
+
+:root[data-theme='mono'] {
+  --bg-deep: #000000;
+  --bg-base: #08080a;
+  --bg-raise: #151518;
+  --bg-veil: rgba(8, 8, 10, 0.66);
+
+  --pearl-100: #ffffff;
+  --pearl-200: #f1f1f3;
+  --pearl-300: #d5d5d9;
+  --pearl-400: #9e9ea5;
+  --pearl-500: #84848b;
+  --pearl-600: #5a5a61;
+
+  /* Silver, not colour: bright edge, mid grey, shadow, bright, mid. */
+  --iri-1: #ffffff;
+  --iri-2: #c9c9d0;
+  --iri-3: #8d8d96;
+  --iri-4: #ededf1;
+  --iri-5: #a8a8b1;
+
+  --holo-soft: linear-gradient(
+    var(--holo-angle),
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(201, 201, 208, 0.34) 25%,
+    rgba(141, 141, 150, 0.36) 50%,
+    rgba(237, 237, 241, 0.34) 75%,
+    rgba(168, 168, 177, 0.36) 100%
+  );
+
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-strong: rgba(255, 255, 255, 0.1);
+  --edge: rgba(255, 255, 255, 0.16);
+  --edge-bright: rgba(255, 255, 255, 0.4);
+
+  --shadow-holo: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 8px 34px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(255, 255, 255, 0.06);
+}

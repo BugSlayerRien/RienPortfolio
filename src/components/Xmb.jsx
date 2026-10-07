@@ -100,7 +100,7 @@ export default function Xmb({
                         {...linkProps}
                       >
                         <span className="xmb__node-glyph">
-                          <Icon name={item.icon} size={22} strokeWidth={1.5} />
+                          <Icon name={item.icon} size={30} strokeWidth={1.5} />
                         </span>
                         <span className="xmb__node-text">
                           <span className="xmb__node-label">{item.title}</span>
@@ -136,11 +136,18 @@ export default function Xmb({
                           {/* Fixed-width slot keeps the tile centred on the
                               cross point even as it grows on selection. */}
                           <span className="xmb__item-slot">
-                            <span className="xmb__item-glyph" data-logo={item.logo ? '' : undefined}>
+                            <span
+                              className="xmb__item-glyph"
+                              data-logo={item.logo ? item.logoFit || 'plate' : undefined}
+                            >
                               {item.logo ? (
                                 <img
                                   className="xmb__item-logo"
-                                  style={item.logoScale ? { '--logo-scale': item.logoScale } : undefined}
+                                  style={{
+                                    '--logo-scale': item.logoScale ?? item.logoZoom,
+                                    objectPosition: item.logoFocus,
+                                    transformOrigin: item.logoFocus,
+                                  }}
                                   src={item.logo}
                                   alt=""
                                   loading="lazy"
