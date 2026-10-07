@@ -245,8 +245,8 @@
 
 .vault__note {
   margin: 0;
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  font-size: 0.92rem;
+  letter-spacing: 0.1em;
   color: var(--ink-3);
 }
 

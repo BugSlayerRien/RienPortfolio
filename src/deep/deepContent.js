@@ -92,11 +92,6 @@ export const strata = [
         body: 'Something is always playing.',
       },
       {
-        icon: 'gamepad',
-        name: 'League of Legends',
-        body: 'I play as Wiyen#1213, I barely touch this anymore.',
-      },
-      {
         icon: 'display',
         name: 'Old console menus',
         body: 'The PSP XMB most of all. This whole portfolio started as an excuse to rebuild one from memory.',
@@ -106,25 +101,6 @@ export const strata = [
         name: 'Projects that go nowhere',
         body: 'Half-finished repos are a hobby, not a failure. Most of what I know came from something I abandoned.',
       },
-    ],
-  },
-  {
-    /**
-     * A /uses section. Low-maintenance, genuinely useful, and the thing other
-     * students actually ask about. Update it once a year and it stays true.
-     */
-    id: 'setup',
-    depth: 220,
-    label: 'Setup',
-    align: 'wide',
-    title: 'What I build with',
-    lede: 'The short answer to something people ask me a lot.',
-    // TODO(rien): correct these — they are guesses from the projects.
-    groups: [
-      { name: 'Editor', items: ['VS Code', 'Android Studio (Flutter)'] },
-      { name: 'Everyday stack', items: ['React + Vite', 'Flutter / Dart', 'Supabase', 'PHP + MySQL'] },
-      { name: 'Design', items: ['Figma', 'Pen and paper first'] },
-      { name: 'Ship it', items: ['Git + GitHub', 'Vercel'] },
     ],
   },
 ];
