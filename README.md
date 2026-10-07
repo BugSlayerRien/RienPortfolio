@@ -1,10 +1,10 @@
-# RIEN — XMB Portfolio
+RIEN — XMB Portfolio
 
-Rien Miro Gappi's portfolio, presented as a PlayStation Portable style Cross
+My web portfolio, presented as a PlayStation Portable style Cross
 Media Bar. React + Vite + plain CSS, no backend, deploys as a static site.
 
 This replaces the old PHP portfolio in `../Portfolio`. All of that content
-carried over — the PHP itself was doing nothing (login/register/logout were bare
+carried over, the PHP itself was doing nothing (login/register/logout were bare
 redirects, the DB helpers were never imported, and the chat replied from a
 hardcoded array), so nothing was lost in the port.
 
