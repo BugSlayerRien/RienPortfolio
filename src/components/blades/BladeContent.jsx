@@ -182,7 +182,7 @@ function ProjectBlade({ id }) {
           )}
           {showRepoLink && (
             <a className="btn btn--ghost" href={p.repo} target="_blank" rel="noreferrer">
-              <Icon name="github" size={14} /> View code
+              <Icon name="github" size={14} /> View repository
             </a>
           )}
           {p.repo && p.repoPrivate && (

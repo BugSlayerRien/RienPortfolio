@@ -218,6 +218,13 @@ const PATHS = {
       <path d="M2.6 9.6h18.8M6.4 15.2h3.4" />
     </>
   ),
+  scissors: (
+    <>
+      <circle cx="6" cy="6.4" r="2.7" />
+      <circle cx="6" cy="17.6" r="2.7" />
+      <path d="M8.2 8 20.4 18.8M8.2 16 20.4 5.2" />
+    </>
+  ),
   lock: (
     <>
       <rect x="4.6" y="10.4" width="14.8" height="10" rx="2" />

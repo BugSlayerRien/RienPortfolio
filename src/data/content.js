@@ -45,7 +45,7 @@ export const categories = [
     label: 'Projects',
     icon: 'folder',
     items: [
-      { id: 'barberya', title: 'Brilyantis', subtitle: 'Barbershop system · AI haircut scan', icon: 'folder', logo: '/img/barberya.png', blade: 'project' },
+      { id: 'barberya', title: 'Brilyantis', subtitle: 'Barbershop system · AI haircut scan', icon: 'scissors', blade: 'project' },
       // Logo fields: `logo` is the image; with `logoFit: 'cover'` it fills the whole
       // tile (for opaque artwork), steered by `logoFocus` (CSS object-position) and
       // `logoZoom`. Without it the mark sits on a light plate.
@@ -160,7 +160,7 @@ export const projects = {
     status: 'In development',
     roles: ['fullstack', 'capstone'],
     repo: 'https://github.com/BugSlayerRien/barberyanitatis',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
   gocollab: {
@@ -182,7 +182,7 @@ export const projects = {
       { src: '/img/projects/gocollab-5.webp', alt: 'Community announcements' },
     ],
     repo: 'https://github.com/BugSlayerRien/GoCollab',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
   // TODO(rien): drafted from the repo README. Check the status and roles, and
@@ -203,7 +203,7 @@ export const projects = {
       { src: '/img/projects/musika-5.webp', alt: 'The catalogue' },
     ],
     repo: 'https://github.com/BugSlayerRien/Musika',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
   ckresort: {
@@ -222,7 +222,7 @@ export const projects = {
       { src: '/img/projects/ck-5.webp', alt: 'Manager analytics' },
     ],
     repo: 'https://github.com/BugSlayerRien/CKResort',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
   // TODO(rien): the description is drafted from the screenshots only, and the
@@ -242,8 +242,10 @@ export const projects = {
       { src: '/img/projects/tastetrails-4.webp', alt: 'Your first Bulacan dish' },
       { src: '/img/projects/tastetrails-5.webp', alt: 'Mang Perdy shares a legend' },
     ],
-    repo: '',
-    repoPrivate: false,
+    // Still private on GitHub, so it renders as a note rather than a link.
+    // Flip repoPrivate to false once the repo is public.
+    repo: 'https://github.com/BugSlayerRien/TasteTrails',
+    repoPrivate: true,
     demoUrl: '',
   },
   asknu: {
@@ -262,7 +264,7 @@ export const projects = {
       { src: '/img/projects/asknu-4.webp', alt: 'About AskNU' },
     ],
     repo: 'https://github.com/BugSlayerRien/AskNU',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
   readthat: {
@@ -279,7 +281,7 @@ export const projects = {
       { src: '/img/projects/readthat-3.webp', alt: 'A book page' },
     ],
     repo: 'https://github.com/BugSlayerRien/ReadThat',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
   medeasyna: {
@@ -297,7 +299,7 @@ export const projects = {
       { src: '/img/projects/medeasyna-4.webp', alt: 'Doctor dashboard' },
     ],
     repo: 'https://github.com/BugSlayerRien/Medeasyna',
-    repoPrivate: true,
+    repoPrivate: false,
     demoUrl: '',
   },
 };
