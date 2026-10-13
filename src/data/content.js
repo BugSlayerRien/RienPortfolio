@@ -183,14 +183,14 @@ export const projects = {
         shots: [
           { src: '/img/projects/brilyantis-w1.webp', alt: 'Admin dashboard with revenue and ratings' },
           { src: '/img/projects/brilyantis-w2.webp', alt: 'Operating schedule and business calendar' },
+          { src: '/img/projects/brilyantis-w3.webp', alt: 'Front desk: barber leave calendar and time-off requests' },
         ],
       },
       {
         id: 'kiosk',
         label: 'In-store kiosk',
         note: 'Walk-ins',
-        // TODO(rien): add kiosk screenshots here and this carousel appears.
-        shots: [],
+        shots: [{ src: '/img/projects/brilyantis-k1.webp', alt: 'Walk-in queue and kiosk start screen' }],
       },
     ],
     repo: 'https://github.com/BugSlayerRien/barberyanitatis',

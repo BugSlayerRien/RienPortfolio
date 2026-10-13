@@ -307,11 +307,33 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
                 const p = projects[item.id];
                 if (!p) return null;
                 const showRepo = p.repo && !p.repoPrivate;
+                // One unlabelled carousel, or several labelled ones for a project
+                // with more than one client. Empty sets are dropped.
+                const sets = p.shotSets
+                  ? p.shotSets.filter((set) => set.shots.length > 0)
+                  : p.shots?.length
+                    ? [{ id: 'shots', shots: p.shots, fit: p.shotsFit }]
+                    : [];
                 return (
                   <article className="pv-project" key={item.id} data-pv data-flip={i % 2 ? '' : undefined}>
                     <div className="pv-project__media">
-                      {p.shots?.length ? (
-                        <ShotCarousel key={item.id} shots={p.shots} fit={p.shotsFit} label={`${p.title} screenshots`} />
+                      {sets.length > 0 ? (
+                        sets.map((set) => (
+                          <figure className="pv-shotset" key={set.id}>
+                            {set.label && (
+                              <figcaption className="pv-shotset__cap">
+                                <span className="pv-label">{set.label}</span>
+                                {set.note && <span className="pv-shotset__note">{set.note}</span>}
+                              </figcaption>
+                            )}
+                            <ShotCarousel
+                              key={`${item.id}-${set.id}`}
+                              shots={set.shots}
+                              fit={set.fit}
+                              label={`${p.title}${set.label ? ` — ${set.label}` : ' screenshots'}`}
+                            />
+                          </figure>
+                        ))
                       ) : (
                         <div className="pv-project__tile">
                           <Icon name={item.icon} size={64} strokeWidth={1.2} />

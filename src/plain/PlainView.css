@@ -538,7 +538,29 @@
 }
 
 .pv-project__media {
+  display: grid;
+  gap: 22px;
   min-width: 0;
+}
+
+/* A project with several clients stacks its carousels, each with its own
+   caption, so it is obvious which screen belongs to which. */
+.pv-shotset {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.pv-shotset__cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.pv-shotset__note {
+  font-size: 0.82rem;
+  color: var(--pearl-400);
 }
 
 .pv-project__tile {
