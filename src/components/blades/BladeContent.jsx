@@ -167,6 +167,19 @@ function ProjectBlade({ id }) {
         </Section>
       )}
 
+      {p.shotSets
+        ?.filter((set) => set.shots.length > 0)
+        .map((set) => (
+          <Section key={set.id} title={set.label} note={set.note}>
+            <ShotCarousel
+              key={`${id}-${set.id}`}
+              shots={set.shots}
+              fit={set.fit}
+              label={`${p.title} — ${set.label}`}
+            />
+          </Section>
+        ))}
+
       {p.tech.length > 0 && (
         <Section title="Stack">
           <Chips items={p.tech} />
@@ -266,7 +279,7 @@ function CertificateBlade({ id }) {
 }
 
 /** What I did on a project. Full Stack and Capstone get the special finish. */
-function RoleBadge({ role, n }) {
+export function RoleBadge({ role, n }) {
   const b = roleBadges[role];
   return (
     <span

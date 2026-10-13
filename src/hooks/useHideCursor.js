@@ -8,8 +8,9 @@ import { useEffect } from 'react';
  * Browsers fire a synthetic mousemove when the page scrolls or re-lays out under
  * a stationary cursor, so a move only counts if the position really changed.
  */
-export default function useHideCursor(delay = 5000) {
+export default function useHideCursor(delay = 5000, enabled = true) {
   useEffect(() => {
+    if (!enabled) return undefined;
     const root = document.documentElement;
     let timer = 0;
     let x = -1;
@@ -45,5 +46,5 @@ export default function useHideCursor(delay = 5000) {
       window.removeEventListener('pointerdown', onDown);
       root.classList.remove('cursor-idle');
     };
-  }, [delay]);
+  }, [delay, enabled]);
 }

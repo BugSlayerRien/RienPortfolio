@@ -1,0 +1,1021 @@
+/* ============================================================
+   Plain view — the whole portfolio as one scrolling page.
+
+   Built from the same theme tokens as the XMB, so Iris, Noir and Mono all
+   carry over. Type is the one thing that changes: Instrument Serif for
+   display, Century Gothic for everything you read (Didact Gothic stands in
+   where Century Gothic is not installed).
+   ============================================================ */
+
+.plain {
+  --pv-serif: 'Instrument Serif', 'Times New Roman', serif;
+  --pv-sans: 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'Didact Gothic', 'Questrial', system-ui,
+    sans-serif;
+  --pv-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --pv-ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --pv-max: 1160px;
+
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: var(--bg-deep);
+  color: var(--pearl-200);
+  font-family: var(--pv-sans);
+  /* Opacity only: a transform here would trap the fixed wave behind it. */
+  animation: pv-enter 640ms var(--pv-ease) both;
+}
+
+.plain[data-leaving] {
+  animation: pv-leave 380ms var(--pv-ease-io) forwards;
+  pointer-events: none;
+}
+
+@keyframes pv-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pv-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+/* The wave sits behind at low strength; the veil keeps text readable over it. */
+.plain__veil {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 0%, transparent 0%, var(--bg-veil) 70%),
+    linear-gradient(180deg, color-mix(in oklab, var(--bg-deep) 35%, transparent), var(--bg-veil));
+}
+
+.plain__scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-bright) transparent;
+}
+
+.plain__scroll > * {
+  animation: pv-settle 900ms var(--pv-ease) both;
+}
+
+@keyframes pv-settle {
+  from {
+    transform: translateY(14px) scale(0.99);
+  }
+}
+
+/* ---------- Top bar ---------- */
+
+.pv-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px clamp(18px, 4vw, 48px);
+  background: color-mix(in oklab, var(--bg-deep) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--edge);
+}
+
+.pv-bar__brand {
+  flex: none;
+  padding: 0;
+  font-family: var(--pv-serif);
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--pearl-100);
+  white-space: nowrap;
+}
+
+.pv-bar__brand em,
+.pv-hero__name em,
+.pv-contact__big em,
+.pv-head__title em {
+  font-style: italic;
+  background: var(--holo);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holo-drift 14s linear infinite;
+  padding-right: 0.06em;
+}
+
+.pv-nav {
+  display: flex;
+  gap: 4px;
+  margin: 0 auto;
+}
+
+.pv-nav__link {
+  position: relative;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pearl-400);
+  transition: color 300ms var(--pv-ease);
+}
+
+.pv-nav__link::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 1px;
+  background: var(--holo);
+  background-size: 300% 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 500ms var(--pv-ease);
+}
+
+.pv-nav__link:hover,
+.pv-nav__link[data-active] {
+  color: var(--pearl-100);
+}
+
+.pv-nav__link[data-active]::after {
+  transform: scaleX(1);
+}
+
+.pv-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Reading progress along the bottom edge of the bar. */
+.pv-bar__progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 100%;
+  background: var(--holo);
+  background-size: 300% 100%;
+  transform: scaleX(var(--pv-progress, 0));
+  transform-origin: left;
+}
+
+/* ---------- Buttons ---------- */
+
+.pv-btn,
+.pv-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  color: var(--pearl-100);
+  font-family: var(--pv-sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 300ms var(--pv-ease), background 300ms var(--pv-ease),
+    transform 400ms var(--pv-ease);
+}
+
+.pv-btn:hover,
+.pv-chip:hover {
+  border-color: var(--edge-bright);
+  background: var(--glass-strong);
+  transform: translateY(-2px);
+}
+
+.pv-btn--solid {
+  border-color: transparent;
+  background: var(--pearl-100);
+  color: var(--bg-deep);
+  font-weight: 700;
+}
+
+.pv-btn--solid:hover {
+  background: #fff;
+}
+
+.pv-btn--lg {
+  padding: 13px 22px;
+  font-size: 0.92rem;
+}
+
+.pv-chip {
+  padding: 8px 13px;
+}
+
+.pv-chip__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--holo);
+  background-size: 260% 100%;
+  animation: holo-drift 7s linear infinite;
+}
+
+.pv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  color: var(--pearl-100);
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--edge-bright);
+  padding-bottom: 3px;
+  transition: border-color 300ms var(--pv-ease), gap 300ms var(--pv-ease);
+}
+
+.pv-link:hover {
+  border-color: var(--pearl-100);
+  gap: 11px;
+}
+
+.pv-link--muted {
+  color: var(--pearl-500);
+  border-bottom-style: dashed;
+}
+
+.pv-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pearl-500);
+}
+
+/* ---------- Layout ---------- */
+
+.pv-main {
+  max-width: var(--pv-max);
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 56px);
+}
+
+.pv-section {
+  padding: clamp(80px, 14vh, 140px) 0 0;
+}
+
+.pv-head {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: clamp(32px, 5vh, 52px);
+}
+
+.pv-head__num {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: var(--pearl-500);
+}
+
+.pv-head__title {
+  margin: 0;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  line-height: 1;
+  color: var(--pearl-100);
+}
+
+.pv-head__rule {
+  height: 1px;
+  align-self: center;
+  background: linear-gradient(90deg, var(--edge-bright), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s var(--pv-ease) 150ms;
+}
+
+.pv-head[data-pv='in'] .pv-head__rule {
+  transform: scaleX(1);
+}
+
+.pv-head__note {
+  grid-column: 1 / -1;
+  margin: -6px 0 0;
+  color: var(--pearl-400);
+  font-size: 0.95rem;
+}
+
+/* ---------- Hero ---------- */
+
+.pv-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  min-height: calc(100svh - 72px);
+  padding: 40px 0 80px;
+}
+
+.pv-kicker {
+  margin: 0 0 18px;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pearl-400);
+}
+
+.pv-hero__name {
+  margin: 0;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: clamp(3.6rem, 10vw, 8.2rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--pearl-100);
+}
+
+/* Each word rises out of its own mask. */
+.pv-word {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0 0.04em 0.12em;
+  margin-bottom: -0.12em;
+  vertical-align: top;
+}
+
+.pv-word > span {
+  display: inline-block;
+  animation: pv-word 1.1s var(--pv-ease) both;
+  animation-delay: calc(200ms + var(--d, 0) * 110ms);
+}
+
+@keyframes pv-word {
+  from {
+    transform: translateY(105%) rotate(4deg);
+  }
+}
+
+.pv-rise {
+  animation: pv-rise 1s var(--pv-ease) both;
+  animation-delay: calc(200ms + var(--d, 0) * 110ms);
+}
+
+@keyframes pv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+
+.pv-hero__lede {
+  max-width: 54ch;
+  margin: 30px 0 0;
+  font-size: 1.04rem;
+  line-height: 1.75;
+  color: var(--pearl-300);
+}
+
+.pv-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.pv-hero__photo {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 340px);
+  aspect-ratio: 1;
+  margin: 0;
+  /* Drifts up a little as you scroll away from it. */
+  translate: 0 calc(var(--pv-scroll, 0px) * -0.12);
+}
+
+.pv-hero__photo img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--edge-bright);
+}
+
+/* A slow iridescent ring, the same oil-slick as the XMB tiles. */
+.pv-hero__ring {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from var(--holo-angle), var(--iri-1), var(--iri-2), var(--iri-3), var(--iri-4), var(--iri-5), var(--iri-1));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.8;
+  animation: holo-spin 14s linear infinite;
+}
+
+.pv-hero__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  translate: -50% 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--pearl-500);
+  opacity: calc(1 - var(--pv-progress, 0) * 12);
+}
+
+.pv-hero__hint i {
+  width: 1px;
+  height: 38px;
+  background: linear-gradient(180deg, var(--pearl-300), transparent);
+  animation: pv-hint 2.2s var(--pv-ease-io) infinite;
+}
+
+@keyframes pv-hint {
+  0%,
+  100% {
+    transform: translateY(-6px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+/* ---------- Scroll reveal ---------- */
+
+/* Below the band: waiting underneath. In the band: settled. Above the band:
+   drifting up and out. The delay only applies on the way in, so leaving is
+   immediate and a stagger never makes content lag behind the scroll. */
+[data-pv] {
+  opacity: 0;
+  transform: translate3d(0, 38px, 0);
+  transition: opacity 900ms var(--pv-ease), transform 1100ms var(--pv-ease);
+}
+
+[data-pv='in'] {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--pv-i, 0) * 80ms);
+}
+
+[data-pv='above'] {
+  opacity: 0;
+  transform: translate3d(0, -28px, 0) scale(0.985);
+  transition: opacity 700ms var(--pv-ease-io), transform 900ms var(--pv-ease-io);
+}
+
+/* ---------- About ---------- */
+
+.pv-about {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+.pv-prose p {
+  margin: 0 0 18px;
+  font-size: 1.04rem;
+  line-height: 1.8;
+  color: var(--pearl-300);
+}
+
+.pv-prose .pv-prose__intro {
+  font-family: var(--pv-serif);
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.2;
+  color: var(--pearl-100);
+}
+
+.pv-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.pv-stack__row {
+  display: grid;
+  gap: 10px;
+}
+
+.pv-stack .tchip {
+  font-family: var(--pv-sans);
+  font-weight: 400;
+}
+
+/* ---------- Projects ---------- */
+
+.pv-projects {
+  display: grid;
+  gap: clamp(64px, 11vh, 120px);
+}
+
+.pv-project {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+
+.pv-project[data-flip] .pv-project__media {
+  order: 2;
+}
+
+.pv-project__media {
+  min-width: 0;
+}
+
+.pv-project__tile {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--edge);
+  background: radial-gradient(80% 80% at 30% 20%, var(--glass-strong), transparent 70%), var(--bg-raise);
+  color: var(--pearl-200);
+  overflow: hidden;
+  position: relative;
+}
+
+.pv-project__tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--holo-soft);
+  background-size: 200% 200%;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  animation: holo-wander 16s ease-in-out infinite;
+}
+
+.pv-project__body {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.pv-project__index {
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  color: var(--pearl-500);
+}
+
+.pv-project__title {
+  margin: 0;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  line-height: 1;
+  color: var(--pearl-100);
+}
+
+.pv-project__tagline {
+  margin: -4px 0 0;
+  font-size: 0.98rem;
+  color: var(--pearl-300);
+}
+
+.pv-project__desc {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--pearl-400);
+}
+
+.pv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pv-tags li {
+  padding: 4px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--edge);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--pearl-300);
+}
+
+.pv-project__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 4px;
+}
+
+/* ---------- Experience ---------- */
+
+.pv-orgs {
+  display: grid;
+  gap: 20px;
+}
+
+.pv-org {
+  display: grid;
+  grid-template-columns: 0.8fr 1.6fr;
+  gap: clamp(20px, 4vw, 56px);
+  padding: 30px 0;
+  border-top: 1px solid var(--edge);
+}
+
+.pv-org__head h3 {
+  margin: 0 0 8px;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--pearl-100);
+}
+
+.pv-roles {
+  display: grid;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pv-role {
+  position: relative;
+  padding-left: 22px;
+}
+
+.pv-role::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--pearl-400);
+}
+
+.pv-role[data-current]::before {
+  border: 0;
+  background: var(--iri-3);
+  box-shadow: 0 0 12px var(--iri-3);
+}
+
+.pv-role__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+
+.pv-role h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pearl-100);
+}
+
+.pv-role ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--pearl-400);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* ---------- Credentials ---------- */
+
+.pv-certs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.pv-cert {
+  display: grid;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 400ms var(--pv-ease), transform 600ms var(--pv-ease), opacity 900ms var(--pv-ease);
+}
+
+.pv-cert:hover {
+  border-color: var(--edge-bright);
+  transform: translateY(-6px);
+}
+
+.pv-cert__thumb {
+  display: block;
+  aspect-ratio: 1.414;
+  overflow: hidden;
+  background: var(--bg-raise);
+}
+
+.pv-cert__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--pv-ease);
+}
+
+.pv-cert:hover .pv-cert__thumb img {
+  transform: scale(1.05);
+}
+
+.pv-cert__text {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px 20px;
+}
+
+.pv-cert__title {
+  font-family: var(--pv-serif);
+  font-size: 1.4rem;
+  line-height: 1.15;
+  color: var(--pearl-100);
+}
+
+.pv-cert__meta {
+  font-size: 0.84rem;
+  color: var(--pearl-400);
+}
+
+.pv-edu {
+  margin-top: clamp(48px, 8vh, 80px);
+}
+
+.pv-edu__title {
+  margin: 0 0 18px;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: 2rem;
+  color: var(--pearl-100);
+}
+
+.pv-edu ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pv-edu li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--edge);
+}
+
+.pv-edu__place {
+  font-size: 1.05rem;
+  color: var(--pearl-100);
+}
+
+/* ---------- Contact ---------- */
+
+.pv-contact {
+  padding-bottom: clamp(80px, 14vh, 140px);
+}
+
+.pv-contact__big {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: clamp(3rem, 8vw, 6.4rem);
+  line-height: 0.98;
+  color: var(--pearl-100);
+}
+
+.pv-contact__mail {
+  display: inline-block;
+  margin-top: 32px;
+  font-size: clamp(1.2rem, 2.6vw, 1.8rem);
+  color: var(--pearl-100);
+  text-decoration: none;
+  border-bottom: 1px solid var(--edge-bright);
+  padding-bottom: 6px;
+  transition: border-color 300ms var(--pv-ease);
+}
+
+.pv-contact__mail:hover {
+  border-color: var(--pearl-100);
+}
+
+.pv-contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+/* ---------- Footer ---------- */
+
+.pv-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: var(--pv-max);
+  margin: 0 auto;
+  padding: 28px clamp(20px, 5vw, 56px) 40px;
+  border-top: 1px solid var(--edge);
+  font-size: 0.85rem;
+  color: var(--pearl-500);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 960px) {
+  .pv-nav {
+    display: none;
+  }
+
+  .pv-bar {
+    justify-content: space-between;
+  }
+
+  .pv-hero,
+  .pv-about,
+  .pv-project,
+  .pv-org {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pv-hero {
+    padding-top: 28px;
+    gap: 36px;
+  }
+
+  .pv-hero__photo {
+    order: -1;
+    width: min(44vw, 190px);
+    justify-self: start;
+    /* Room for the ring, which sits outside the photo. */
+    margin: 14px 0 0 14px;
+  }
+
+  .pv-project[data-flip] .pv-project__media {
+    order: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .pv-bar__brand {
+    font-size: 1.2rem;
+  }
+
+  .pv-bar__actions .pv-btn span,
+  .pv-bar__actions .pv-chip span:not(.pv-chip__dot) {
+    display: none;
+  }
+
+  .pv-bar__actions .pv-btn,
+  .pv-bar__actions .pv-chip {
+    padding: 9px;
+  }
+
+  .pv-head {
+    grid-template-columns: auto 1fr;
+  }
+
+  .pv-head__rule {
+    display: none;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .plain,
+  .plain__scroll > *,
+  .pv-word > span,
+  .pv-rise,
+  .pv-hero__ring,
+  .pv-hero__hint i {
+    animation: none;
+  }
+
+  .pv-hero__photo {
+    translate: none;
+  }
+
+  [data-pv],
+  [data-pv='above'] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .pv-head__rule {
+    transform: none;
+  }
+}
+
+/* ---------- Side ribbons ---------- */
+
+/* A slow wave down each margin, drawn once and stacked head to tail so the
+   loop is seamless. Hidden below 1180px, where the margins run out. */
+.pv-frame {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pv-frame__edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(26px, 3.4vw, 54px);
+  overflow: hidden;
+  opacity: 0.5;
+  /* Fades out at the top and bottom so the ribbon never collides with the
+     sticky bar or the footer. */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+.pv-frame__edge[data-side='left'] {
+  left: clamp(6px, 1.1vw, 20px);
+}
+
+.pv-frame__edge[data-side='right'] {
+  right: clamp(6px, 1.1vw, 20px);
+  transform: scaleX(-1);
+}
+
+.pv-frame__edge svg {
+  width: 100%;
+  /* Two wave lengths tall: one on screen, one queued below it. */
+  height: 200vh;
+  display: block;
+}
+
+.pv-frame__flow path {
+  fill: none;
+  stroke: var(--iri-2);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--iri-2) 60%, transparent));
+}
+
+.pv-frame__edge[data-side='left'] .pv-frame__flow path {
+  stroke: url(#pv-ribbon-left);
+}
+
+.pv-frame__edge[data-side='right'] .pv-frame__flow path {
+  stroke: url(#pv-ribbon-right);
+}
+
+/* One wave length per cycle, so the second copy lands exactly where the
+   first started. Slight offset per side keeps them from moving in lockstep. */
+.pv-frame__flow {
+  animation: pv-flow 26s linear infinite;
+}
+
+.pv-frame__edge[data-side='right'] .pv-frame__flow {
+  animation-duration: 34s;
+  animation-direction: reverse;
+}
+
+@keyframes pv-flow {
+  to {
+    transform: translateY(-504px);
+  }
+}
+
+@media (max-width: 1180px) {
+  .pv-frame {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pv-frame__flow {
+    animation: none;
+  }
+}

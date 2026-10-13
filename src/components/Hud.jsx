@@ -34,6 +34,7 @@ export default function Hud({
   bladeOpen,
   onBack,
   onCat,
+  onPlain,
 }) {
   const now = useClock();
   const { battery, network, bars } = useSystemStatus();
@@ -49,9 +50,17 @@ export default function Hud({
   return (
     <div className="hud" data-blade={bladeOpen || undefined}>
       <header className="hud__top">
-        <div className="hud__brand">
-          <span className="hud__brand-mark holo-text">RIEN</span>
-          <span className="hud__brand-sub mono">XMB PORTFOLIO</span>
+        <div className="hud__left">
+          <div className="hud__brand">
+            <span className="hud__brand-mark holo-text">RIEN</span>
+            <span className="hud__brand-sub mono">XMB PORTFOLIO</span>
+          </div>
+
+          {/* The way out for anyone who would rather just scroll. */}
+          <button type="button" className="hud__plain" onClick={onPlain} title="Open the plain scrolling view">
+            <Icon name="timeline" size={14} />
+            <span className="mono">Plain view</span>
+          </button>
         </div>
 
         <div className="hud__status">

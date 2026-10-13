@@ -112,8 +112,8 @@ export const about = {
   heading: 'About_Me',
   intro: 'I am Rien, a 4th year BSIT student.',
   body: [
-    'I build software end to end. For my capstone, Brilyantis, a barbershop platform, I worked across the whole system: a mobile app for customers and barbers, a walk-in kiosk, a web portal for receptionists and admins, and the API and database behind them, plus an AI face scan that powers its haircut recommendations.',
-    'The parts I enjoy most are the ones that hold everything together: sign-in, bookings, payments, database security and deployment. Interfaces are only one piece of it. I care most about things that work reliably for real people.',
+    'I build software end to end, from the database and API to the interface people actually use. I work across web and mobile, and I like adding AI where it genuinely helps.',
+    'What I enjoy most is the work that holds a product together. I care about software that works reliably for real people, and I am as comfortable leading a team as building for one.',
     'Outside the editor I help run Google Developer Groups on Campus at NU Baliwag, where I organise workshops and developer sessions for other students.',
   ],
 };
@@ -147,7 +147,9 @@ export const location = {
  * Projects, ordered by how much they matter. `roles` is what I did on each and
  * keys into `roleBadges`. `shots` is an optional screenshot carousel: each
  * entry is a WebP in public/img/projects plus a short caption. Set
- * `shotsFit: 'contain'` for portrait (phone) screenshots so they are not cropped. `repo` is the GitHub URL and
+ * `shotsFit: 'contain'` for portrait (phone) screenshots so they are not cropped.
+ * A project with more than one client uses `shotSets` instead — one labelled
+ * carousel per client, each with its own `fit`. `repo` is the GitHub URL and
  * `repoPrivate` controls whether the portfolio renders a link or a
  * "private repository" note — flip it to false once a repo goes public.
  */
@@ -160,6 +162,37 @@ export const projects = {
     tech: ['Flutter', 'Dart', 'PHP', 'MySQL', 'Python', 'MediaPipe', 'Gemini API'],
     status: 'In development',
     roles: ['fullstack', 'capstone'],
+    // Three clients, three carousels. The kiosk set is empty until there are
+    // screenshots of it; an empty set renders nothing rather than a blank frame.
+    shotSets: [
+      {
+        id: 'mobile',
+        label: 'Mobile app',
+        note: 'Customers and barbers',
+        fit: 'contain',
+        shots: [
+          { src: '/img/projects/brilyantis-m1.webp', alt: 'Onboarding: try on hairstyles with AI' },
+          { src: '/img/projects/brilyantis-m2.webp', alt: 'Home with a scan session and top picks' },
+          { src: '/img/projects/brilyantis-m3.webp', alt: 'Picking a date from the booking calendar' },
+        ],
+      },
+      {
+        id: 'web',
+        label: 'Web admin portal',
+        note: 'Receptionists and admins',
+        shots: [
+          { src: '/img/projects/brilyantis-w1.webp', alt: 'Admin dashboard with revenue and ratings' },
+          { src: '/img/projects/brilyantis-w2.webp', alt: 'Operating schedule and business calendar' },
+        ],
+      },
+      {
+        id: 'kiosk',
+        label: 'In-store kiosk',
+        note: 'Walk-ins',
+        // TODO(rien): add kiosk screenshots here and this carousel appears.
+        shots: [],
+      },
+    ],
     repo: 'https://github.com/BugSlayerRien/barberyanitatis',
     repoPrivate: false,
     demoUrl: '',

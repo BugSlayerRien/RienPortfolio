@@ -13,7 +13,7 @@ import './Boot.css';
  */
 const LOGO = ['R', 'I', 'E', 'N'];
 
-export default function Boot({ onStart, onFinish, reduced }) {
+export default function Boot({ onStart, onFinish, reduced, onPlain }) {
   const [phase, setPhase] = useState('prompt');
   const timers = useRef([]);
   const rootRef = useRef(null);
@@ -29,15 +29,16 @@ export default function Boot({ onStart, onFinish, reduced }) {
     setPhase('booting');
     onStart();
 
-    const wait = reduced ? 300 : 3200;
+    const wait = reduced ? 300 : 1250;
     timers.current.push(setTimeout(() => setPhase('done'), wait));
-    timers.current.push(setTimeout(onFinish, wait + 700));
+    timers.current.push(setTimeout(onFinish, wait + 420));
   };
 
   useEffect(() => {
     if (phase !== 'prompt') return undefined;
     const onKey = (e) => {
       if (e.key === 'Tab') return; // let keyboard users reach the button
+      if (e.target?.closest?.('.boot__plain')) return; // Enter on that link means the link
       begin();
     };
     window.addEventListener('keydown', onKey);
@@ -62,10 +63,16 @@ export default function Boot({ onStart, onFinish, reduced }) {
       <div className="boot__field" aria-hidden="true">
         <span className="boot__line" />
         <span className="boot__ripple" style={{ '--d': '0s' }} />
-        <span className="boot__ripple" style={{ '--d': '0.35s' }} />
-        <span className="boot__ripple" style={{ '--d': '0.7s' }} />
+        <span className="boot__ripple" style={{ '--d': '0.12s' }} />
+        <span className="boot__ripple" style={{ '--d': '0.24s' }} />
         <span className="boot__bloom" />
       </div>
+
+      {phase === 'prompt' && (
+        <button type="button" className="boot__plain" onClick={onPlain}>
+          Skip to plain view
+        </button>
+      )}
 
       <div className="boot__center">
         <h1 className="boot__logo" aria-label="RIEN">

@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 /**
  * A two-page router in twenty lines.
  *
- * There are exactly two destinations — the XMB at `/` and the deep dive at
- * `/deep` — so pulling in react-router would cost more than it explains.
+ * There are three destinations — the XMB at `/`, the deep dive at `/deep`, and
+ * the plain scrolling page at `/plain` — so pulling in react-router would cost more than it explains.
  * `vercel.json` already rewrites every path to index.html, so a real URL works
  * on a hard refresh and can be shared.
  */
@@ -35,5 +35,6 @@ export default function useRoute() {
     }
   }, []);
 
-  return { path, go, back, isDeep: path.replace(/\/+$/, '') === '/deep' };
+  const clean = path.replace(/\/+$/, '');
+  return { path, go, back, isDeep: clean === '/deep', isPlain: clean === '/plain' };
 }

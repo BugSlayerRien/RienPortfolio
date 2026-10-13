@@ -11,6 +11,7 @@ import useReducedMotion from './hooks/useReducedMotion';
 import useTheme from './hooks/useTheme';
 import useRoute from './hooks/useRoute';
 import DeepPage from './deep/DeepPage';
+import PlainView from './plain/PlainView';
 import psp from './audio/psp';
 import { categories } from './data/content';
 import './App.css';
@@ -29,9 +30,10 @@ export default function App() {
   const [volume, setVolumeState] = useState(0.55);
   const [motionOn, setMotionOn] = useState(true);
 
-  const { go, back, isDeep } = useRoute();
+  const { go, back, isDeep, isPlain } = useRoute();
 
-  useHideCursor(5000);
+  // Hiding the cursor suits the console, not a page someone is reading.
+  useHideCursor(5000, !isPlain);
 
   const { theme, next: nextTheme, cycleTheme, palette } = useTheme();
 
@@ -179,7 +181,7 @@ export default function App() {
   /* ---------- keyboard: WASD + arrows + PlayStation-style confirm ---------- */
 
   useEffect(() => {
-    if (!booted || isDeep) return undefined;
+    if (!booted || isDeep || isPlain) return undefined;
 
     const onKey = (e) => {
       // Never hijack typing.
@@ -236,14 +238,14 @@ export default function App() {
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [booted, isDeep, reading, catIndex, itemIndex, soundOn, moveCategory, moveItem, activate, close, setSoundOn]);
+  }, [booted, isDeep, isPlain, reading, catIndex, itemIndex, soundOn, moveCategory, moveItem, activate, close, setSoundOn]);
 
   /* ---------- wheel drives the cursor, unless it is over the panel ---------- */
 
   const wheelLock = useRef(0);
 
   useEffect(() => {
-    if (!booted || reading || isDeep) return undefined;
+    if (!booted || reading || isDeep || isPlain) return undefined;
 
     const onWheel = (e) => {
       // The panel is always on screen now, so scrolling it must stay scrolling
@@ -264,12 +266,12 @@ export default function App() {
 
     window.addEventListener('wheel', onWheel, { passive: true });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [booted, isDeep, reading, moveCategory, moveItem]);
+  }, [booted, isDeep, isPlain, reading, moveCategory, moveItem]);
 
   /* ---------- touch: swipe the bar ---------- */
 
   useEffect(() => {
-    if (!booted || reading || isDeep) return undefined;
+    if (!booted || reading || isDeep || isPlain) return undefined;
     let sx = 0;
     let sy = 0;
     let onPanel = false;
@@ -295,7 +297,7 @@ export default function App() {
       window.removeEventListener('touchstart', start);
       window.removeEventListener('touchend', end);
     };
-  }, [booted, isDeep, reading, moveCategory, moveItem]);
+  }, [booted, isDeep, isPlain, reading, moveCategory, moveItem]);
 
   /* ---------- boot ---------- */
 
@@ -354,6 +356,36 @@ export default function App() {
 
   const columns = categories.length > 1 ? catIndex / (categories.length - 1) : 0;
 
+  /* ---------- plain view ---------- */
+
+  const openPlain = useCallback(() => {
+    psp.play('enter');
+    setReading(false);
+    go('/plain');
+  }, [go]);
+
+  // Not history.back(): someone who opened /plain from a link would leave the site.
+  const closePlain = useCallback(() => go('/'), [go]);
+
+  // The plain page is quiet; the console's ambient bed comes back with the XMB.
+  useEffect(() => {
+    if (isPlain) psp.stopAmbient();
+    else if (booted && soundOn) psp.startAmbient();
+  }, [isPlain, booted, soundOn]);
+
+  if (isPlain) {
+    return (
+      <PlainView
+        theme={theme}
+        nextTheme={nextTheme}
+        onCycleTheme={cycleTheme}
+        palette={palette}
+        reduced={reduced}
+        onExit={closePlain}
+      />
+    );
+  }
+
   return (
     <div
       className="app"
@@ -391,6 +423,7 @@ export default function App() {
         bladeOpen={reading}
         onBack={close}
         onCat={dive}
+        onPlain={openPlain}
       />
 
       <Blade
@@ -404,7 +437,9 @@ export default function App() {
         <BladeContent item={panelItem} settings={settings} />
       </Blade>
 
-      {!booted && <Boot onStart={onBootStart} onFinish={onBootFinish} reduced={systemReduced} />}
+      {!booted && (
+        <Boot onStart={onBootStart} onFinish={onBootFinish} reduced={systemReduced} onPlain={openPlain} />
+      )}
 
       {isDeep && <DeepPage onExit={surface} />}
     </div>

@@ -319,13 +319,13 @@ class PspAudio {
         const chord = [220, 329.6, 440, 554.4, 659.3, 880];
         const bus = ctx.createGain();
         bus.gain.setValueAtTime(0.0001, t);
-        bus.gain.exponentialRampToValueAtTime(0.22, t + 1.5);
-        bus.gain.exponentialRampToValueAtTime(0.0001, t + 3.6);
+        bus.gain.exponentialRampToValueAtTime(0.22, t + 0.5);
+        bus.gain.exponentialRampToValueAtTime(0.0001, t + 2.0);
 
         const lp = ctx.createBiquadFilter();
         lp.type = 'lowpass';
         lp.frequency.setValueAtTime(300, t);
-        lp.frequency.exponentialRampToValueAtTime(7000, t + 2.2);
+        lp.frequency.exponentialRampToValueAtTime(7000, t + 0.9);
         lp.Q.value = 0.7;
 
         bus.connect(lp);
@@ -344,22 +344,22 @@ class PspAudio {
             g.gain.value = 0.16 / (i + 1.4);
             osc.connect(g);
             g.connect(bus);
-            osc.start(t + i * 0.09);
-            osc.stop(t + 4);
+            osc.start(t + i * 0.05);
+            osc.stop(t + 2.2);
           });
         });
 
         // Rising air behind the chord.
-        const air = this._noise(2.6);
+        const air = this._noise(1.4);
         const abp = ctx.createBiquadFilter();
         abp.type = 'bandpass';
         abp.Q.value = 1.6;
         abp.frequency.setValueAtTime(400, t);
-        abp.frequency.exponentialRampToValueAtTime(6000, t + 2.2);
+        abp.frequency.exponentialRampToValueAtTime(6000, t + 0.9);
         const aenv = ctx.createGain();
         aenv.gain.setValueAtTime(0.0001, t);
-        aenv.gain.exponentialRampToValueAtTime(0.035, t + 1.4);
-        aenv.gain.exponentialRampToValueAtTime(0.0001, t + 2.6);
+        aenv.gain.exponentialRampToValueAtTime(0.035, t + 0.5);
+        aenv.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
         air.connect(abp);
         abp.connect(aenv);
         aenv.connect(this.master);
