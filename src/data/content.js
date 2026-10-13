@@ -10,7 +10,7 @@
 export const profile = {
   name: 'Rien',
   fullName: 'Rien Miro Gappi',
-  occupation: 'Web Developer & Designer',
+  occupation: 'Full-Stack Developer',
   tagline: '4th year BSIT student',
   avatar: '/img/rien-photo.webp',
   cv: '/cv/Rien-Miro-Gappi-CV.pdf',
@@ -112,7 +112,8 @@ export const about = {
   heading: 'About_Me',
   intro: 'I am Rien, a 4th year BSIT student.',
   body: [
-    'I build web interfaces and spend most of my time somewhere between the design file and the browser devtools. Front-end is where I am most at home, but I have shipped full stacks for coursework and client-shaped projects alike.',
+    'I build software end to end. For my capstone, Brilyantis, a barbershop platform, I worked across the whole system: a mobile app for customers and barbers, a walk-in kiosk, a web portal for receptionists and admins, and the API and database behind them, plus an AI face scan that powers its haircut recommendations.',
+    'The parts I enjoy most are the ones that hold everything together: sign-in, bookings, payments, database security and deployment. Interfaces are only one piece of it. I care most about things that work reliably for real people.',
     'Outside the editor I help run Google Developer Groups on Campus at NU Baliwag, where I organise workshops and developer sessions for other students.',
   ],
 };

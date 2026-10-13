@@ -54,7 +54,7 @@ export const strata = [
     facts: [
       ['Most at home in', 'Front-end, Back-end'],
       ['Works best', 'Late at night, with music on'],
-      ['Biggest weakness', 'Doubting too much'],
+      ['Biggest weakness', 'Doubt'],
     ],
   },
   {
