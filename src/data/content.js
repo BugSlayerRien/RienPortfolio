@@ -55,7 +55,7 @@ export const categories = [
       { id: 'musika', title: 'MUSIKA', subtitle: 'Classic English songs of the world', icon: 'music', logo: '/img/musika.webp', logoFit: 'cover', logoZoom: 2.15, logoFocus: '50% 21%', blade: 'project' },
       { id: 'ckresort', title: 'CK', subtitle: 'Resort booking and operations', icon: 'folder', logo: '/img/ck.webp', logoFit: 'cover', blade: 'project' },
       { id: 'tastetrails', title: 'Taste Trails', subtitle: 'Bulacan culinary adventure game', icon: 'gamepad', logo: '/img/tastetrails.webp', logoFit: 'cover', logoFocus: '22% 50%', blade: 'project' },
-      { id: 'asknu', title: 'AskNU', subtitle: 'AI image analysis app', icon: 'folder', blade: 'project' },
+      { id: 'asknu', title: 'AskNU', subtitle: 'Student help app with AI chat', icon: 'folder', blade: 'project' },
       { id: 'readthat', title: 'ReadThat', subtitle: 'Book discovery and reviews', icon: 'folder', blade: 'project' },
       { id: 'medeasyna', title: 'MedEasyna', subtitle: 'Clinic scheduling system', icon: 'folder', logo: '/img/medeasyna.png', blade: 'project' },
     ],
@@ -225,14 +225,12 @@ export const projects = {
     repoPrivate: false,
     demoUrl: '',
   },
-  // TODO(rien): the description is drafted from the screenshots only, and the
-  // stack and repo are still empty.
   tastetrails: {
     title: 'Taste Trails',
     tagline: 'Bulacan Culinary Adventure',
     description:
-      'A pixel-art cooking game set in Bulacan. Lola Ising welcomes you into her kitchen, you pick through the market for ingredients, cook your first Bulacan dish, and hear the stories behind it from Mang Perdy along the way.',
-    tech: [],
+      'A 2D cooking and storytelling game that takes players on a culinary tour of Bulacan. You play a young chef learning traditional recipes from local cooks one town at a time: Lola Ising teaches the basics, you buy ingredients at the palengke, then drag them into the pot in the Baliwag and Pulilan kitchens to unlock the next town. Progress, inventory and unlocked towns are saved between sessions.',
+    tech: ['Godot', 'GDScript'],
     status: 'Shipped',
     roles: ['frontend', 'backend'],
     shots: [
@@ -250,10 +248,10 @@ export const projects = {
   },
   asknu: {
     title: 'AskNU',
-    tagline: 'AI-Powered Image Analysis App Built on Google Gemini',
+    tagline: 'A Student Help App for National University Baliwag',
     description:
-      'A Flutter app that sends an image to Google Gemini and reads back a description of what is in it. Pick a photo from the gallery or shoot one on the spot, and the analyzer returns the model output in the app. The Gemini key is loaded from a local env file rather than compiled into the build.',
-    tech: ['Flutter', 'Dart', 'Google Gemini API'],
+      'A Flutter app that puts the answers students keep asking about in one place. Students search and browse the school’s FAQs by category, bookmark answers, look up offices, track document requests, and ask an AI assistant when the FAQs do not cover it. The assistant answers from the FAQ and student handbook content and keeps saved conversations. Registrar and admin staff manage FAQs, users and notifications from a built-in dashboard with analytics, user activity and audit logs.',
+    tech: ['Flutter', 'Dart', 'Firebase Auth', 'Cloud Firestore', 'Cloud Messaging', 'Gemini API'],
     status: 'Shipped',
     roles: ['frontend', 'backend'],
     shotsFit: 'contain',

@@ -36,123 +36,118 @@ CONTACT = [
     '<a href="mailto:gappirien@gmail.com">gappirien@gmail.com</a>',
     '<a href="https://www.linkedin.com/in/rien-miro-gappi-82bb95389/">linkedin.com/in/rien-miro-gappi</a>',
     '<a href="https://github.com/BugSlayerRien">github.com/BugSlayerRien</a>',
+    '<a href="https://rien-portfolio-ten.vercel.app">rien-portfolio-ten.vercel.app</a>',
 ]
 
 SUMMARY = (
-    "Fourth-year BS Information Technology student who ships full products, not just screens &mdash; "
-    "a Flutter barbershop app with a computer-vision haircut recommender, a resort booking platform "
-    "with role-separated portals and live payments, a book review app on Supabase. Most at home in "
-    "the front end; used to leading a team as well as building for one."
+    "Fourth-year BS Information Technology student who is dependable, detail-oriented and quick to "
+    "learn. A friendly, approachable teammate who coordinates well with others and turns ideas into "
+    "complete, working products."
 )
 
-# Skills first: it is the section that gets scanned, and keyword-matched.
-SKILLS = [
-    ("Languages", "JavaScript, TypeScript, Dart, PHP, Python, SQL, HTML5, CSS3"),
-    ("Frameworks", "React, Next.js, Flutter, Bootstrap, Vite, React Router"),
-    ("Backend &amp; Data", "Node.js, REST APIs, Supabase, Firebase, PostgreSQL, MySQL, Row-Level Security"),
-    ("AI &amp; Vision", "Google Gemini API, MediaPipe"),
-    ("Tools &amp; Hosting", "Git, GitHub, Docker, Figma, Vercel, Render, PayMongo"),
-]
-
-# (name, stack, one-line description)
-PROJECTS = [
-    (
-        "Brilyantis",
-        "Flutter, Dart, PHP, MySQL, Python, MediaPipe, Gemini API",
-        "Barbershop platform built around an AI face scan: a Python pipeline runs MediaPipe face "
-        "detection and mesh to derive face shape and hair attributes, then an LLM ranks the top five "
-        "hairstyles with previews. Separate portals for customers, reception, walk-ins, kiosk and admin.",
-    ),
-    (
-        "CK Resort &amp; Events Place",
-        "React, Vite, Supabase, PostgreSQL, PayMongo",
-        "Resort booking and operations with a portal per role. Live payments through PayMongo with "
-        "proof-of-payment uploads; Postgres row-level security separates what each role can read and write.",
-    ),
-    (
-        "ReadThat",
-        "React, Vite, React Router, Supabase, PostgreSQL",
-        "Book discovery and review app &mdash; ratings, spoiler flags, helpful votes, reading states, and "
-        "an admin dashboard for the catalogue and moderation.",
-    ),
-    (
-        "AskNU &nbsp;&bull;&nbsp; MedEasyna",
-        "Flutter, Gemini API &nbsp;&bull;&nbsp; PHP, MySQL, Google OAuth",
-        "A Flutter image analyzer built on Google Gemini, and a clinic appointment platform that "
-        "replaced a paper booking log.",
-    ),
-]
-
-# (organisation, role, dates, one-line description)
-EXPERIENCE = [
-    (
-        "Google Developer Groups on Campus &ndash; NU Baliwag",
-        "Co-Chapter Organizer",
-        "Jun 2026 &ndash; Present",
-        "Co-lead the chapter: plan the term&rsquo;s technical events, coordinate the core team, and "
-        "represent it to student organizations and faculty. Ran InfoSession 2026 and Gem in AI, a "
-        "hands-on Gemini workshop.",
-    ),
-    (
-        "Google Developer Groups on Campus &ndash; NU Baliwag",
-        "Executive Secretary",
-        "Dec 2025 &ndash; May 2026",
-        "Owned chapter documentation, minutes and member records across the year; volunteered on "
-        "GATHER 2025: Google Developers Assembly.",
-    ),
-    (
-        "NU Literates Community",
-        "Batch Delegate, 2nd &amp; 3rd Year",
-        "Jul 2024 &ndash; May 2026",
-        "Two consecutive terms representing the batch &mdash; carried student concerns into planning and "
-        "relayed decisions back.",
-    ),
-    (
-        "NU Literates Community",
-        "Class Representative, 1st Year",
-        "Aug 2023 &ndash; May 2024",
-        "First elected role; resource speaker for Study Jam: A Midterm Review Session (ITE233).",
-    ),
-    (
-        "Google Developer Student Clubs",
-        "Event Lead",
-        "May 2024 &ndash; Jun 2024",
-        "Led planning and day-of execution for a campus developer event.",
-    ),
-]
-
-# (school, degree, dates, honours on one line)
+# (school, location, degree, dates, [bullets])
 EDUCATION = [
     (
         "National University &ndash; Baliwag",
-        "BS Information Technology",
-        "2023 &ndash; Expected 2027",
-        "Dean&rsquo;s Lister &mdash; 1st Year (2 terms), 2nd Year &nbsp;&bull;&nbsp; Outstanding Programming Project",
+        "Baliwag, Bulacan",
+        "Bachelor of Science in Information Technology",
+        "Expected 2027",
+        [
+            "Dean&rsquo;s Lister",
+            "Capstone Project: Brilyantis, AI-powered barbershop platform",
+        ],
     ),
     (
         "STI College Baliuag",
-        "Senior High School",
+        "Baliuag, Bulacan",
+        "Senior High School; Graduated With High Honors",
         "2021 &ndash; 2023",
-        "Graduated With High Honors &nbsp;&bull;&nbsp; Outstanding Student Award",
+        [],
     ),
 ]
 
-# Folded into two runs. The detail lives on the portfolio, linked up top.
-CERTIFICATIONS = [
+# Skills sit high: it is the section that gets scanned, and keyword-matched.
+SKILLS = [
+    ("Languages", "Python, Dart, PHP, SQL, JavaScript, HTML/CSS"),
+    ("AI &amp; Integrations", "Google Gemini API, Grok, Cursor, Claude Code, MediaPipe, OpenCV, PayMongo (GCash), "
+                              "Firebase Cloud Messaging, Google OAuth, Google Calendar API"),
+    ("Frameworks", "React, Vite, React Router, Flutter, Riverpod, FastAPI"),
+    ("Data &amp; Infra", "PostgreSQL, Supabase, MySQL, Docker, GitHub Actions, Vercel, Render"),
+    ("Tools", "Git, GitHub, Figma, REST API design, Playwright"),
+]
+
+# (name, stack, dates, [bullets])
+PROJECTS = [
     (
-        "GDG on Campus &ndash; NU Baliwag",
-        "2025&ndash;2026",
-        "InfoSession 2026 (Participation) &bull; Gem in AI: A Gemini Workshop (Appreciation, Volunteer) "
-        "&bull; Membership, 1st &amp; 2nd Term AY 2025&ndash;2026 &bull; GATHER 2025: Google Developers "
-        "Assembly (Appreciation, Volunteer)",
+        "Brilyantis (Capstone)",
+        "Flutter, PHP, PostgreSQL, Python, FastAPI, MediaPipe, Gemini API",
+        "Jan 2026 &ndash; Present",
+        [
+            "Built a Flutter customer and barber app, a self-service kiosk, and a web portal for receptionists "
+            "and admins on a PHP REST API with PostgreSQL row-level security",
+            "Developed an AI face scan: a Python FastAPI service uses MediaPipe and OpenCV to read face shape, "
+            "then Gemini ranks the top three hairstyles with try-on previews",
+            "Designed a booking engine with time-slot locking against double bookings, group bookings and "
+            "PayMongo/GCash payments; deployed with Docker on Vercel and Render",
+        ],
     ),
     (
-        "Earlier",
-        "2023",
-        "StuG! a Flutter and Firebase Workshop, Google Developer Student Clubs (Participation) &bull; "
-        "Study Jam: A Midterm Review Session, NU Literates Community (Resource Speaker)",
+        "GoCollab",
+        "Flutter, Riverpod, Supabase, Firebase Cloud Messaging, Google Calendar API",
+        "Jul 2026 &ndash; Present",
+        [
+            "Built a role-aware app for GDG on Campus Philippines members and officers using Clean Architecture "
+            "on Supabase (Auth, Storage, Realtime)",
+            "Implemented event registration with QR tickets and officer QR check-in, Google Calendar sync, push "
+            "notifications and a career opportunities hub",
+            "Built officer analytics dashboards and partner management for sponsorships, meetings and "
+            "communication logs",
+        ],
+    ),
+    (
+        "AskNU",
+        "Flutter, Dart, Firebase, Cloud Firestore, Cloud Messaging, Gemini API",
+        "Aug 2026 &ndash; Present",
+        [
+            "Built a Flutter student help app for NU Baliwag: FAQ search, bookmarks, offices, document requests "
+            "and notifications",
+            "Integrated a Gemini assistant that answers from FAQ and handbook content; built an admin dashboard "
+            "with analytics",
+        ],
     ),
 ]
+
+# (project, stack, one line)
+OTHER_PROJECTS = [
+    ("CK Resort", "React, Supabase, PayMongo", "resort booking with role-based portals and PayMongo checkout"),
+    ("Taste Trails", "Godot, GDScript", "2D cooking and storytelling game about Bulacan, with saved progress"),
+    ("MUSIKA", "React, Vite", "community atlas of classic English-language songs, filed by the band&rsquo;s country"),
+    ("ReadThat", "React, Supabase", "book review app with ratings, spoiler flags, reading progress and admin moderation"),
+    ("MedEasyna", "PHP, MySQL, Google OAuth", "clinic appointment system with dashboards for five user roles"),
+]
+
+# (title, dates, optional one-line description)
+EXPERIENCE = [
+    (
+        "Co-Chapter Organizer, Google Developer Groups on Campus &ndash; NU Baliwag",
+        "Jun 2026 &ndash; Present",
+        "Co-lead the chapter and its core team; organized InfoSession 2026 and Gem in AI, a hands-on Google "
+        "Gemini workshop",
+    ),
+    ("Executive Secretary, Google Developer Groups on Campus &ndash; NU Baliwag", "Dec 2025 &ndash; May 2026", ""),
+    (
+        "Batch Delegate (1st &ndash; 3rd Year) and Class Representative (1st Year), NU Literates Community",
+        "Aug 2023 &ndash; May 2026",
+        "",
+    ),
+    ("Event Lead, Google Developer Student Clubs &ndash; NU Baliwag", "May 2024 &ndash; Jun 2024", ""),
+]
+
+SEMINARS = (
+    "GATHER 2025: Google Developers Assembly (Volunteer); Gem in AI: A Gemini Workshop (Volunteer); "
+    "InfoSession 2026 (Participant); StuG!: A Flutter and Firebase Workshop, Google Developer Student Clubs "
+    "(Participant, 2023)"
+)
 
 # ----------------------------------------------------------------- style
 
@@ -177,6 +172,8 @@ S = {
                            textColor=MUTED),
     'body': ParagraphStyle('body', fontName='Helvetica', fontSize=8.1, leading=10.5,
                            textColor=INK, alignment=TA_JUSTIFY),
+    'bullet': ParagraphStyle('bullet', fontName='Helvetica', fontSize=8.1, leading=10.5,
+                             textColor=INK, leftIndent=9, bulletIndent=0, bulletFontName='Helvetica'),
     'skill': ParagraphStyle('skill', fontName='Helvetica', fontSize=8.2, leading=11.0,
                             textColor=INK),
 }
@@ -242,6 +239,16 @@ def build(path):
     story.append(Paragraph("&nbsp;&bull;&nbsp; ".join(CONTACT), S['contact']))
     story.append(Paragraph(SUMMARY, S['summary']))
 
+    BUL = '\u2022'
+
+    # --- education
+    section("Education")
+    for school, where, degree, dates, bullets in EDUCATION:
+        story.append(KeepTogether([
+            two_col(school, where, W, S['org'], S['dates']),
+            two_col(degree, dates, W, S['role'], S['dates']),
+        ] + [Paragraph(b, S['bullet'], bulletText=BUL) for b in bullets] + [Spacer(1, 2.6)]))
+
     # --- skills, high on the page
     section("Technical Skills")
     for label, items in SKILLS:
@@ -249,41 +256,31 @@ def build(path):
 
     # --- projects
     section("Projects")
-    for name, stack, body in PROJECTS:
+    for name, stack, dates, bullets in PROJECTS:
         story.append(KeepTogether([
-            Paragraph(name, S['org']),
-            Paragraph(stack, S['role']),
-            Paragraph(body, S['body']),
-            Spacer(1, 3.4),
-        ]))
+            two_col("{} &nbsp;|&nbsp; <font name='Helvetica-Oblique'>{}</font>".format(name, stack), dates,
+                    W, S['org'], S['dates']),
+        ] + [Paragraph(b, S['bullet'], bulletText=BUL) for b in bullets] + [Spacer(1, 3)]))
+
+    names = ", ".join(n for n, _, _ in OTHER_PROJECTS)
+    story.append(KeepTogether(
+        [Paragraph("Other Projects &nbsp;|&nbsp; <font name='Helvetica-Oblique'>{}</font>".format(names), S['org'])]
+        + [Paragraph("<b>{}</b> ({}): {}".format(n, st, d), S['bullet'], bulletText=BUL)
+           for n, st, d in OTHER_PROJECTS]
+    ))
 
     # --- experience
     section("Leadership &amp; Experience")
-    for org, role, dates, body in EXPERIENCE:
-        story.append(KeepTogether([
-            two_col(org, dates, W, S['org'], S['dates']),
-            Paragraph(role, S['role']),
-            Paragraph(body, S['body']),
-            Spacer(1, 3.4),
-        ]))
+    for title, dates, body in EXPERIENCE:
+        block = [two_col(title, dates, W, S['org'], S['dates'])]
+        if body:
+            block.append(Paragraph(body, S['bullet'], bulletText=BUL))
+        block.append(Spacer(1, 2.2))
+        story.append(KeepTogether(block))
 
-    # --- education
-    section("Education")
-    for school, degree, dates, honours in EDUCATION:
-        story.append(KeepTogether([
-            two_col(school, dates, W, S['org'], S['dates']),
-            Paragraph("{} &nbsp;&bull;&nbsp; {}".format(degree, honours), S['role']),
-            Spacer(1, 3.2),
-        ]))
-
-    # --- certifications
-    section("Certifications")
-    for issuer, when, items in CERTIFICATIONS:
-        story.append(KeepTogether([
-            two_col(issuer, when, W, S['org'], S['dates']),
-            Paragraph(items, S['body']),
-            Spacer(1, 3.2),
-        ]))
+    # --- seminars & workshops
+    section("Seminars &amp; Workshops")
+    story.append(Paragraph(SEMINARS, S['body']))
 
     doc.build(story)
     return path
