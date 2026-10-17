@@ -10,7 +10,7 @@
 export const profile = {
   name: 'Rien',
   fullName: 'Rien Miro Gappi',
-  occupation: 'Software Developer',
+  occupation: 'Aspiring Software Engineer',
   tagline: '4th year BSIT student',
   quote: 'Ideas into systems. I’ve got your front and back.',
   avatar: '/img/rien-photo.webp',
