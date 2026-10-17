@@ -1,4 +1,6 @@
+import { useLayoutEffect, useRef } from 'react';
 import Icon from './Icon';
+import { profile } from '../data/content';
 import './Xmb.css';
 
 /**
@@ -31,6 +33,41 @@ export default function Xmb({
   dimmed = false,
   idle = false,
 }) {
+  const railRef = useRef(null);
+
+  /* The burst should read as coming out of the category globe, which sits one
+     row above the cross point. Cards are laid out by a grid, so CSS cannot know
+     where each one lands; measure it instead and hand every card the offset
+     from its own spot back to the globe (--fx / --fy). offsetLeft / offsetTop
+     are layout positions, so the running animation does not skew them. */
+  useLayoutEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return undefined;
+
+    const place = () => {
+      rail.querySelectorAll('.xmb__burst').forEach((burst) => {
+        const rowGap = parseFloat(getComputedStyle(burst).getPropertyValue('--row-gap')) || 104;
+        const globeX = 0;
+        const globeY = burst.offsetHeight / 2 - rowGap;
+        burst.querySelectorAll('.xmb__node').forEach((node) => {
+          const cx = node.offsetLeft + node.offsetWidth / 2;
+          const cy = node.offsetTop + node.offsetHeight / 2;
+          node.style.setProperty('--fx', `${(globeX - cx).toFixed(1)}px`);
+          node.style.setProperty('--fy', `${(globeY - cy).toFixed(1)}px`);
+        });
+      });
+    };
+
+    place();
+    const ro = new ResizeObserver(place);
+    rail.querySelectorAll('.xmb__burst').forEach((b) => ro.observe(b));
+    window.addEventListener('resize', place);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', place);
+    };
+  }, [categories]);
+
   return (
     <div
       className="xmb"
@@ -38,7 +75,7 @@ export default function Xmb({
       data-idle={idle || undefined}
       style={{ '--cat': catIndex, '--item': itemIndex }}
     >
-      <div className="xmb__rail">
+      <div className="xmb__rail" ref={railRef}>
         {categories.map((cat, ci) => {
           const active = ci === catIndex;
           const distance = ci - catIndex;
@@ -109,6 +146,8 @@ export default function Xmb({
                       </Tag>
                     );
                   })}
+
+                  <p className="xmb__quote">{profile.quote}</p>
                 </div>
               ) : (
                 /* ---- Ordinary column ---- */

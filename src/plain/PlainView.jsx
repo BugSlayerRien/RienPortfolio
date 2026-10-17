@@ -465,7 +465,9 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
           <section className="pv-section pv-contact" id="pv-contact">
             <SectionHead n={5} title="Contact" />
             <h2 className="pv-contact__big" data-pv>
-              Let&rsquo;s build <em>something</em> together.
+              {profile.quote.split(/(systems)/).map((part, i) =>
+                part === 'systems' ? <em key={i}>{part}</em> : part,
+              )}
             </h2>
             {email && (
               <a className="pv-contact__mail" href={email.href} data-pv>

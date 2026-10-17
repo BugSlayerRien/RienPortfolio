@@ -823,10 +823,10 @@
 
 .pv-contact__big {
   margin: 0;
-  max-width: 16ch;
+  max-width: 17ch;
   font-family: var(--pv-serif);
   font-weight: 400;
-  font-size: clamp(3rem, 8vw, 6.4rem);
+  font-size: clamp(2.8rem, 7vw, 5.6rem);
   line-height: 0.98;
   color: var(--pearl-100);
 }

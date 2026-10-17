@@ -505,11 +505,12 @@
   top: var(--cross-y);
   left: 0;
   translate: 0 -50%;
-  width: min(880px, 64vw);
+  width: min(1000px, 72vw);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px 22px;
-  padding-left: 26px;
+  /* Clear of the globe, so the cards sit beside it rather than under it. */
+  padding-left: clamp(70px, 9vw, 140px);
   pointer-events: none;
 }
 
@@ -517,11 +518,12 @@
   pointer-events: auto;
 }
 
-/* The detonation flash, pinned on the cross point. */
+/* The detonation flash, pinned on the globe icon: one row above the cross
+   point, which is where the burst's own midpoint sits. */
 .xmb__burst-flash {
   position: absolute;
   left: 0;
-  top: 50%;
+  top: calc(50% - var(--row-gap));
   width: 26px;
   height: 26px;
   translate: -50% -50%;
@@ -573,9 +575,9 @@
   overflow: hidden;
   isolation: isolate;
 
-  /* Parked at the cross point, collapsed, until the column goes active. */
+  /* Parked on the globe, collapsed, until the column goes active. */
   opacity: 0;
-  transform: translate3d(calc(-26px - 50%), 0, 0) scale(0.2);
+  transform: translate3d(var(--fx, -26px), var(--fy, 0px), 0) scale(0.2);
   transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft),
     box-shadow var(--dur-tick) var(--ease-soft);
 }
@@ -602,7 +604,7 @@
 @keyframes node-fly {
   0% {
     opacity: 0;
-    transform: translate3d(calc(-26px - 50%), 0, 0) scale(0.2) rotate(-8deg);
+    transform: translate3d(var(--fx, -26px), var(--fy, 0px), 0) scale(0.2) rotate(-8deg);
     filter: blur(6px);
   }
   60% {
@@ -723,5 +725,91 @@
 
   .xmb__col[data-active] .xmb__burst-flash {
     animation: none;
+  }
+}
+
+/* ---------- The quote under the burst ---------- */
+
+/* Hangs below the cards without joining the grid, so the cards stay centred
+   on the cross point. Hovering sweeps the oil-slick gradient across the text
+   and opens the tracking a touch; everything is a transition, so it also
+   eases back out when the pointer leaves. */
+.xmb__quote {
+  position: absolute;
+  left: clamp(70px, 9vw, 140px);
+  top: calc(100% + 34px);
+  margin: 0;
+  padding-bottom: 8px;
+  max-width: 56ch;
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 1.7vw, 1.45rem);
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  cursor: default;
+  background: linear-gradient(
+    100deg,
+    var(--pearl-300) 0%,
+    var(--pearl-300) 38%,
+    var(--iri-1) 46%,
+    var(--iri-2) 52%,
+    var(--iri-3) 58%,
+    var(--iri-4) 64%,
+    var(--pearl-100) 72%,
+    var(--pearl-100) 100%
+  );
+  background-size: 300% 100%;
+  background-position: 0% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: background-position 1400ms var(--ease-out), letter-spacing 700ms var(--ease-out),
+    opacity 700ms var(--ease-soft), transform 700ms var(--ease-out);
+}
+
+.xmb__quote::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--holo);
+  background-size: 300% 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 900ms var(--ease-out);
+}
+
+/* Arrives with the last card. */
+.xmb__col[data-active] .xmb__quote {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0ms, 0ms, 700ms, 700ms;
+}
+
+.xmb__col[data-active] .xmb__quote:hover {
+  background-position: 100% 0;
+  letter-spacing: 0.05em;
+  transition-delay: 0ms;
+}
+
+.xmb__col[data-active] .xmb__quote:hover::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 900px) {
+  .xmb__quote {
+    left: 18px;
+    max-width: 26ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xmb__quote {
+    opacity: 1;
+    transform: none;
+    background-position: 100% 0;
   }
 }

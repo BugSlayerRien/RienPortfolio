@@ -12,6 +12,7 @@ export const profile = {
   fullName: 'Rien Miro Gappi',
   occupation: 'Full-Stack Developer',
   tagline: '4th year BSIT student',
+  quote: 'Ideas into systems. I’ve got your front and back.',
   avatar: '/img/rien-photo.webp',
   cv: '/cv/Rien-Miro-Gappi-CV.pdf',
   cvFileName: 'Rien-Miro-Gappi-CV.pdf',

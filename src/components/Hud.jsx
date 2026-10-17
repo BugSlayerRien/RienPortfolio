@@ -15,6 +15,15 @@ function useClock() {
 
 const pad = (n) => String(n).padStart(2, '0');
 
+/* The name, split into words and letters so each letter can bounce on its own
+   beat. `i` is the letter's place across the whole name, which is what staggers
+   the wave; `data-w` lets a narrow screen keep just the first word. */
+const NAME_WORDS = (() => {
+  let i = 0;
+  return profile.fullName.split(' ').map((word) => [...word].map((ch) => ({ ch, i: i++ })));
+})();
+const NAME_LETTERS = NAME_WORDS.flat().length;
+
 /**
  * The console furniture: brand, CV download and real device status along the
  * top; the current breadcrumb and button legend along the bottom.
@@ -52,7 +61,21 @@ export default function Hud({
       <header className="hud__top">
         <div className="hud__left">
           <div className="hud__brand">
-            <span className="hud__brand-mark holo-text">RIEN</span>
+            <span className="hud__brand-mark" aria-label={profile.fullName}>
+              {NAME_WORDS.map((letters, w) => (
+                <span className="hud__word" data-w={w} key={w} aria-hidden="true">
+                  {letters.map(({ ch, i }) => (
+                    <span
+                      className="hud__ch"
+                      key={i}
+                      style={{ '--i': i, '--ci': i / (NAME_LETTERS - 1) }}
+                    >
+                      {ch}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </span>
             <span className="hud__brand-sub mono">XMB PORTFOLIO</span>
           </div>
 
