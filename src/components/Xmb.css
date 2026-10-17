@@ -692,7 +692,9 @@
 
 @media (max-width: 900px) {
   .xmb__burst {
-    width: min(480px, 78vw);
+    /* Measured from the cross point, not the screen edge, or the right-hand
+       side runs off a narrow phone. */
+    width: min(480px, calc(100vw - var(--cross-x) - 14px));
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     padding-left: 18px;
@@ -728,33 +730,83 @@
   }
 }
 
-/* ---------- The quote under the burst ---------- */
+/* ---------- The quote above the burst ---------- */
 
-/* Hangs below the cards without joining the grid, so the cards stay centred
-   on the cross point. Hovering sweeps the oil-slick gradient across the text
-   and opens the tracking a touch; everything is a transition, so it also
-   eases back out when the pointer leaves. */
+/* A headline over the cards, not a box: the same oil-slick vocabulary as the
+   rest of the system, with an iridescent bar down its leading edge and a
+   hairline drifting beneath it. The colours in the words travel on their own, on
+   a loop, so there is nothing to hover.
+
+   It hangs above the grid without joining it, so the cards stay centred on the
+   cross point, and it enters the way the cards do: parked on the globe, then
+   flung out to its place. Every colour is a token, so it follows Iris, Noir and
+   Mono. */
 .xmb__quote {
   position: absolute;
   left: clamp(70px, 9vw, 140px);
-  top: calc(100% + 34px);
+  bottom: calc(100% + 24px);
   margin: 0;
-  padding-bottom: 8px;
-  max-width: 56ch;
-  font-family: var(--font-mono);
-  font-size: clamp(1rem, 1.7vw, 1.45rem);
-  line-height: 1.35;
-  letter-spacing: 0.02em;
+  padding: 0 0 0.3em 0.62em;
+  isolation: isolate;
   cursor: default;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  /* Sized by height as well as width. The room above the cards grows roughly
+     with the viewport height, so the size follows it (about 17vh less a fixed
+     allowance for the HUD) and the headline never rides up into the top bar. */
+  font-size: clamp(1.6rem, min(4.2vw, calc(16.6vh - 75px)), 3.6rem);
+  line-height: 1.08;
+  letter-spacing: 0.005em;
+  opacity: 0;
+  /* Parked on the globe, collapsed, until the column goes active. */
+  transform: translate3d(var(--fx, -26px), var(--fy, 0px), 0) scale(0.2);
+}
+
+/* The oil-slick bar down the leading edge. */
+.xmb__quote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  bottom: 0.45em;
+  width: 0.09em;
+  min-width: 3px;
+  border-radius: 3px;
+  background: var(--holo);
+  background-size: 100% 300%;
+  box-shadow: 0 0 18px color-mix(in oklab, var(--iri-3) 60%, transparent);
+  animation: edge-drift 9s linear infinite;
+}
+
+/* The hairline beneath the words. */
+.xmb__quote::after {
+  content: '';
+  position: absolute;
+  left: 0.62em;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--holo);
+  background-size: 300% 100%;
+  opacity: 0.75;
+  animation: holo-drift 9s linear infinite;
+}
+
+/* The words: pearl, with a band of iridescence that crosses them on a loop.
+   The band is parked outside the visible third of the gradient at both ends,
+   so the jump back to the start is invisible. */
+.xmb__quote-body {
+  display: block;
   background: linear-gradient(
     100deg,
-    var(--pearl-300) 0%,
-    var(--pearl-300) 38%,
-    var(--iri-1) 46%,
-    var(--iri-2) 52%,
-    var(--iri-3) 58%,
+    var(--pearl-100) 0%,
+    var(--pearl-100) 34%,
+    var(--iri-1) 43%,
+    var(--iri-2) 50%,
+    var(--iri-3) 57%,
     var(--iri-4) 64%,
-    var(--pearl-100) 72%,
+    var(--pearl-100) 73%,
     var(--pearl-100) 100%
   );
   background-size: 300% 100%;
@@ -762,47 +814,68 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: background-position 1400ms var(--ease-out), letter-spacing 700ms var(--ease-out),
-    opacity 700ms var(--ease-soft), transform 700ms var(--ease-out);
+  filter: drop-shadow(0 3px 20px rgba(0, 0, 0, 0.55));
 }
 
-.xmb__quote::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--holo);
-  background-size: 300% 100%;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 900ms var(--ease-out);
+.xmb__quote-line {
+  display: block;
+  white-space: nowrap;
 }
 
-/* Arrives with the last card. */
+/* Leaves the globe just behind the first card, and settles with a small
+   overshoot: the same gesture as node-fly, slower, because it is bigger. */
 .xmb__col[data-active] .xmb__quote {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0ms, 0ms, 700ms, 700ms;
+  animation: quote-fly 1000ms var(--ease-out) 140ms forwards;
 }
 
-.xmb__col[data-active] .xmb__quote:hover {
-  background-position: 100% 0;
-  letter-spacing: 0.05em;
-  transition-delay: 0ms;
+.xmb__col[data-active] .xmb__quote-body {
+  animation: quote-sheen 7s var(--ease-soft) 1.2s infinite;
 }
 
-.xmb__col[data-active] .xmb__quote:hover::after {
-  transform: scaleX(1);
+@keyframes quote-fly {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--fx, -26px), var(--fy, 0px), 0) scale(0.2) rotate(-5deg);
+    filter: blur(10px);
+  }
+  55% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  78% {
+    transform: translate3d(0, 0, 0) scale(1.03) rotate(0.4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* Sweeps across in a little over half the cycle, then rests. */
+@keyframes quote-sheen {
+  0%,
+  8% {
+    background-position: 0% 0;
+  }
+  58%,
+  100% {
+    background-position: 100% 0;
+  }
 }
 
 @media (max-width: 900px) {
+  /* The cards stack into one column here and fill the height, so the quote drops under them. */
   .xmb__quote {
     left: 18px;
-    max-width: 26ch;
+    bottom: auto;
+    top: calc(100% + 22px);
+    font-size: 1.6rem;
+    max-width: calc(100% - 18px);
+  }
+
+  .xmb__quote-line {
+    white-space: normal;
   }
 }
 
@@ -810,6 +883,22 @@
   .xmb__quote {
     opacity: 1;
     transform: none;
+  }
+
+  .xmb__quote::before,
+  .xmb__quote::after {
+    animation: none;
+  }
+
+  .xmb__col[data-active] .xmb__quote-body {
+    animation: none;
+  }
+
+  .xmb__quote-body {
     background-position: 100% 0;
+  }
+
+  .xmb__col[data-active] .xmb__quote {
+    animation: none;
   }
 }

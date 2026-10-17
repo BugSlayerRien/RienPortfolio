@@ -49,7 +49,7 @@ export default function Xmb({
         const rowGap = parseFloat(getComputedStyle(burst).getPropertyValue('--row-gap')) || 104;
         const globeX = 0;
         const globeY = burst.offsetHeight / 2 - rowGap;
-        burst.querySelectorAll('.xmb__node').forEach((node) => {
+        burst.querySelectorAll('.xmb__node, .xmb__quote').forEach((node) => {
           const cx = node.offsetLeft + node.offsetWidth / 2;
           const cy = node.offsetTop + node.offsetHeight / 2;
           node.style.setProperty('--fx', `${(globeX - cx).toFixed(1)}px`);
@@ -147,7 +147,16 @@ export default function Xmb({
                     );
                   })}
 
-                  <p className="xmb__quote">{profile.quote}</p>
+                  <p className="xmb__quote" aria-label={profile.quote}>
+                    <span className="xmb__quote-body" aria-hidden="true">
+                      {/* Two lines, split at the first full stop. */}
+                      {profile.quote.split(/(?<=\.)\s+/).map((line) => (
+                        <span className="xmb__quote-line" key={line}>
+                          {line}
+                        </span>
+                      ))}
+                    </span>
+                  </p>
                 </div>
               ) : (
                 /* ---- Ordinary column ---- */
