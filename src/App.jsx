@@ -18,6 +18,10 @@ import './App.css';
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
+// The cat in the status bar leads to /deep. Switch this back to true to show it;
+// the page itself is untouched and still opens from its URL.
+const SECRET_LINK_VISIBLE = false;
+
 export default function App() {
   const [booted, setBooted] = useState(false);
   const [catIndex, setCatIndex] = useState(1); // open on Profile, not Settings
@@ -422,7 +426,7 @@ export default function App() {
         onCycleTheme={cycleTheme}
         bladeOpen={reading}
         onBack={close}
-        onCat={dive}
+        onCat={SECRET_LINK_VISIBLE ? dive : undefined}
         onPlain={openPlain}
       />
 

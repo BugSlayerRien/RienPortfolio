@@ -166,15 +166,18 @@ export default function Hud({
           </span>
 
           {/* The way down. Deliberately not styled as a button — it reads as
-              one more status glyph until you hover it. */}
-          <button
-            type="button"
-            className="hud__cat"
-            onClick={onCat}
-            aria-label="There is something else here"
-          >
-            <Icon name="cat" size={17} strokeWidth={1.4} />
-          </button>
+              one more status glyph until you hover it. Only drawn when the
+              app hands it somewhere to go. */}
+          {onCat && (
+            <button
+              type="button"
+              className="hud__cat"
+              onClick={onCat}
+              aria-label="There is something else here"
+            >
+              <Icon name="cat" size={17} strokeWidth={1.4} />
+            </button>
+          )}
         </div>
       </header>
 

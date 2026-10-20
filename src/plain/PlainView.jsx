@@ -301,7 +301,7 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
 
           {/* ---------- Projects ---------- */}
           <section className="pv-section" id="pv-projects">
-            <SectionHead n={2} title="Projects" note={`${PROJECT_ITEMS.length} projects, newest work first`} />
+            <SectionHead n={2} title="Projects" />
             <div className="pv-projects">
               {PROJECT_ITEMS.map((item, i) => {
                 const p = projects[item.id];
