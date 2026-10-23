@@ -902,3 +902,215 @@
     animation: none;
   }
 }
+
+/* ============================================================
+   First-visit cues
+   ============================================================ */
+
+.xmb__coach {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-soft);
+}
+
+.xmb__coach[data-on] {
+  opacity: 1;
+  transition-delay: 700ms;
+}
+
+/* Chevrons sit in the gaps between the cross point and its neighbours, and
+   nudge the way that neighbour lies. */
+.xmb__coach-chev {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border-radius: 50%;
+  border: 1px solid var(--edge-bright);
+  background: color-mix(in oklab, var(--bg-base) 70%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--pearl-100);
+  box-shadow: 0 0 18px color-mix(in oklab, var(--iri-3) 55%, transparent);
+}
+
+.xmb__coach-chev--l,
+.xmb__coach-chev--r {
+  top: calc(var(--cross-y) - var(--row-gap));
+}
+
+.xmb__coach-chev--l {
+  left: calc(var(--cross-x) - var(--col-gap) * 0.5);
+  animation: coach-left 1.6s var(--ease-soft) infinite;
+}
+
+.xmb__coach-chev--r {
+  left: calc(var(--cross-x) + var(--col-gap) * 0.5);
+  animation: coach-right 1.6s var(--ease-soft) infinite;
+}
+
+.xmb__coach-chev--u,
+.xmb__coach-chev--d {
+  left: var(--cross-x);
+}
+
+.xmb__coach-chev--u {
+  top: calc(var(--cross-y) - var(--row-gap) * 0.56);
+  animation: coach-up 1.6s var(--ease-soft) 0.2s infinite;
+}
+
+.xmb__coach-chev--d {
+  top: calc(var(--cross-y) + var(--row-gap) * 0.56);
+  animation: coach-down 1.6s var(--ease-soft) 0.2s infinite;
+}
+
+.xmb__coach-chev--u svg {
+  rotate: -90deg;
+}
+
+.xmb__coach-chev--d svg {
+  rotate: 90deg;
+}
+
+@keyframes coach-left {
+  0%,
+  100% { transform: translateX(0); opacity: 0.55; }
+  50% { transform: translateX(-9px); opacity: 1; }
+}
+
+@keyframes coach-right {
+  0%,
+  100% { transform: translateX(0); opacity: 0.55; }
+  50% { transform: translateX(9px); opacity: 1; }
+}
+
+@keyframes coach-up {
+  0%,
+  100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(-9px); opacity: 1; }
+}
+
+@keyframes coach-down {
+  0%,
+  100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(9px); opacity: 1; }
+}
+
+/* The pill: the wheel, the four arrow keys, and a few words. Low on the left,
+   clear of the panel that docks on the right. */
+.xmb__coach-pill {
+  position: absolute;
+  left: clamp(18px, 3vw, 44px);
+  bottom: 72px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px 10px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--edge-bright);
+  background: color-mix(in oklab, var(--bg-base) 72%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-md);
+}
+
+.xmb__coach-mouse {
+  position: relative;
+  width: 18px;
+  height: 28px;
+  border-radius: 9px;
+  border: 1.5px solid var(--pearl-300);
+}
+
+.xmb__coach-mouse i {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 2px;
+  height: 6px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: #fff;
+  animation: wheel-roll 1.8s var(--ease-soft) infinite;
+}
+
+.xmb__coach-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 20px);
+  grid-template-rows: repeat(2, 20px);
+  gap: 2px;
+}
+
+.xmb__coach-keys kbd {
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  border: 1px solid var(--edge-bright);
+  border-bottom-width: 2px;
+  background: var(--glass);
+  color: var(--pearl-200);
+  animation: key-demo 4s var(--ease-soft) infinite;
+}
+
+.xmb__coach-keys kbd[data-d='up'] { grid-area: 1 / 2; animation-delay: 0s; }
+.xmb__coach-keys kbd[data-d='left'] { grid-area: 2 / 1; animation-delay: 1s; }
+.xmb__coach-keys kbd[data-d='down'] { grid-area: 2 / 2; animation-delay: 2s; }
+.xmb__coach-keys kbd[data-d='right'] { grid-area: 2 / 3; animation-delay: 3s; }
+
+.xmb__coach-keys kbd[data-d='up'] svg { rotate: -90deg; }
+.xmb__coach-keys kbd[data-d='left'] svg { rotate: 180deg; }
+.xmb__coach-keys kbd[data-d='down'] svg { rotate: 90deg; }
+
+.xmb__coach-text {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pearl-100);
+  white-space: nowrap;
+}
+
+.xmb__coach-text b {
+  font-weight: 600;
+}
+
+.xmb__coach-touch {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .xmb__coach-desk,
+  .xmb__coach-keys,
+  .xmb__coach-mouse {
+    display: none;
+  }
+
+  .xmb__coach-touch {
+    display: inline;
+  }
+}
+
+/* On a phone the docked sheet takes the lower half, so the pill moves up. */
+@media (max-width: 900px) {
+  .xmb__coach-pill {
+    left: 50%;
+    bottom: auto;
+    top: calc(var(--cross-y) + var(--row-gap) * 1.55);
+    translate: -50% 0;
+  }
+
+  .xmb__coach-chev--l {
+    left: calc(var(--cross-x) - var(--col-gap) * 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xmb__coach-chev,
+  .xmb__coach-mouse i,
+  .xmb__coach-keys kbd {
+    animation: none;
+  }
+}

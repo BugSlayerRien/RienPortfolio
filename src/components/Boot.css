@@ -287,15 +287,50 @@
 /* ---------- Controls legend ---------- */
 
 .ctls {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
-  gap: 14px clamp(22px, 4vw, 44px);
+  gap: 16px clamp(22px, 3.6vw, 44px);
   margin: 0;
-  padding: 0;
+  padding: 18px clamp(22px, 3vw, 38px) 14px;
   list-style: none;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   animation: fade-in 900ms var(--ease-out) 1.3s both;
+}
+
+/* A hairline round the panel that breathes, so the eye lands here before the
+   button underneath. */
+.ctls::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--holo);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.6;
+  animation: holo-drift 8s linear infinite, ctls-breathe 3.6s var(--ease-soft) infinite;
+  pointer-events: none;
+}
+
+@keyframes ctls-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.95;
+  }
 }
 
 .ctl {
@@ -305,20 +340,20 @@
 }
 
 .ctl__label {
-  font-size: 0.58rem;
-  letter-spacing: 0.26em;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--ink-mute);
+  color: var(--pearl-300);
 }
 
 /* A keycap. Glass, with a lit state the demo animation borrows. */
 .ctl__key {
   display: grid;
   place-items: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 6px;
-  border-radius: 6px;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 7px;
   border: 1px solid var(--edge);
   border-bottom-width: 2px;
   background: rgba(255, 255, 255, 0.04);
@@ -330,15 +365,15 @@
 }
 
 .ctl__key--wide {
-  min-width: 42px;
+  min-width: 52px;
 }
 
 /* Inverted-T arrow cluster. One arrow glyph, turned per key. */
 .ctl__pad {
   display: grid;
-  grid-template-columns: repeat(3, 24px);
-  grid-template-rows: repeat(2, 24px);
-  gap: 3px;
+  grid-template-columns: repeat(3, 30px);
+  grid-template-rows: repeat(2, 30px);
+  gap: 4px;
 }
 
 .ctl__pad [data-dir='up'] { grid-area: 1 / 2; }
@@ -380,10 +415,10 @@
 /* Mouse, with a wheel that rolls. */
 .ctl__mouse {
   position: relative;
-  width: 20px;
-  height: 30px;
-  border-radius: 10px;
-  border: 1.5px solid var(--pearl-400);
+  width: 24px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1.5px solid var(--pearl-300);
   opacity: 0.85;
 }
 
@@ -657,49 +692,6 @@
   );
 }
 
-/* Crosshairs, on the lagging point so they visibly settle. */
-.boot__scan-x,
-.boot__scan-y {
-  background: var(--iri-3);
-  opacity: 0.42;
-}
-
-.boot__scan .boot__scan-x {
-  inset: 0 auto 0 0;
-  width: 1px;
-  transform: translateX(var(--tx, -100px));
-}
-
-.boot__scan .boot__scan-y {
-  inset: 0 0 auto 0;
-  height: 1px;
-  transform: translateY(var(--ty, -100px));
-}
-
-/* The ranging ring: snaps tight when still, opens up as you move. */
-.boot__scan .boot__scan-ring {
-  inset: 0 auto auto 0;
-  width: 86px;
-  height: 86px;
-  margin: -43px 0 0 -43px;
-  border-radius: 50%;
-  border: 1px solid var(--iri-3);
-  opacity: calc(0.3 + var(--speed, 0) * 0.45);
-  transform: translate3d(var(--mx, -200px), var(--my, -200px), 0)
-    scale(calc(0.6 + var(--speed, 0) * 0.7));
-  transition: opacity 200ms linear;
-}
-
-.boot__scan-ring::after {
-  content: '';
-  position: absolute;
-  inset: 34px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  color: var(--iri-1);
-  opacity: 0.8;
-}
-
 @media (hover: none) {
   .boot__scan {
     display: none;
@@ -743,4 +735,71 @@
   background: var(--glass-strong);
   transform: translateY(-1px);
   outline: none;
+}
+
+/* ---------- The click control ---------- */
+
+/* The same mouse, with its left button pressing and a ring going out, so
+   "click" is shown rather than described. */
+.ctl__mouse--click i {
+  display: none;
+}
+
+.ctl__mouse--click b {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 44%;
+  border-radius: 12px 0 0 0;
+  background: rgba(255, 255, 255, 0.85);
+  animation: mouse-press 2.2s var(--ease-soft) infinite;
+}
+
+.ctl__mouse--click::after {
+  content: '';
+  position: absolute;
+  left: 25%;
+  top: 22%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 1px solid var(--iri-3);
+  animation: mouse-ring 2.2s var(--ease-out) infinite;
+}
+
+@keyframes mouse-press {
+  0%,
+  55%,
+  100% {
+    opacity: 0.12;
+  }
+  62%,
+  72% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes mouse-ring {
+  0%,
+  58% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  62% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ctls::before,
+  .ctl__mouse--click b,
+  .ctl__mouse--click::after {
+    animation: none;
+  }
 }

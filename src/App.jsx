@@ -28,6 +28,15 @@ export default function App() {
   const [itemIndex, setItemIndex] = useState(0);
   const [settled, setSettled] = useState({ ci: 1, ii: 0 }); // what the panel is showing
   const [reading, setReading] = useState(false); // panel has the keyboard
+  // First visit only: show the on-screen cues for the controls until someone has
+  // moved around a couple of times, or ten-odd seconds have passed.
+  const [coach, setCoach] = useState(() => {
+    try {
+      return localStorage.getItem('xmb:coached') !== '1';
+    } catch {
+      return true;
+    }
+  });
   const [dropping, setDropping] = useState(false); // the fall into /deep
 
   const [soundOn, setSoundOnState] = useState(true);
@@ -47,6 +56,29 @@ export default function App() {
 
   const category = categories[catIndex];
   const item = category.items[clamp(itemIndex, 0, category.items.length - 1)];
+
+  const endCoach = useCallback(() => {
+    setCoach(false);
+    try {
+      localStorage.setItem('xmb:coached', '1');
+    } catch {
+      // Private mode: the cues just show again next visit.
+    }
+  }, []);
+
+  const coachMoves = useRef(0);
+  useEffect(() => {
+    if (!coach || !booted) return;
+    coachMoves.current += 1;
+    // The first run is the initial render, not a move.
+    if (coachMoves.current > 3) endCoach();
+  }, [catIndex, itemIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!coach || !booted) return undefined;
+    const id = setTimeout(endCoach, 14000);
+    return () => clearTimeout(id);
+  }, [coach, booted, endCoach]);
 
   /**
    * The panel follows the cursor with no confirm step — landing on an item is
@@ -415,6 +447,7 @@ export default function App() {
         onActivate={activate}
         dimmed={reading}
         idle={idle && !reduced}
+        coach={coach && booted && !reading}
       />
 
       <Hud

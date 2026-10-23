@@ -32,6 +32,7 @@ export default function Xmb({
   onActivate,
   dimmed = false,
   idle = false,
+  coach = false,
 }) {
   const railRef = useRef(null);
 
@@ -219,6 +220,48 @@ export default function Xmb({
             </div>
           );
         })}
+      </div>
+
+      {/* First-visit cues. Drawn, not written: chevrons that nudge toward the
+          neighbouring icons and items, and a pill showing the wheel and keys.
+          They vanish the moment someone has found their way around. */}
+      <div className="xmb__coach" data-on={coach || undefined} aria-hidden="true">
+        <span className="xmb__coach-chev xmb__coach-chev--l">
+          <Icon name="arrowLeft" size={18} strokeWidth={2.2} />
+        </span>
+        <span className="xmb__coach-chev xmb__coach-chev--r">
+          <Icon name="arrowRight" size={18} strokeWidth={2.2} />
+        </span>
+        <span className="xmb__coach-chev xmb__coach-chev--u">
+          <Icon name="arrowRight" size={18} strokeWidth={2.2} />
+        </span>
+        <span className="xmb__coach-chev xmb__coach-chev--d">
+          <Icon name="arrowRight" size={18} strokeWidth={2.2} />
+        </span>
+
+        <div className="xmb__coach-pill">
+          <span className="xmb__coach-mouse">
+            <i />
+          </span>
+          <span className="xmb__coach-keys">
+            <kbd data-d="up">
+              <Icon name="arrowRight" size={11} strokeWidth={2.4} />
+            </kbd>
+            <kbd data-d="left">
+              <Icon name="arrowRight" size={11} strokeWidth={2.4} />
+            </kbd>
+            <kbd data-d="down">
+              <Icon name="arrowRight" size={11} strokeWidth={2.4} />
+            </kbd>
+            <kbd data-d="right">
+              <Icon name="arrowRight" size={11} strokeWidth={2.4} />
+            </kbd>
+          </span>
+          <span className="xmb__coach-text mono">
+            <b className="xmb__coach-desk">Scroll or use arrow keys</b>
+            <b className="xmb__coach-touch">Swipe to move</b>
+          </span>
+        </div>
       </div>
 
       {/* The cross point itself — a soft holographic focus ring. */}

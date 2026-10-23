@@ -55,9 +55,6 @@ export default function Boot({ onStart, onFinish, reduced, onPlain }) {
       <div className="boot__scan" aria-hidden="true">
         <span className="boot__scan-grid" />
         <span className="boot__scan-wake" />
-        <span className="boot__scan-x" />
-        <span className="boot__scan-y" />
-        <span className="boot__scan-ring" />
       </div>
 
       <div className="boot__field" aria-hidden="true">
@@ -150,6 +147,13 @@ function Controls() {
           <i />
         </span>
         <span className="ctl__label mono" aria-hidden="true">Scroll</span>
+      </li>
+
+      <li className="ctl ctl--desk" data-repel aria-label="Click to select">
+        <span className="ctl__mouse ctl__mouse--click" aria-hidden="true">
+          <b />
+        </span>
+        <span className="ctl__label mono" aria-hidden="true">Click</span>
       </li>
 
       <li className="ctl ctl--touch" data-repel aria-label="Swipe to move">
