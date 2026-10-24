@@ -121,6 +121,41 @@ function TitleSlot({ titles, style }) {
   );
 }
 
+/* The hero portrait alternates between two shots. Each sits in the disc on its
+   own geometry — the close-up is framed tight, the suited one steps back — so
+   the fit is named on the element and the mask is set per shot in CSS. */
+const SHOTS = [
+  { src: profile.cutout, fit: 'close', w: 900, h: 924 },
+  { src: profile.standing, fit: 'stand', w: 695, h: 1100 },
+];
+const SHOT_MS = 6500;
+
+function HeroShots() {
+  const [shot, setShot] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const id = setInterval(() => {
+      if (!document.hidden) setShot((s) => (s + 1) % SHOTS.length);
+    }, SHOT_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  return SHOTS.map((s, i) => (
+    <img
+      className="pv-hero__shot"
+      key={s.src}
+      src={s.src}
+      alt=""
+      width={s.w}
+      height={s.h}
+      data-fit={s.fit}
+      data-on={i === shot || undefined}
+      loading={i === 0 ? undefined : 'lazy'}
+    />
+  ));
+}
+
 /* A ribbon down each margin, flowing slowly out of frame. Two copies of the
    same wave stacked head to tail, so the loop never shows a seam. */
 function SideFrame() {
@@ -328,9 +363,15 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
               </div>
             </div>
 
-            <figure className="pv-hero__photo pv-rise" style={{ '--d': 3 }}>
+            <figure
+              className="pv-hero__photo pv-rise"
+              style={{ '--d': 3 }}
+              role="img"
+              aria-label={profile.fullName}
+            >
               <span className="pv-hero__ring" aria-hidden="true" />
-              <img src={profile.avatar} alt={profile.fullName} width="320" height="320" />
+              <span className="pv-hero__disc" aria-hidden="true" />
+              <HeroShots />
             </figure>
 
             <span className="pv-hero__hint" aria-hidden="true">

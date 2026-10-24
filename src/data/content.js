@@ -16,6 +16,9 @@ export const profile = {
   tagline: '4th year BSIT student',
   quote: 'Ideas into systems. I’ve got your front and back.',
   avatar: '/img/rien-photo.webp',
+  // Cut-outs for the plain view: the hero pops out of its disc, the closing section stands on the page.
+  cutout: '/img/rien-cutout.webp',
+  standing: '/img/rien-standing.webp',
   cv: '/cv/Rien-Miro-Gappi-CV.pdf',
   cvFileName: 'Rien-Miro-Gappi-CV.pdf',
 };
