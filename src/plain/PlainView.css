@@ -98,8 +98,6 @@
   white-space: nowrap;
 }
 
-.pv-bar__brand em,
-.pv-hero__name em,
 .pv-contact__big em,
 .pv-head__title em {
   font-style: italic;
@@ -340,6 +338,70 @@
   line-height: 0.9;
   letter-spacing: -0.01em;
   color: var(--pearl-100);
+}
+
+/* The title reel under the name: one line visible, the rest spinning past. */
+.pv-slot {
+  margin: 22px 0 0;
+  font-size: clamp(1.25rem, 2.6vw, 2rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.pv-slot .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.pv-slot__window {
+  --row: 1.3em;
+  position: relative;
+  display: inline-grid;
+  height: var(--row);
+  overflow: hidden;
+  vertical-align: top;
+  /* Rows fade at the lips of the window, like a reel behind glass. */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
+}
+
+.pv-slot__sizer {
+  grid-area: 1 / 1;
+  height: var(--row);
+  line-height: var(--row);
+  white-space: nowrap;
+  visibility: hidden;
+}
+
+.pv-slot__reel {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--pos) * var(--row) * -1));
+  /* Fast through the middle, a small overshoot as it lands. */
+  transition: transform 1.1s cubic-bezier(0.22, 0.9, 0.28, 1.12);
+}
+
+.pv-slot__reel[data-instant] {
+  transition: none;
+}
+
+.pv-slot__row {
+  height: var(--row);
+  line-height: var(--row);
+  white-space: nowrap;
+  background: var(--holo);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: holo-drift 14s linear infinite;
 }
 
 /* Each word rises out of its own mask. */
@@ -935,6 +997,7 @@
   .plain,
   .plain__scroll > *,
   .pv-word > span,
+  .pv-slot__row,
   .pv-rise,
   .pv-hero__ring,
   .pv-hero__hint i {

@@ -11,6 +11,8 @@ export const profile = {
   name: 'Rien',
   fullName: 'Rien Miro Gappi',
   occupation: 'Aspiring Software Engineer',
+  // Cycled under the name in the plain view, first one shown first.
+  titles: ['Software Developer', 'Mobile Developer', 'Web Developer', 'Full-Stack Developer'],
   tagline: '4th year BSIT student',
   quote: 'Ideas into systems. I’ve got your front and back.',
   avatar: '/img/rien-photo.webp',
@@ -128,7 +130,7 @@ export const stack = [
   { group: 'Frameworks', items: ['React', 'Next.js', 'Flutter', 'Bootstrap', 'Vite', 'React Router'] },
   { group: 'Backend & data', items: ['Node.js', 'REST API', 'Supabase', 'Firebase', 'PostgreSQL', 'MySQL'] },
   { group: 'AI & services', items: ['Gemini API', 'MediaPipe', 'PayMongo', 'Google OAuth'] },
-  { group: 'Tools & hosting', items: ['Git', 'GitHub', 'Docker', 'Figma', 'Vercel', 'Render'] },
+  { group: 'Tools & hosting', items: ['Git', 'GitHub', 'Docker', 'Figma', 'Notion', 'Vercel', 'Render'] },
 ];
 
 export const education = [

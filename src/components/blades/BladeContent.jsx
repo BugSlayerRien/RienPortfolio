@@ -145,14 +145,13 @@ function ProjectBlade({ id }) {
   return (
     <>
       <Section>
-        <div className="status-row">
-          <span className="status" data-state={p.status}>
-            {p.status}
-          </span>
-          {p.roles?.map((r, n) => (
-            <RoleBadge key={r} role={r} n={n} />
-          ))}
-        </div>
+        {p.roles?.length > 0 && (
+          <div className="status-row">
+            {p.roles.map((r, n) => (
+              <RoleBadge key={r} role={r} n={n} />
+            ))}
+          </div>
+        )}
         <Prose>
           <p>
             <strong>{p.tagline}</strong>
@@ -212,7 +211,6 @@ function ProjectBlade({ id }) {
             .filter(([key]) => key !== id)
             .map(([key, other]) => (
               <Card key={key}>
-                <p className="node__label">{other.status}</p>
                 <p className="node__value">{other.title}</p>
                 {other.tech.length > 0 && <Chips items={other.tech.slice(0, 3)} />}
               </Card>

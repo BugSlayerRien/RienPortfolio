@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Icon from '../components/Icon';
 import WaveField from '../components/WaveField';
 import TechChips from '../components/blades/TechChips';
@@ -49,11 +49,75 @@ const CERT_LIST = (() => {
 
 /** "Rien Miro Gappi" with the middle name set in italic, the way the hero does it. */
 function Name({ as: Tag = 'span', className }) {
-  const [first, ...rest] = profile.fullName.split(' ');
+  return <Tag className={className}>{profile.fullName}</Tag>;
+}
+
+/* The title under the name, on a slot-machine reel. Every few seconds the reel
+   spins a full turn plus one and settles, with a little overshoot, on the next
+   title. The reel is the list repeated, so it can keep spinning downward; once
+   it is deep enough it snaps back to the same title near the top, unseen. */
+const REEL_TURNS = 6;
+
+function TitleSlot({ titles, style }) {
+  const n = titles.length;
+  const reel = useMemo(() => Array.from({ length: REEL_TURNS }, () => titles).flat(), [titles]);
+  const [pos, setPos] = useState(0);
+  const [instant, setInstant] = useState(false);
+  const reelRef = useRef(null);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const id = setInterval(() => {
+      if (document.hidden) return;
+      setPos((p) => p + n + 1);
+      reelRef.current?.animate([{ filter: 'blur(2.5px)' }, { filter: 'blur(0px)' }], {
+        duration: 1100,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      });
+    }, 3200);
+    return () => clearInterval(id);
+  }, [n]);
+
+  useEffect(() => {
+    if (!instant) return undefined;
+    let raf = requestAnimationFrame(() => {
+      raf = requestAnimationFrame(() => setInstant(false));
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [instant]);
+
+  const settle = () => {
+    if (pos >= n * (REEL_TURNS - 2)) {
+      setInstant(true);
+      setPos(pos % n);
+    }
+  };
+
   return (
-    <Tag className={className}>
-      <em>{first}</em> {rest.join(' ')}
-    </Tag>
+    <p className="pv-slot pv-rise" style={style}>
+      <span className="sr-only">{titles.join(', ')}</span>
+      <span className="pv-slot__window" aria-hidden="true">
+        {/* Invisible copies of every title size the window to the longest. */}
+        {titles.map((t) => (
+          <span className="pv-slot__sizer" key={t}>
+            {t}
+          </span>
+        ))}
+        <span
+          className="pv-slot__reel"
+          ref={reelRef}
+          data-instant={instant || undefined}
+          style={{ '--pos': pos }}
+          onTransitionEnd={settle}
+        >
+          {reel.map((t, i) => (
+            <span className="pv-slot__row" key={i}>
+              {t}
+            </span>
+          ))}
+        </span>
+      </span>
+    </p>
   );
 }
 
@@ -244,10 +308,11 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
               <h1 className="pv-hero__name" aria-label={profile.fullName}>
                 {profile.fullName.split(' ').map((w, i) => (
                   <span className="pv-word" key={w} aria-hidden="true">
-                    <span style={{ '--d': i + 1 }}>{i === 0 ? <em>{w}</em> : w}</span>
+                    <span style={{ '--d': i + 1 }}>{w}</span>
                   </span>
                 ))}
               </h1>
+              <TitleSlot titles={profile.titles} style={{ '--d': 4 }} />
               <p className="pv-hero__lede pv-rise" style={{ '--d': 5 }}>
                 {about.body[0]}
               </p>
@@ -345,14 +410,13 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
                       <span className="pv-project__index">{String(i + 1).padStart(2, '0')}</span>
                       <h3 className="pv-project__title">{p.title}</h3>
                       <p className="pv-project__tagline">{p.tagline}</p>
-                      <div className="status-row">
-                        <span className="status" data-state={p.status}>
-                          {p.status}
-                        </span>
-                        {p.roles?.map((r, n) => (
-                          <RoleBadge key={r} role={r} n={n} />
-                        ))}
-                      </div>
+                      {p.roles?.length > 0 && (
+                        <div className="status-row">
+                          {p.roles.map((r, n) => (
+                            <RoleBadge key={r} role={r} n={n} />
+                          ))}
+                        </div>
+                      )}
                       <p className="pv-project__desc">{p.description}</p>
                       {p.tech.length > 0 && (
                         <ul className="pv-tags">
