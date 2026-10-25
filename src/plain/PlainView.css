@@ -9,6 +9,8 @@
 
 .plain {
   --pv-serif: 'Instrument Serif', 'Times New Roman', serif;
+  /* Stand-in for Milker: Anton is the nearest free heavy condensed grotesque. */
+  --pv-display: 'Anton', 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
   --pv-sans: 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'Didact Gothic', 'Questrial', system-ui,
     sans-serif;
   --pv-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -314,10 +316,6 @@
 
 .pv-hero {
   position: relative;
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  align-items: center;
-  gap: clamp(28px, 5vw, 72px);
   min-height: calc(100svh - 72px);
   padding: 40px 0 80px;
 }
@@ -356,6 +354,23 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* The hero runs the slot as a second line of the billboard. The window is
+   sized from --row so a spin never nudges what sits under it. */
+.pv-slot[data-size='bill'] .pv-slot__window {
+  --row: 1.12em;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.pv-slot[data-size='bill'] {
+  margin: 6px 0 0;
+  font-family: var(--pv-display);
+  font-size: clamp(1.6rem, 4.6vw, 3.4rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
 }
 
 .pv-slot__window {
@@ -1198,6 +1213,159 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pv-frame__flow {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Billboard hero
+   ============================================================
+
+   Brutalist: the name is the page. Each line is set from the block's own
+   width — `--ch` is its character count and the divisor is Anton's average
+   cap advance — so four letters and five letters both reach the margins
+   instead of one line hanging short. Container query units rather than vw,
+   because the block breaks out of the column and its width is its own.
+   ------------------------------------------------------------ */
+
+.pv-bill {
+  position: relative;
+  /* Out of the reading column and all the way to the window edges, less the
+     scrollbar — 100vw counts it, and the overshoot shifts the page sideways. */
+  margin-inline: calc(50% - 50vw + var(--sbw, 0px) / 2);
+  padding: 18px clamp(14px, 3vw, 34px) 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
+.pv-bill__top,
+.pv-bill__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px 28px;
+}
+
+.pv-bill__top {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--edge);
+}
+
+.pv-bill__kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pearl-400);
+}
+
+.pv-bill__name {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-family: var(--pv-display);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* The mask each line rises out of. The size is set by useBillboardFit. */
+.pv-bill__line {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 12vw;
+}
+
+.pv-bill__line + .pv-bill__line {
+  margin-top: -0.24em;
+}
+
+/* Type and portrait share one grid, so the photo has an edge to sit on
+   instead of floating over the lettering. */
+.pv-bill__band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: clamp(16px, 3vw, 48px);
+}
+
+.pv-bill__type {
+  min-width: 0;
+}
+
+.pv-bill__line > span {
+  display: inline-block;
+  vertical-align: top;
+  animation: pv-bill-rise 1.15s var(--pv-ease) both;
+  animation-delay: calc(120ms + var(--d) * 130ms);
+}
+
+@keyframes pv-bill-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* The portrait is the band's second column, bottom-aligned to the type. */
+.pv-bill .pv-hero__photo {
+  --ring-bleed: 14px; /* .pv-hero__ring sits this far outside the figure */
+  --ring-gap: 10px; /* air between the ring and each rule */
+  width: auto;
+  height: calc(100% - (var(--ring-bleed) + var(--ring-gap)) * 2);
+  min-height: 150px;
+  max-height: 300px;
+  align-self: center;
+  justify-self: end;
+  margin: auto 0;
+  translate: none; /* the scroll-drift belongs to the old absolute placement */
+}
+
+.pv-bill__foot {
+  padding: 26px 0 26px;
+  border-top: 1px solid var(--edge);
+}
+
+.pv-bill__foot .pv-hero__lede {
+  max-width: 46ch;
+  margin: 0;
+}
+
+.pv-bill__foot .pv-hero__cta {
+  margin: 0;
+  justify-self: end;
+  align-self: center;
+}
+
+@media (max-width: 720px) {
+  .pv-bill__band {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pv-bill .pv-hero__photo {
+    order: -1;
+    width: min(52vw, 220px);
+    height: auto;
+    max-height: none;
+    justify-self: start;
+    margin: 0 0 6px;
+  }
+
+  .pv-bill__foot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pv-bill__foot .pv-hero__cta {
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pv-bill__line > span {
     animation: none;
   }
 }

@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Icon from '../components/Icon';
 import WaveField from '../components/WaveField';
 import TechChips from '../components/blades/TechChips';
 import ShotCarousel from '../components/blades/ShotCarousel';
 import { RoleBadge } from '../components/blades/BladeContent';
 import useKeyScroll from '../hooks/useKeyScroll';
+import useScrollFx from './useScrollFx';
 import {
   profile,
   about,
@@ -58,7 +59,7 @@ function Name({ as: Tag = 'span', className }) {
    it is deep enough it snaps back to the same title near the top, unseen. */
 const REEL_TURNS = 6;
 
-function TitleSlot({ titles, style }) {
+function TitleSlot({ titles, style, size }) {
   const n = titles.length;
   const reel = useMemo(() => Array.from({ length: REEL_TURNS }, () => titles).flat(), [titles]);
   const [pos, setPos] = useState(0);
@@ -94,7 +95,7 @@ function TitleSlot({ titles, style }) {
   };
 
   return (
-    <p className="pv-slot pv-rise" style={style}>
+    <p className="pv-slot pv-rise" data-size={size} style={style}>
       <span className="sr-only">{titles.join(', ')}</span>
       <span className="pv-slot__window" aria-hidden="true">
         {/* Invisible copies of every title size the window to the longest. */}
@@ -128,19 +129,79 @@ const SHOTS = [
   { src: profile.cutout, fit: 'close', w: 900, h: 924 },
   { src: profile.standing, fit: 'stand', w: 695, h: 1100 },
 ];
-const SHOT_MS = 6500;
+/* The billboard's one line, set flush to both margins. A long line on purpose:
+   see useBillboardFit for why short words do not work here. */
+const BILL_LINES = [profile.fullName.toUpperCase()];
 
-function HeroShots() {
-  const [shot, setShot] = useState(0);
+/**
+ * Rules every billboard line flush to both margins.
+ *
+ * Sizing to fit the width would mean 900px letters — four characters is not
+ * many to spread across a window — so the size is capped against the viewport
+ * height and the slack is taken up in tracking instead. Letters spread apart,
+ * which is what a billboard does, rather than the type being stretched.
+ *
+ * Measured rather than computed from a ratio: a ratio would have to assume the
+ * font's cap advance and would be wrong the moment the webfont fails to load.
+ * Chrome adds the tracking after the last character too, hence the matching
+ * negative margin, or every line would sit one gap short of the right margin.
+ */
+function useBillboardFit(ref) {
+  useLayoutEffect(() => {
+    const host = ref.current;
+    if (!host) return undefined;
+    const lines = Array.from(host.querySelectorAll('.pv-bill__line'));
 
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const id = setInterval(() => {
-      if (!document.hidden) setShot((s) => (s + 1) % SHOTS.length);
-    }, SHOT_MS);
-    return () => clearInterval(id);
-  }, []);
+    const PROBE = 200;
 
+    const fit = () => {
+      const cap = Math.max(44, Math.round(window.innerHeight * 0.34));
+      lines.forEach((line) => {
+        const span = line.firstElementChild;
+        const n = span.textContent.trim().length;
+        /* The line is a block, so its own content box is the column it has to
+           fill — the billboard around it is wider than that. */
+        const room = line.clientWidth - 2; /* a hair, against sub-pixel wrap */
+        if (!n || room <= 0) return;
+
+        /* Pass one: how big could this line be before it hits the margins. */
+        line.style.letterSpacing = '0px';
+        line.style.fontSize = `${PROBE}px`;
+        const probed = span.getBoundingClientRect().width;
+        if (!probed) return;
+
+        /* Never larger than the width allows, so the tracking below only ever
+           opens the line up — squeezing it shut would overlap the letters. */
+        const size = Math.min((PROBE * room) / probed, cap);
+        line.style.fontSize = `${size.toFixed(2)}px`;
+
+        /* Pass two: correct for the rounding, then share out what is left.
+           Scaling a measurement is never exact to the pixel, and on a long
+           line the error adds up to a visible overhang. */
+        let w = span.getBoundingClientRect().width;
+        if (w > room) {
+          line.style.fontSize = `${((size * room) / w).toFixed(2)}px`;
+          w = span.getBoundingClientRect().width;
+        }
+        const track = Math.max((room - w) / n, 0);
+        line.style.letterSpacing = `${track.toFixed(2)}px`;
+        span.style.marginRight = `${(-track).toFixed(2)}px`;
+      });
+    };
+
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(host);
+    document.fonts?.ready.then(fit).catch(() => {});
+    window.addEventListener('resize', fit);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', fit);
+    };
+  }, [ref]);
+}
+
+function HeroShots({ shot }) {
   return SHOTS.map((s, i) => (
     <img
       className="pv-hero__shot"
@@ -211,7 +272,12 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
   const [active, setActive] = useState('');
   const [leaving, setLeaving] = useState(false);
 
+  const billRef = useRef(null);
+  const [shot, setShot] = useState(0);
+
   useKeyScroll(scrollRef, true, { step: 120 });
+  useBillboardFit(billRef);
+  useScrollFx(scrollRef, !reduced);
 
   // Content eases in when it enters the middle band of the viewport, and eases
   // out through the top when it leaves it. The band is inset 10% top and bottom
@@ -240,7 +306,33 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
     if (!root) return undefined;
     let frame = 0;
 
+    /* The billboard's height is measured once rather than on every scroll, so
+       choosing a portrait below costs two reads and no layout. */
+    const bill = root.querySelector('.pv-bill');
+    let billH = bill?.offsetHeight || 1;
+
+    /* The full-bleed band is sized off 100vw, which counts the scrollbar; told
+       how wide the bar is, it can take it back off. */
+    const measure = () => {
+      billH = bill?.offsetHeight || 1;
+      root.parentElement.style.setProperty(
+        '--sbw',
+        `${Math.max(window.innerWidth - root.clientWidth, 0)}px`,
+      );
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(root);
+    if (bill) ro.observe(bill);
+
     const onScroll = () => {
+      /* Which hero portrait shows follows the scroll through the billboard, so
+         the swap is something the reader causes rather than waits for. Outside
+         the frame below: it is arithmetic, and it should not wait on a paint. */
+      const through = Math.min(Math.max(root.scrollTop / billH, 0), 0.999);
+      setShot(Math.floor(through * SHOTS.length));
+
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
@@ -262,6 +354,7 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
     onScroll();
     return () => {
       root.removeEventListener('scroll', onScroll);
+      ro?.disconnect();
       if (frame) cancelAnimationFrame(frame);
     };
   }, []);
@@ -336,43 +429,45 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
         <main className="pv-main">
           {/* ---------- Hero ---------- */}
           <section className="pv-hero">
-            <div className="pv-hero__text">
-              <p className="pv-kicker pv-rise" style={{ '--d': 0 }}>
-                Portfolio · {profile.tagline}
-              </p>
-              <h1 className="pv-hero__name" aria-label={profile.fullName}>
-                {profile.fullName.split(' ').map((w, i) => (
-                  <span className="pv-word" key={w} aria-hidden="true">
-                    <span style={{ '--d': i + 1 }}>{w}</span>
-                  </span>
-                ))}
-              </h1>
-              <TitleSlot titles={profile.titles} style={{ '--d': 4 }} />
-              <p className="pv-hero__lede pv-rise" style={{ '--d': 5 }}>
-                {about.body[0]}
-              </p>
-              <div className="pv-hero__cta pv-rise" style={{ '--d': 6 }}>
-                <a className="pv-btn pv-btn--solid pv-btn--lg" href={profile.cv} download={profile.cvFileName}>
-                  <Icon name="download" size={15} />
-                  <span>Download CV</span>
-                </a>
-                <button type="button" className="pv-btn pv-btn--lg" onClick={() => scrollTo('projects')}>
-                  <span>See projects</span>
-                  <Icon name="arrowRight" size={14} />
-                </button>
+            {/* The billboard. Each line is sized off the block's own width, so
+                the name is set as large as it can be without breaking — the
+                type is the layout, not a label on top of one. */}
+            <div className="pv-bill" ref={billRef}>
+              <div className="pv-bill__top">
+                <span className="pv-bill__kicker mono">Portfolio — {profile.tagline}</span>
+                <span className="pv-bill__kicker mono">Bulacan, PH</span>
+              </div>
+
+              <div className="pv-bill__band">
+                <div className="pv-bill__type">
+                  <h1 className="pv-bill__name" aria-label={profile.fullName}>
+                    {BILL_LINES.map((w, i) => (
+                      <span className="pv-bill__line" key={w} style={{ '--d': i }} aria-hidden="true">
+                        <span>{w}</span>
+                      </span>
+                    ))}
+                  </h1>
+                  <TitleSlot titles={profile.titles} size="bill" style={{ '--d': 4 }} />
+                </div>
+
+                <figure
+                  className="pv-hero__photo pv-rise"
+                  style={{ '--d': 3 }}
+                  role="img"
+                  aria-label={profile.fullName}
+                >
+                  <span className="pv-hero__ring" aria-hidden="true" />
+                  <span className="pv-hero__disc" aria-hidden="true" />
+                  <HeroShots shot={shot} />
+                </figure>
+              </div>
+
+              <div className="pv-bill__foot">
+                <p className="pv-hero__lede pv-rise" style={{ '--d': 5 }}>
+                  {about.body[0]}
+                </p>
               </div>
             </div>
-
-            <figure
-              className="pv-hero__photo pv-rise"
-              style={{ '--d': 3 }}
-              role="img"
-              aria-label={profile.fullName}
-            >
-              <span className="pv-hero__ring" aria-hidden="true" />
-              <span className="pv-hero__disc" aria-hidden="true" />
-              <HeroShots />
-            </figure>
 
             <span className="pv-hero__hint" aria-hidden="true">
               Scroll

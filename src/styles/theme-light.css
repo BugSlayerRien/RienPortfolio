@@ -1,0 +1,254 @@
+/* ============================================================
+   Shared light-theme corrections
+   ============================================================
+
+   The first three themes are all dark, so a handful of surfaces were written
+   with opaque dark values baked in rather than drawn from tokens — the wave's
+   ground, the blade's backing, the carousel and certificate plates. On a light
+   theme those read as holes punched in the page.
+
+   Both light themes need the same corrections, so they live here once rather
+   than twice. Tokens would be the better fix, but these are the only places
+   the components reach past them, and keeping the patch in one file beside the
+   themes it serves is easier to follow than threading new tokens through five
+   component sheets.
+   ------------------------------------------------------------ */
+
+:root[data-theme='editorial'],
+:root[data-theme='ethereal'] {
+  /* The panel surface, as a token the overrides below can share. */
+  --surface: var(--bg-raise);
+  --surface-veil: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- Wave ---------- */
+
+:root[data-theme='editorial'] .wavefield__ground,
+:root[data-theme='ethereal'] .wavefield__ground {
+  background: linear-gradient(180deg, var(--bg-raise) 0%, var(--bg-base) 50%, var(--bg-deep) 100%);
+}
+
+:root[data-theme='editorial'] .wavefield__vignette,
+:root[data-theme='ethereal'] .wavefield__vignette {
+  background: radial-gradient(120% 100% at 50% 45%, transparent 48%, rgba(43, 58, 47, 0.12) 100%);
+}
+
+:root[data-theme='editorial'] .wavefield__film {
+  display: none;
+}
+
+:root[data-theme='editorial'] .wavefield__canvas {
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme='ethereal'] .wavefield__film {
+  display: none;
+}
+
+:root[data-theme='editorial'] .wavefield__grain,
+:root[data-theme='ethereal'] .wavefield__grain {
+  mix-blend-mode: multiply;
+  opacity: 0.25;
+}
+
+/* ---------- Start page ---------- */
+
+:root[data-theme='editorial'] .boot,
+:root[data-theme='ethereal'] .boot {
+  background: radial-gradient(120% 100% at 50% 40%, var(--bg-raise) 0%, var(--bg-base) 60%, var(--bg-deep) 100%);
+}
+
+:root[data-theme='editorial'] .boot__scan-wake,
+:root[data-theme='ethereal'] .boot__scan-wake {
+  background: radial-gradient(120% 100% at 50% 50%, var(--bg-raise) 0%, var(--bg-base) 70%, var(--bg-deep) 100%);
+}
+
+/* ---------- Blade ---------- */
+
+:root[data-theme='editorial'] .blade .blade__panel,
+:root[data-theme='ethereal'] .blade .blade__panel {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-base) 100%);
+}
+
+:root[data-theme='editorial'] .blade .blade__panel {
+  border: 2px solid var(--pearl-100);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme='editorial'] .blade__scrim,
+:root[data-theme='ethereal'] .blade__scrim {
+  background: var(--bg-veil);
+}
+
+/* ---------- Plates that hold artwork ---------- */
+
+:root[data-theme='editorial'] .certframe,
+:root[data-theme='ethereal'] .certframe,
+:root[data-theme='editorial'] .ccar--shots,
+:root[data-theme='ethereal'] .ccar--shots,
+:root[data-theme='editorial'] .ccar--shots[data-fit='contain'],
+:root[data-theme='ethereal'] .ccar--shots[data-fit='contain'],
+:root[data-theme='editorial'] .xmb__item-glyph[data-logo='cover'],
+:root[data-theme='ethereal'] .xmb__item-glyph[data-logo='cover'] {
+  background: var(--surface);
+}
+
+:root[data-theme='editorial'] .xmb__node,
+:root[data-theme='ethereal'] .xmb__node {
+  background: linear-gradient(180deg, var(--surface), var(--bg-base));
+}
+
+:root[data-theme='editorial'] .lightbox,
+:root[data-theme='ethereal'] .lightbox {
+  background: radial-gradient(120% 100% at 50% 40%, var(--bg-veil), var(--bg-deep));
+}
+
+:root[data-theme='editorial'] .chat__log,
+:root[data-theme='ethereal'] .chat__log,
+:root[data-theme='editorial'] .chat__input,
+:root[data-theme='ethereal'] .chat__input {
+  background: var(--surface-veil);
+}
+
+/* ---------- Holographic text ----------
+   A five-stop iridescent gradient clipped to glyphs is unreadable once the
+   page is light, so both themes set it solid. */
+
+:root[data-theme='editorial'] .holo-text,
+:root[data-theme='ethereal'] .holo-text,
+:root[data-theme='editorial'] .blade__title,
+:root[data-theme='ethereal'] .blade__title {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--pearl-100);
+  animation: none;
+}
+
+:root[data-theme='editorial'] .blade__title {
+  font-family: var(--pv-serif);
+}
+
+:root[data-theme='ethereal'] .blade__title {
+  font-family: var(--pv-serif);
+  font-weight: 400;
+}
+
+/* ---------- Selected tile ----------
+   The dark themes light the selected glyph white against a saturated film.
+   On paper that is white on white, so the ink is kept and the film dropped. */
+
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-glyph,
+:root[data-theme='ethereal'] .xmb__item[data-selected] .xmb__item-glyph {
+  color: var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .xmb__item-glyph::before,
+:root[data-theme='editorial'] .xmb__cat-glyph::before,
+:root[data-theme='editorial'] .xmb__node-glyph::before {
+  display: none;
+}
+
+:root[data-theme='ethereal'] .xmb__item-glyph::before {
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+/* ---------- Plain view ----------
+   The veil exists to hold text off the wave. It is built from --bg-veil, which
+   on a light theme is near-opaque paper, so it washed the whole page out.
+   Here it only needs to take the edge off. */
+
+:root[data-theme='editorial'] .plain__veil,
+:root[data-theme='ethereal'] .plain__veil {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.12));
+}
+
+/* `.plain` declares its own type stack on the element, which outranks a
+   :root-level token, so the themes restate it at higher specificity. */
+:root[data-theme='editorial'] .plain {
+  --pv-serif: 'Playfair Display', 'Times New Roman', serif;
+  --pv-sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root[data-theme='ethereal'] .plain {
+  --pv-serif: 'Marcellus', Georgia, serif;
+  --pv-sans: 'Cormorant Garamond', Georgia, serif;
+  --pv-display: 'Marcellus', Georgia, serif;
+}
+
+/* Gradient-filled type, again: the rotating slot and the closing line both
+   clip --holo to their glyphs, which disappears on paper. */
+:root[data-theme='editorial'] .pv-slot__row,
+:root[data-theme='ethereal'] .pv-slot__row,
+:root[data-theme='editorial'] .pv-contact__big em,
+:root[data-theme='ethereal'] .pv-contact__big em {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  animation: none;
+}
+
+:root[data-theme='editorial'] .pv-slot__row,
+:root[data-theme='editorial'] .pv-contact__big em {
+  color: var(--iri-2);
+}
+
+:root[data-theme='ethereal'] .pv-slot__row,
+:root[data-theme='ethereal'] .pv-contact__big em {
+  color: var(--pearl-300);
+}
+
+/* ---------- Socials ----------
+   The burst hangs off the cross point, which on these layouts leaves the
+   cluster stranded to one side with the last card alone on a second row.
+   There are three contacts, so give them one row and centre the block. */
+
+:root[data-theme='editorial'] .xmb__burst,
+:root[data-theme='ethereal'] .xmb__burst {
+  left: calc(50vw - var(--cross-x));
+  translate: -50% -50%;
+  width: min(1020px, 84vw);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-left: 0;
+  gap: 18px;
+}
+
+:root[data-theme='editorial'] .xmb__quote,
+:root[data-theme='ethereal'] .xmb__quote {
+  left: 0;
+  right: 0;
+  padding-left: 0;
+  text-align: center;
+}
+
+/* A five-stop sweep across a headline is noise once the page is light. */
+:root[data-theme='editorial'] .xmb__quote-line,
+:root[data-theme='ethereal'] .xmb__quote-line {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: var(--pearl-100);
+  color: var(--pearl-100);
+  animation: none;
+}
+
+:root[data-theme='editorial'] .xmb__quote {
+  font-family: var(--pv-serif);
+  font-weight: 600;
+}
+
+:root[data-theme='ethereal'] .xmb__quote {
+  font-family: var(--pv-serif);
+  font-weight: 400;
+}
+
+@media (max-width: 900px) {
+  :root[data-theme='editorial'] .xmb__burst,
+  :root[data-theme='ethereal'] .xmb__burst {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(440px, 86vw);
+  }
+}

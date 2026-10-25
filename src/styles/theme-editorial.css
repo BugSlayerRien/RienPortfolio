@@ -1,0 +1,433 @@
+/* ============================================================
+   Theme — "editorial" (Press)
+   ============================================================
+
+   Not a recoloured console: a printed contents page. The categories lift into
+   a masthead across the top, the items become a numbered list ruled down the
+   page, and the selection is a highlighter stroke rather than a glowing tile.
+
+   The navigation model is untouched — arrows, WASD, wheel, swipe, Enter and
+   Esc all do exactly what they do in the dark themes, and the rail still
+   slides so the cursor stays on the cross point. Only the geometry and the
+   ink change, which is why this is all CSS over the existing DOM.
+
+   The pearl ramp is inverted: in a dark theme --pearl-100 is the brightest
+   ink, so here it is the blackest. Every component asks for ink by that name,
+   so flipping the ramp flips the site without touching a component.
+   ------------------------------------------------------------ */
+
+:root[data-theme='editorial'] {
+  color-scheme: light;
+
+  /* Paper, two shades of it, and a margin tint. */
+  --bg-deep: #f4f1ea;
+  --bg-base: #efebe2;
+  --bg-raise: #ffffff;
+  --bg-veil: rgba(244, 241, 234, 0.86);
+
+  /* The ramp, inverted: 100 is the heaviest ink. */
+  --pearl-100: #121110;
+  --pearl-200: #26241f;
+  --pearl-300: #46423a;
+  --pearl-400: #5c564c;
+  --pearl-500: #6f685c;
+  --pearl-600: #8d8578;
+
+  /* Press colours: highlighter, red, black, blue, paper tint. */
+  --iri-1: #e8e23a;
+  --iri-2: #d8402f;
+  --iri-3: #121110;
+  --iri-4: #2f6bd8;
+  --iri-5: #e9e4d8;
+
+  --holo-soft: linear-gradient(
+    var(--holo-angle),
+    rgba(232, 226, 58, 0.5) 0%,
+    rgba(216, 64, 47, 0.26) 35%,
+    rgba(18, 17, 16, 0.14) 65%,
+    rgba(233, 228, 216, 0.5) 100%
+  );
+
+  --metal: linear-gradient(170deg, rgba(18, 17, 16, 0.9) 0%, rgba(18, 17, 16, 0.5) 50%, rgba(18, 17, 16, 0.9) 100%);
+
+  /* Flat, not glassy. */
+  --glass: rgba(18, 17, 16, 0.04);
+  --glass-strong: rgba(18, 17, 16, 0.08);
+  --edge: rgba(18, 17, 16, 0.2);
+  --edge-bright: rgba(18, 17, 16, 0.55);
+
+  /* Print type. */
+  --font-ui: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --pv-sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --pv-serif: 'Playfair Display', 'Times New Roman', serif;
+  --pv-display: 'Anton', 'Arial Narrow Bold', sans-serif;
+
+  /* Nothing is rounded in print. */
+  --r-sm: 0;
+  --r-md: 0;
+  --r-lg: 0;
+  --r-pill: 0;
+
+  /* List geometry: short rows close together, not tiles far apart. */
+  --col-gap: clamp(118px, 13vw, 184px);
+  --row-gap: 62px;
+  --icon: 32px;
+  --icon-sel: 46px;
+
+  /* Caps with tracking read smaller than they measure. */
+  --fs-xs: 0.8rem;
+  --fs-sm: 0.9rem;
+
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-holo: 0 0 0 1px rgba(18, 17, 16, 0.55);
+}
+
+/* The list hangs off the left margin, and starts below the masthead. */
+:root[data-theme='editorial'] .xmb {
+  --cross-x: clamp(120px, 15vw, 230px);
+  --cross-y: 46vh;
+}
+
+/* The wave is a press-check smudge: faint, and well out of the way. */
+:root[data-theme='editorial'] .wave {
+  opacity: 0.1;
+  mix-blend-mode: multiply;
+}
+
+/* ============================================================
+   The bar, as a contents page
+   ============================================================ */
+
+/* The masthead rule the category words sit on. Fixed to the page, not the
+   rail, so it does not slide when the bar does. */
+:root[data-theme='editorial'] .xmb::before {
+  content: '';
+  position: absolute;
+  left: clamp(20px, 4vw, 56px);
+  right: clamp(20px, 4vw, 56px);
+  top: 124px;
+  height: 2px;
+  background: var(--pearl-100);
+  z-index: 1;
+}
+
+/* Categories become words in a masthead, not icons on the rail. */
+:root[data-theme='editorial'] .xmb__cat {
+  top: 104px;
+  width: auto;
+  white-space: nowrap;
+}
+
+:root[data-theme='editorial'] .xmb__cat-slot {
+  display: none;
+}
+
+:root[data-theme='editorial'] .xmb__cat-label {
+  position: static;
+  translate: none;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 1;
+}
+
+:root[data-theme='editorial'] .xmb__col[data-active] .xmb__cat-label {
+  padding: 4px 10px;
+  background: var(--pearl-100);
+  color: var(--bg-raise);
+}
+
+/* Items: a ruled, numbered list running out from the left margin. */
+:root[data-theme='editorial'] .xmb__items {
+  counter-reset: folio;
+}
+
+:root[data-theme='editorial'] .xmb__item {
+  counter-increment: folio;
+}
+
+:root[data-theme='editorial'] .xmb__item-btn {
+  position: relative;
+  gap: 16px;
+  margin-left: 0;
+  padding: 0 0 12px;
+  width: min(52vw, 620px);
+  border-bottom: 1px solid var(--edge);
+}
+
+/* The folio number in the gutter. */
+:root[data-theme='editorial'] .xmb__item-btn::before {
+  content: counter(folio, decimal-leading-zero);
+  flex: none;
+  width: 2.4em;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--pearl-500);
+}
+
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-btn::before {
+  color: var(--iri-2);
+}
+
+:root[data-theme='editorial'] .xmb__item-slot {
+  width: var(--icon-sel);
+  height: var(--icon-sel);
+}
+
+/* Flat plates with a hairline. */
+:root[data-theme='editorial'] .xmb__item-glyph,
+:root[data-theme='editorial'] .xmb__node-glyph {
+  background: var(--bg-raise);
+  border: 1px solid var(--pearl-100);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+:root[data-theme='editorial'] .xmb__item-sheen,
+:root[data-theme='editorial'] .xmb__burst-flash,
+:root[data-theme='editorial'] .xmb__focus-ring,
+:root[data-theme='editorial'] .xmb__focus-core {
+  display: none;
+}
+
+/* Titles set in the Didone, subtitles as small grotesque caps. */
+:root[data-theme='editorial'] .xmb__item-title,
+:root[data-theme='editorial'] .xmb__node-label {
+  font-family: var(--pv-serif);
+  font-weight: 500;
+  font-size: 1.15rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root[data-theme='editorial'] .xmb__item-sub,
+:root[data-theme='editorial'] .xmb__node-value {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+  color: var(--pearl-400);
+}
+
+/* Every row shows its title — a contents page lists everything, it does not
+   reveal one line at a time. */
+:root[data-theme='editorial'] .xmb__col[data-active] .xmb__item-text {
+  opacity: 1;
+  transform: none;
+}
+
+:root[data-theme='editorial'] .xmb__col[data-active] .xmb__item:not([data-selected]) .xmb__item-text {
+  opacity: 0.55;
+}
+
+/* The selected row is marked the way a reader marks a page. */
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-text {
+  position: relative;
+}
+
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-text::before {
+  content: '';
+  position: absolute;
+  inset: 6% -12px 16% -12px;
+  background: var(--iri-1);
+  z-index: -1;
+}
+
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-btn {
+  border-bottom-color: var(--pearl-100);
+  border-bottom-width: 2px;
+}
+
+/* ---------- Start page: a cover ---------- */
+
+:root[data-theme='editorial'] .boot__bloom,
+:root[data-theme='editorial'] .boot__ripple,
+:root[data-theme='editorial'] .boot__scan-wake,
+:root[data-theme='editorial'] .boot__logo-sheen {
+  display: none;
+}
+
+:root[data-theme='editorial'] .boot__scan-grid {
+  opacity: 0.12;
+}
+
+:root[data-theme='editorial'] .boot__frame {
+  border: 2px solid var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .boot__logo {
+  padding: 10px 0;
+  border-top: 2px solid var(--pearl-100);
+  border-bottom: 2px solid var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .boot__logo-text {
+  font-family: 'Anton', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+:root[data-theme='editorial'] .boot__ch {
+  background: none;
+  -webkit-text-fill-color: var(--pearl-100);
+  color: var(--pearl-100);
+  animation: none;
+}
+
+:root[data-theme='editorial'] .boot__line {
+  background: var(--pearl-100);
+  opacity: 1;
+}
+
+/* The prompt is a stamped sticker. */
+:root[data-theme='editorial'] .boot__prompt {
+  background: var(--pearl-100);
+  border: 0;
+  border-radius: 0;
+  rotate: -1.4deg;
+}
+
+:root[data-theme='editorial'] .boot__prompt-label,
+:root[data-theme='editorial'] .boot__prompt-note {
+  color: var(--bg-raise);
+}
+
+:root[data-theme='editorial'] .boot__prompt-ring {
+  display: none;
+}
+
+:root[data-theme='editorial'] .ctls {
+  border: 1px solid var(--edge);
+  background: transparent;
+  backdrop-filter: none;
+}
+
+:root[data-theme='editorial'] .ctls::before {
+  display: none;
+}
+
+:root[data-theme='editorial'] .ctl__key,
+:root[data-theme='editorial'] .ctl__mouse,
+:root[data-theme='editorial'] .ctl__pad,
+:root[data-theme='editorial'] .ctl__swipe,
+:root[data-theme='editorial'] .ctl__tap {
+  border-color: var(--pearl-100);
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ---------- Detail panel: a printed page ---------- */
+
+:root[data-theme='editorial'] .blade .blade__panel {
+  --panel-w: min(680px, 52vw);
+}
+
+:root[data-theme='editorial'] .blade__title {
+  font-family: var(--pv-serif);
+  font-weight: 600;
+}
+
+:root[data-theme='editorial'] .blade__head {
+  border-bottom: 2px solid var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .eyebrow {
+  border-left: 3px solid var(--iri-2);
+  padding-left: 8px;
+}
+
+/* ---------- HUD: a masthead ---------- */
+
+:root[data-theme='editorial'] .hud__chip,
+:root[data-theme='editorial'] .hud__cv,
+:root[data-theme='editorial'] .hud__plain,
+:root[data-theme='editorial'] .hud__kbd {
+  background: transparent;
+  border: 1px solid var(--pearl-100);
+  border-radius: 0;
+  color: var(--pearl-100);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+:root[data-theme='editorial'] .hud__cv {
+  background: var(--pearl-100);
+  color: var(--bg-raise);
+}
+
+:root[data-theme='editorial'] .hud__cv-ring {
+  display: none;
+}
+
+:root[data-theme='editorial'] .hud__top {
+  border-bottom: 2px solid var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .hud__bottom {
+  border-top: 1px solid var(--edge);
+}
+
+:root[data-theme='editorial'] .hud__brand-mark {
+  font-family: 'Anton', sans-serif;
+}
+
+:root[data-theme='editorial'] .hud__ch {
+  background: none;
+  -webkit-text-fill-color: var(--pearl-100);
+  color: var(--pearl-100);
+}
+
+/* ---------- Plain view: a spread ---------- */
+
+:root[data-theme='editorial'] .pv-frame {
+  display: none;
+}
+
+:root[data-theme='editorial'] .pv-bill__line[data-slab] > span {
+  background: var(--iri-1);
+  color: var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .pv-slot[data-size='bill'] .pv-slot__row {
+  background: var(--iri-1);
+  color: var(--pearl-100);
+  padding-inline: 0.12em;
+}
+
+:root[data-theme='editorial'] .pv-btn,
+:root[data-theme='editorial'] .tchip,
+:root[data-theme='editorial'] .pv-tags li {
+  border-radius: 0;
+  border: 1px solid var(--pearl-100);
+  background: transparent;
+}
+
+:root[data-theme='editorial'] .pv-btn--solid {
+  background: var(--pearl-100);
+  color: var(--bg-raise);
+}
+
+/* Section heads read as folios over a heavy rule. */
+:root[data-theme='editorial'] .pv-head {
+  border-bottom: 2px solid var(--pearl-100);
+  padding-bottom: 10px;
+}
+
+:root[data-theme='editorial'] .pv-head__rule {
+  display: none;
+}
+
+:root[data-theme='editorial'] .pv-head__title {
+  font-family: var(--pv-serif);
+  font-weight: 600;
+}
+
+:root[data-theme='editorial'] .pv-project__title {
+  font-family: var(--pv-serif);
+}

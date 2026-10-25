@@ -21,17 +21,19 @@ export const THEMES = [
       [255, 232, 154],
     ],
   },
-  {
-    id: 'malevolent',
-    label: 'Noir',
-    palette: [
-      [255, 90, 102],
-      [194, 32, 63],
-      [122, 16, 48],
-      [224, 122, 60],
-      [240, 200, 154],
-    ],
-  },
+  /* Noir is hidden for now — its tokens stay in tokens.css, so putting this
+     block back is all it takes to bring the theme along with them. */
+  // {
+  //   id: 'malevolent',
+  //   label: 'Noir',
+  //   palette: [
+  //     [255, 90, 102],
+  //     [194, 32, 63],
+  //     [122, 16, 48],
+  //     [224, 122, 60],
+  //     [240, 200, 154],
+  //   ],
+  // },
   {
     id: 'mono',
     label: 'Mono',
@@ -41,6 +43,28 @@ export const THEMES = [
       [141, 141, 150],
       [237, 237, 241],
       [168, 168, 177],
+    ],
+  },
+  {
+    id: 'editorial',
+    label: 'Press',
+    palette: [
+      [232, 226, 58],
+      [216, 64, 47],
+      [18, 17, 16],
+      [47, 107, 216],
+      [233, 228, 216],
+    ],
+  },
+  {
+    id: 'ethereal',
+    label: 'Bloom',
+    palette: [
+      [255, 244, 194],
+      [191, 227, 168],
+      [159, 216, 210],
+      [232, 242, 216],
+      [255, 255, 255],
     ],
   },
 ];
