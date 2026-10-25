@@ -360,8 +360,8 @@
    sized from --row so a spin never nudges what sits under it. */
 .pv-slot[data-size='bill'] .pv-slot__window {
   --row: 1.12em;
-  -webkit-mask-image: none;
-  mask-image: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
 }
 
 .pv-slot[data-size='bill'] {
@@ -477,73 +477,24 @@
   translate: 0 calc(var(--pv-scroll, 0px) * -0.12);
 }
 
-/* The portrait breaks out of its disc: the head rises over the ring while
-   the shoulders and the cat below are cut off by the disc's lower half.
-   The image is 160% of the disc wide and sits so its top clears the disc by
-   about 0.39 of the disc's width; the mask is the disc's lower half plus
-   everything above its centre line. */
-.pv-hero__disc {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--iri-2) 38%, transparent), transparent 70%),
-    radial-gradient(circle at 20% 90%, color-mix(in srgb, var(--iri-4) 34%, transparent), transparent 65%),
-    color-mix(in srgb, var(--pearl-100) 5%, transparent);
-  border: 1px solid var(--edge-bright);
-  backdrop-filter: blur(6px);
-}
-
-/* Each shot is masked twice over: the disc itself, drawn as an ellipse in the
-   image's own coordinates, plus a plain band covering everything above the
-   disc's centre line — that band is what lets the head rise past the rim.
-   --cy is where that centre line falls on the image, so the band's height and
-   the ellipse's centre are the same number. */
+/* The portrait is a tall frame now, not a disc, so a shot is simply a crop:
+   object-fit does the work the two per-shot ellipse masks used to, and the
+   focal point rides on the element as objectPosition. */
 .pv-hero__shot {
   position: absolute;
-  left: var(--l);
-  top: var(--t);
-  width: var(--w);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
-  height: auto;
+  object-fit: cover;
   opacity: 0;
   transition: opacity 1100ms var(--pv-ease-io);
-  -webkit-mask-image: linear-gradient(#000, #000), radial-gradient(ellipse var(--rx) var(--ry) at 50% var(--cy), #000 98.5%, transparent 100%);
-  -webkit-mask-size: 100% var(--cy), 100% 100%;
-  -webkit-mask-position: 0 0, 0 0;
-  -webkit-mask-repeat: no-repeat;
-  mask-image: linear-gradient(#000, #000), radial-gradient(ellipse var(--rx) var(--ry) at 50% var(--cy), #000 98.5%, transparent 100%);
-  mask-size: 100% var(--cy), 100% 100%;
-  mask-position: 0 0, 0 0;
-  mask-repeat: no-repeat;
-  filter: drop-shadow(0 10px 22px rgb(0 0 0 / 0.35));
   transform-origin: 50% 92%;
   animation: pv-sway 17s linear infinite;
 }
 
 .pv-hero__shot[data-on] {
   opacity: 1;
-}
-
-/* Close-up: 160% wide, head well clear of the rim. */
-.pv-hero__shot[data-fit='close'] {
-  --l: -30%;
-  --t: -39.4%;
-  --w: 160%;
-  --rx: 31.25%;
-  --ry: 30.4%;
-  --cy: 54.4%;
-}
-
-/* Suited half-body: stands further back, so it needs less scale and only a
-   touch of headroom above the rim. */
-.pv-hero__shot[data-fit='stand'] {
-  --l: 4%;
-  --t: -6%;
-  --w: 92%;
-  --rx: 54.3%;
-  --ry: 34.3%;
-  --cy: 38.5%;
 }
 
 /* A breath. The path is a sine traced through eight stops and played at a
@@ -582,9 +533,10 @@
 /* A slow iridescent ring, the same oil-slick as the XMB tiles. */
 .pv-hero__ring {
   position: absolute;
-  inset: -14px;
+  inset: 0;
+  z-index: 2;
   border-radius: 50%;
-  padding: 2px;
+  padding: 1px;
   background: conic-gradient(from var(--holo-angle), var(--iri-1), var(--iri-2), var(--iri-3), var(--iri-4), var(--iri-5), var(--iri-1));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -992,16 +944,6 @@
   padding-bottom: clamp(80px, 14vh, 140px);
 }
 
-.pv-contact__big {
-  margin: 0;
-  max-width: 17ch;
-  font-family: var(--pv-serif);
-  font-weight: 400;
-  font-size: clamp(2.8rem, 7vw, 5.6rem);
-  line-height: 0.98;
-  color: var(--pearl-100);
-}
-
 .pv-contact__mail {
   display: inline-block;
   margin-top: 32px;
@@ -1289,6 +1231,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: clamp(16px, 3vw, 48px);
+  padding-bottom: 26px;
 }
 
 .pv-bill__type {
@@ -1313,21 +1256,38 @@
 
 /* The portrait is the band's second column, bottom-aligned to the type. */
 .pv-bill .pv-hero__photo {
-  --ring-bleed: 14px; /* .pv-hero__ring sits this far outside the figure */
   --ring-gap: 10px; /* air between the ring and each rule */
-  width: auto;
-  height: calc(100% - (var(--ring-bleed) + var(--ring-gap)) * 2);
-  min-height: 150px;
-  max-height: 300px;
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--iri-2) 26%, transparent), transparent 70%),
+    var(--bg-raise);
+  width: clamp(200px, 24vw, 330px);
+  height: auto;
+  aspect-ratio: 1;
   align-self: center;
   justify-self: end;
   margin: auto 0;
-  translate: none; /* the scroll-drift belongs to the old absolute placement */
+  overflow: hidden;
+  border-radius: 50%;
+  translate: none; /* the scroll-drift belonged to the old absolute placement */
 }
 
-.pv-bill__foot {
-  padding: 26px 0 26px;
-  border-top: 1px solid var(--edge);
+/* The closing section is centred on the page, headline and all. */
+.pv-contact {
+  text-align: center;
+}
+
+.pv-contact__big {
+  max-width: 17ch;
+  margin: 0 auto;
+  font-family: var(--pv-serif);
+  font-weight: 400;
+  font-size: clamp(2.8rem, 7vw, 5.6rem);
+  line-height: 0.98;
+  color: var(--pearl-100);
+}
+
+.pv-contact .pv-contact__links {
+  justify-content: center;
 }
 
 .pv-bill__foot .pv-hero__lede {
@@ -1346,13 +1306,17 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .pv-bill__band {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
   .pv-bill .pv-hero__photo {
     order: -1;
-    width: min(52vw, 220px);
+    width: min(58vw, 240px);
     height: auto;
-    max-height: none;
     justify-self: start;
-    margin: 0 0 6px;
+    margin: 0 0 14px;
   }
 
   .pv-bill__foot {

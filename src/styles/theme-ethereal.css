@@ -18,20 +18,23 @@
    ------------------------------------------------------------ */
 
 :root[data-theme='ethereal'] {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --bg-deep: #e9efe6;
-  --bg-base: #f1f4ec;
-  --bg-raise: #fbfcf8;
-  --bg-veil: rgba(233, 239, 230, 0.78);
+  /* A dark clearing. The golds and mints below are unchanged: against this
+     ground they finally read as light sources, which is what the halo and the
+     bloom always wanted them to be. */
+  --bg-deep: #0e1611;
+  --bg-base: #141f19;
+  --bg-raise: #1b2a21;
+  --bg-veil: rgba(14, 22, 17, 0.8);
 
-  /* Ink is soft green-grey, never black. */
-  --pearl-100: #1d2a21;
-  --pearl-200: #2b3a2f;
-  --pearl-300: #41523f;
-  --pearl-400: #5a6b5c;
-  --pearl-500: #6f7f71;
-  --pearl-600: #93a394;
+  /* Pale sage through to a dim moss. */
+  --pearl-100: #eaf2e6;
+  --pearl-200: #d7e2d2;
+  --pearl-300: #bccfb8;
+  --pearl-400: #9cb199;
+  --pearl-500: #8a9e87;
+  --pearl-600: #70836e;
 
   /* Sunlight, leaf, water, haze, bloom. */
   --iri-1: #fff4c2;
@@ -50,16 +53,16 @@
 
   --metal: linear-gradient(
     170deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.4) 40%,
-    rgba(191, 227, 168, 0.3) 70%,
-    rgba(255, 255, 255, 0.9) 100%
+    rgba(234, 242, 230, 0.8) 0%,
+    rgba(234, 242, 230, 0.26) 40%,
+    rgba(191, 227, 168, 0.2) 70%,
+    rgba(234, 242, 230, 0.7) 100%
   );
 
-  --glass: rgba(255, 255, 255, 0.55);
-  --glass-strong: rgba(255, 255, 255, 0.78);
-  --edge: rgba(43, 58, 47, 0.1);
-  --edge-bright: rgba(43, 58, 47, 0.22);
+  --glass: rgba(234, 242, 230, 0.06);
+  --glass-strong: rgba(234, 242, 230, 0.12);
+  --edge: rgba(234, 242, 230, 0.14);
+  --edge-bright: rgba(234, 242, 230, 0.3);
 
   --font-ui: 'Marcellus', Georgia, serif;
   --font-mono: 'Marcellus', Georgia, serif;
@@ -83,11 +86,11 @@
   --halo-r: clamp(150px, 19vw, 280px);
   --halo-step: 23deg;
 
-  --shadow-sm: 0 2px 18px rgba(43, 58, 47, 0.1);
-  --shadow-md: 0 14px 50px rgba(43, 58, 47, 0.12);
-  --shadow-lg: 0 30px 90px rgba(43, 58, 47, 0.14);
-  --shadow-holo: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 10px 44px rgba(159, 216, 210, 0.5),
-    0 0 90px rgba(255, 244, 194, 0.6);
+  --shadow-sm: 0 2px 18px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 14px 50px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.6);
+  --shadow-holo: 0 0 0 1px rgba(234, 242, 230, 0.3), 0 10px 44px rgba(159, 216, 210, 0.3),
+    0 0 80px rgba(255, 244, 194, 0.26);
 
   --track-wide: 0.12em;
 
@@ -103,18 +106,27 @@
   --cross-y: 50vh;
 }
 
-/* A wash of light instead of ribbons. */
-:root[data-theme='ethereal'] .wave {
-  opacity: 0.55;
-  filter: blur(16px) saturate(1.2);
+/* ---------- Ground: dappled light ----------
+   No wave here either. A few very large, very soft pools of gold and mint drift
+   across the dark, the way light comes through a canopy. */
+
+:root[data-theme='ethereal'] .wavefield__canvas,
+:root[data-theme='ethereal'] .wavefield__film,
+:root[data-theme='ethereal'] .wavefield__vignette {
+  display: none;
 }
 
-/* Light leaks in from the top, the way it does through a canopy. */
-:root[data-theme='ethereal'] body {
+:root[data-theme='ethereal'] .wavefield__ground {
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 255, 255, 0.95), transparent 60%),
-    radial-gradient(90% 60% at 80% 10%, rgba(255, 244, 194, 0.7), transparent 70%),
+    radial-gradient(44% 38% at 24% 18%, rgba(255, 244, 194, 0.16), transparent 70%),
+    radial-gradient(52% 44% at 78% 32%, rgba(159, 216, 210, 0.14), transparent 72%),
+    radial-gradient(60% 50% at 52% 92%, rgba(191, 227, 168, 0.12), transparent 70%),
     var(--bg-deep);
+  filter: blur(26px);
+}
+
+:root[data-theme='ethereal'] body {
+  background: var(--bg-deep);
 }
 
 /* ============================================================
@@ -187,14 +199,13 @@
 
 :root[data-theme='ethereal'] .xmb__item[data-selected] .xmb__item-glyph {
   border-color: transparent;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 50px rgba(255, 244, 194, 0.9),
-    0 0 110px rgba(159, 216, 210, 0.6);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6), 0 0 44px rgba(255, 244, 194, 0.55),
+    0 0 96px rgba(159, 216, 210, 0.38);
 }
 
-/* The cross point is a halo rather than a reticle. */
-:root[data-theme='ethereal'] .xmb__focus-ring {
-  border-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 60px rgba(255, 244, 194, 0.9);
+:root[data-theme='ethereal'] .xmb__focus-ring,
+:root[data-theme='ethereal'] .xmb__focus-core {
+  display: none;
 }
 
 /* The category reduces to one faint word above the arc. */
@@ -245,13 +256,16 @@
 
 /* ---------- Start page: light through the frame ---------- */
 
-:root[data-theme='ethereal'] .boot__frame,
-:root[data-theme='ethereal'] .boot__scan-grid {
+:root[data-theme='ethereal'] .boot__frame {
   opacity: 0;
 }
 
+:root[data-theme='ethereal'] .boot__scan-grid {
+  opacity: 0.1;
+}
+
 :root[data-theme='ethereal'] .boot__bloom {
-  opacity: 0.95;
+  opacity: 0.85;
   filter: blur(46px);
   scale: 1.3;
 }
@@ -266,7 +280,7 @@
   background: none;
   -webkit-text-fill-color: var(--pearl-100);
   color: var(--pearl-100);
-  text-shadow: 0 0 34px rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 40px rgba(255, 244, 194, 0.55);
 }
 
 :root[data-theme='ethereal'] .boot__line {
@@ -301,16 +315,28 @@
   display: none;
 }
 
-/* ---------- Detail panel: a centred clearing ---------- */
-
-:root[data-theme='ethereal'] .blade {
-  justify-content: center;
-}
+/* ---------- Detail panel: lacquered black ----------
+   Docked on the right like every other theme. The base panel is a navy glass,
+   which next to the green ground read as tinted; here it is a polished black
+   so the clearing around it stays the only colour on screen. */
 
 :root[data-theme='ethereal'] .blade .blade__panel {
-  --panel-w: min(620px, 62vw);
-  border: 0;
-  box-shadow: 0 40px 120px rgba(43, 58, 47, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015) 38%, rgba(255, 255, 255, 0.05)),
+    linear-gradient(180deg, #0c0d0d 0%, #050606 100%);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Cards inside the panel follow it: neutral glass, no green cast. Scoped to
+   the body, because the panel itself is a .pearl-panel too. */
+:root[data-theme='ethereal'] .blade__body .pearl-panel {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)), #121414;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme='ethereal'] .blade__body .pearl-panel::before {
+  opacity: 0.12;
 }
 
 :root[data-theme='ethereal'] .blade__edge {
@@ -372,11 +398,6 @@
   border-color: var(--edge-bright);
 }
 
-:root[data-theme='ethereal'] .pv-bill__line[data-slab] > span {
-  background: var(--iri-2);
-  color: var(--pearl-100);
-}
-
 /* Section heads reduce to a centred word over a hairline. */
 :root[data-theme='ethereal'] .pv-head {
   justify-items: center;
@@ -386,7 +407,6 @@
 :root[data-theme='ethereal'] .pv-head__title {
   font-weight: 400;
   letter-spacing: 0.14em;
-  text-transform: lowercase;
 }
 
 :root[data-theme='ethereal'] .pv-project__caption,
@@ -403,8 +423,8 @@
   inset: 0;
   pointer-events: none;
   z-index: 60;
-  opacity: 0.4;
-  mix-blend-mode: multiply;
-  background-image: radial-gradient(rgba(43, 58, 47, 0.25) 0.5px, transparent 0.5px);
+  opacity: 0.3;
+  mix-blend-mode: screen;
+  background-image: radial-gradient(rgba(234, 242, 230, 0.16) 0.5px, transparent 0.5px);
   background-size: 3px 3px;
 }

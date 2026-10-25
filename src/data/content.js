@@ -116,10 +116,12 @@ export const categories = [
 
 export const about = {
   heading: 'About_Me',
-  intro: 'I am Rien, a 4th year BSIT student.',
+  /* The opening line used to repeat what the first paragraph now says itself;
+     both views skip the standfirst while it is empty. */
+  intro: '',
   body: [
-    'I build software end to end, from the database and API to the interface people actually use. I work across web and mobile, and I like adding AI where it genuinely helps.',
-    'What I enjoy most is the work that holds a product together. I care about software that works reliably for real people, and I am as comfortable leading a team as building for one.',
+    'I’m a 4th-year BSIT student who loves the craft of building software, from the interface people tap on to the database underneath. I work across websites and mobile apps, and I like using AI where it actually makes a product better, not just for show.',
+    'I led my capstone as the full-stack developer: a barbershop management system with AI-powered haircut recommendations, built with Flutter, PHP, Python, and PostgreSQL. I enjoy taking complex ideas and turning them into simple tools that real people can use. Perseverance is my strongest trait. When a real challenge gets hard, I keep going until it works.',
     'Outside the editor I help run Google Developer Groups on Campus at NU Baliwag, where I organise workshops and developer sessions for other students.',
   ],
 };
@@ -164,8 +166,8 @@ export const projects = {
     title: 'Brilyantis',
     tagline: 'Barbershop Management System with AI-Powered Haircut and Styling Recommendation',
     description:
-      'A full barbershop system built around a face scan. A customer photographs themselves in the mobile app, a Python computer-vision pipeline runs MediaPipe face detection and face mesh to derive face shape and hair attributes, and that reading is ranked by an LLM into the top five hairstyle suggestions with front, side and back previews. From there the customer picks a barber and a time slot and books. Separate portals cover the receptionist desk, walk-ins, an in-store kiosk, and an admin view with analytics and an audit log.',
-    tech: ['Flutter', 'Dart', 'PHP', 'MySQL', 'Python', 'MediaPipe', 'Gemini API'],
+      'A full barbershop system built around a face scan. A customer photographs themselves in the mobile app, a Python computer-vision pipeline runs MediaPipe face detection and face mesh to derive face shape and hair attributes, and that reading is sorted by an LLM into recommended haircuts grouped by category, each with front, side and back previews rendered on the customer’s own photo. The scan ends on a suggested appointment — a barber and a time slot already chosen — that the customer can process straight away. Separate portals cover the receptionist desk, walk-ins, an in-store kiosk, and an admin view with analytics and an audit log.',
+    tech: ['Flutter', 'Dart', 'PHP', 'PostgreSQL', 'Python', 'MediaPipe', 'Gemini API', 'Grok', 'Replicate'],
     status: 'In development',
     roles: ['fullstack', 'capstone'],
     // Three clients, three carousels. The kiosk set is empty until there are
@@ -206,11 +208,9 @@ export const projects = {
   gocollab: {
     title: 'GoCollab',
     tagline: 'A Community Management Platform',
-    // TODO(rien): drafted from the screenshots. Fix anything that is off and add
-    // what it is built with to `tech`.
     description:
       'A mobile home for the GDGoC Philippines community. Members sign in with email or Google, earn community points, register for events, browse a Career Hub of internships, scholarships and certifications, and read announcements. Organizers get their own dashboard with analytics, partners, announcements and member verification.',
-    tech: [],
+    tech: ['Flutter', 'Dart', 'Riverpod', 'Supabase', 'Firebase Cloud Messaging', 'Google Calendar API'],
     status: 'In development',
     roles: ['frontend', 'backend'],
     shotsFit: 'contain',

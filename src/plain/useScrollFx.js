@@ -28,16 +28,16 @@ export default function useScrollFx(scrollRef, ready) {
 
       /* ---- Billboard: the name lifts and the whole block recedes as the
          page leaves it, so the hero reads as a layer above the content. ---- */
-      gsap.to('.pv-bill__name', {
+      gsap.to('.pv-bill--hero .pv-bill__name', {
         y: () => -0.18 * window.innerHeight,
         ease: 'none',
-        scrollTrigger: st({ trigger: '.pv-bill', start: 'top top', end: 'bottom top', scrub: 0.4 }),
+        scrollTrigger: st({ trigger: '.pv-bill--hero', start: 'top top', end: 'bottom top', scrub: 0.4 }),
       });
 
-      gsap.to('.pv-bill', {
+      gsap.to('.pv-bill--hero', {
         opacity: 0.08,
         ease: 'none',
-        scrollTrigger: st({ trigger: '.pv-bill', start: 'center top', end: 'bottom top', scrub: 0.4 }),
+        scrollTrigger: st({ trigger: '.pv-bill--hero', start: 'center top', end: 'bottom top', scrub: 0.4 }),
       });
 
       /* ---- Section rules draw themselves across as the head arrives. ---- */

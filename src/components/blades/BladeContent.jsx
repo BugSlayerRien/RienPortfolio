@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useShotCycle from '../../hooks/useShotCycle';
 import Icon from '../Icon';
 import { Section, Card, Chips, Prose, Row } from './Parts';
 import CommentBlade from './CommentBlade';
@@ -23,8 +24,21 @@ import {
 
 /* ---------------------------------------------------------- */
 
+/* The two portraits, framed for a circle: each is a different crop of the same
+   person, so each needs its own zoom and focal point. */
+const ABOUT_SHOTS = [
+  { src: 'avatar', scale: 1.75, origin: '49% 30%', pos: '50% 50%' },
+  /* The suited shot is a half-body crop with the head in its top fifth, so the
+     circle takes the top band and grows from there rather than from the middle. */
+  /* Zoomed about a point above the frame, so as it grows the head moves down
+     and the circle keeps some air above the hair. */
+  { src: 'standing', scale: 1.5, origin: '50% -10%', pos: '50% 0%' },
+];
+
 function AboutBlade() {
   const [zoomed, setZoomed] = useState(false);
+  const shot = useShotCycle(ABOUT_SHOTS.length);
+  const showing = profile[ABOUT_SHOTS[shot].src];
 
   return (
     <>
@@ -36,10 +50,20 @@ function AboutBlade() {
             onClick={() => setZoomed(true)}
             aria-label="View photo larger"
           >
-            <img src={profile.avatar} alt="" width="136" height="136" />
+            {ABOUT_SHOTS.map((s, i) => (
+              <img
+                className="hero__shot"
+                key={s.src}
+                src={profile[s.src]}
+                alt=""
+                data-on={i === shot || undefined}
+                style={{ '--shot-scale': s.scale, '--shot-origin': s.origin, '--shot-pos': s.pos }}
+                loading={i === 0 ? undefined : 'lazy'}
+              />
+            ))}
           </button>
           {zoomed && (
-            <PhotoLightbox src={profile.avatar} alt={profile.fullName} onClose={() => setZoomed(false)} />
+            <PhotoLightbox src={showing} alt={profile.fullName} onClose={() => setZoomed(false)} />
           )}
           <div className="hero__meta">
             <p className="hero__name holo-text">{profile.fullName}</p>
@@ -51,9 +75,11 @@ function AboutBlade() {
 
       <Section>
         <Prose>
-          <p>
-            <strong>{about.intro}</strong>
-          </p>
+          {about.intro && (
+            <p>
+              <strong>{about.intro}</strong>
+            </p>
+          )}
           {about.body.map((p) => (
             <p key={p.slice(0, 24)}>{p}</p>
           ))}

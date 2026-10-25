@@ -11,50 +11,51 @@
    slides so the cursor stays on the cross point. Only the geometry and the
    ink change, which is why this is all CSS over the existing DOM.
 
-   The pearl ramp is inverted: in a dark theme --pearl-100 is the brightest
-   ink, so here it is the blackest. Every component asks for ink by that name,
-   so flipping the ramp flips the site without touching a component.
+   A printed negative rather than a printed page: the stock is near-black and
+   warm, the type is cream, and the highlighter still works, because yellow on
+   black is what a marker on a proof looks like. Everything asks for ink by the
+   pearl ramp, so the whole site turns over with it.
    ------------------------------------------------------------ */
 
 :root[data-theme='editorial'] {
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* Paper, two shades of it, and a margin tint. */
-  --bg-deep: #f4f1ea;
-  --bg-base: #efebe2;
-  --bg-raise: #ffffff;
-  --bg-veil: rgba(244, 241, 234, 0.86);
+  /* Press-room dark: warm, never a neutral black. */
+  --bg-deep: #14130f;
+  --bg-base: #1b1916;
+  --bg-raise: #24211c;
+  --bg-veil: rgba(20, 19, 15, 0.84);
 
-  /* The ramp, inverted: 100 is the heaviest ink. */
-  --pearl-100: #121110;
-  --pearl-200: #26241f;
-  --pearl-300: #46423a;
-  --pearl-400: #5c564c;
-  --pearl-500: #6f685c;
-  --pearl-600: #8d8578;
+  /* Cream through to a dim warm grey. */
+  --pearl-100: #f6f3ea;
+  --pearl-200: #e6e1d4;
+  --pearl-300: #cfc8b8;
+  --pearl-400: #b2aa99;
+  --pearl-500: #9b9382;
+  --pearl-600: #7d7566;
 
-  /* Press colours: highlighter, red, black, blue, paper tint. */
+  /* Highlighter, red, cream, blue, dark stock. */
   --iri-1: #e8e23a;
-  --iri-2: #d8402f;
-  --iri-3: #121110;
-  --iri-4: #2f6bd8;
-  --iri-5: #e9e4d8;
+  --iri-2: #e8503c;
+  --iri-3: #f6f3ea;
+  --iri-4: #5b8df0;
+  --iri-5: #2a2620;
 
   --holo-soft: linear-gradient(
     var(--holo-angle),
-    rgba(232, 226, 58, 0.5) 0%,
-    rgba(216, 64, 47, 0.26) 35%,
-    rgba(18, 17, 16, 0.14) 65%,
-    rgba(233, 228, 216, 0.5) 100%
+    rgba(232, 226, 58, 0.34) 0%,
+    rgba(232, 80, 60, 0.2) 35%,
+    rgba(246, 243, 234, 0.12) 65%,
+    rgba(42, 38, 32, 0.4) 100%
   );
 
-  --metal: linear-gradient(170deg, rgba(18, 17, 16, 0.9) 0%, rgba(18, 17, 16, 0.5) 50%, rgba(18, 17, 16, 0.9) 100%);
+  --metal: linear-gradient(170deg, rgba(246, 243, 234, 0.85) 0%, rgba(246, 243, 234, 0.4) 50%, rgba(246, 243, 234, 0.85) 100%);
 
   /* Flat, not glassy. */
-  --glass: rgba(18, 17, 16, 0.04);
-  --glass-strong: rgba(18, 17, 16, 0.08);
-  --edge: rgba(18, 17, 16, 0.2);
-  --edge-bright: rgba(18, 17, 16, 0.55);
+  --glass: rgba(246, 243, 234, 0.05);
+  --glass-strong: rgba(246, 243, 234, 0.1);
+  --edge: rgba(246, 243, 234, 0.22);
+  --edge-bright: rgba(246, 243, 234, 0.6);
 
   /* Print type. */
   --font-ui: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
@@ -82,7 +83,7 @@
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
-  --shadow-holo: 0 0 0 1px rgba(18, 17, 16, 0.55);
+  --shadow-holo: 0 0 0 1px rgba(246, 243, 234, 0.5);
 }
 
 /* The list hangs off the left margin, and starts below the masthead. */
@@ -91,10 +92,27 @@
   --cross-y: 46vh;
 }
 
-/* The wave is a press-check smudge: faint, and well out of the way. */
-:root[data-theme='editorial'] .wave {
-  opacity: 0.1;
-  mix-blend-mode: multiply;
+/* ---------- Ground: a printed page ----------
+   No wave here. A halftone dot screen over the stock, ruled into the columns a
+   page is set to, and none of it moves: print does not drift. */
+
+:root[data-theme='editorial'] .wavefield__canvas,
+:root[data-theme='editorial'] .wavefield__film,
+:root[data-theme='editorial'] .wavefield__vignette {
+  display: none;
+}
+
+:root[data-theme='editorial'] .wavefield__ground {
+  background-color: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(246, 243, 234, 0.05) 0 1px,
+      transparent 1px calc(100% / 12)
+    ),
+    radial-gradient(rgba(246, 243, 234, 0.09) 0.8px, transparent 0.9px);
+  background-size: 100% 100%, 5px 5px;
+  animation: none;
 }
 
 /* ============================================================
@@ -186,7 +204,7 @@
 :root[data-theme='editorial'] .xmb__item-glyph,
 :root[data-theme='editorial'] .xmb__node-glyph {
   background: var(--bg-raise);
-  border: 1px solid var(--pearl-100);
+  border: 1px solid var(--pearl-300);
   box-shadow: none;
   backdrop-filter: none;
 }
@@ -240,6 +258,13 @@
   z-index: -1;
 }
 
+/* Marked text sits on the highlighter, so it takes the stock's colour. */
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-title,
+:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-sub {
+  position: relative;
+  color: var(--bg-deep);
+}
+
 :root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-btn {
   border-bottom-color: var(--pearl-100);
   border-bottom-width: 2px;
@@ -255,7 +280,7 @@
 }
 
 :root[data-theme='editorial'] .boot__scan-grid {
-  opacity: 0.12;
+  opacity: 0.08;
 }
 
 :root[data-theme='editorial'] .boot__frame {
@@ -273,6 +298,14 @@
   letter-spacing: 0.02em;
 }
 
+/* .boot__logo indents by one tracking step to cancel the trailing gap that
+   letter-spacing leaves after the last letter. This theme retracks the text,
+   so the indent has to follow or the name sits right of centre. */
+:root[data-theme='editorial'] .boot__logo {
+  letter-spacing: 0.02em;
+  text-indent: 0.02em;
+}
+
 :root[data-theme='editorial'] .boot__ch {
   background: none;
   -webkit-text-fill-color: var(--pearl-100);
@@ -287,7 +320,7 @@
 
 /* The prompt is a stamped sticker. */
 :root[data-theme='editorial'] .boot__prompt {
-  background: var(--pearl-100);
+  background: var(--iri-1);
   border: 0;
   border-radius: 0;
   rotate: -1.4deg;
@@ -295,7 +328,7 @@
 
 :root[data-theme='editorial'] .boot__prompt-label,
 :root[data-theme='editorial'] .boot__prompt-note {
-  color: var(--bg-raise);
+  color: var(--bg-deep);
 }
 
 :root[data-theme='editorial'] .boot__prompt-ring {
@@ -337,9 +370,9 @@
   border-bottom: 2px solid var(--pearl-100);
 }
 
-:root[data-theme='editorial'] .eyebrow {
-  border-left: 3px solid var(--iri-2);
-  padding-left: 8px;
+/* No lit edge down the panel's spine: a printed page has a plain margin. */
+:root[data-theme='editorial'] .blade__edge {
+  display: none;
 }
 
 /* ---------- HUD: a masthead ---------- */
@@ -358,7 +391,7 @@
 
 :root[data-theme='editorial'] .hud__cv {
   background: var(--pearl-100);
-  color: var(--bg-raise);
+  color: var(--bg-deep);
 }
 
 :root[data-theme='editorial'] .hud__cv-ring {
@@ -389,14 +422,9 @@
   display: none;
 }
 
-:root[data-theme='editorial'] .pv-bill__line[data-slab] > span {
-  background: var(--iri-1);
-  color: var(--pearl-100);
-}
-
 :root[data-theme='editorial'] .pv-slot[data-size='bill'] .pv-slot__row {
   background: var(--iri-1);
-  color: var(--pearl-100);
+  color: var(--bg-deep);
   padding-inline: 0.12em;
 }
 
@@ -410,7 +438,7 @@
 
 :root[data-theme='editorial'] .pv-btn--solid {
   background: var(--pearl-100);
-  color: var(--bg-raise);
+  color: var(--bg-deep);
 }
 
 /* Section heads read as folios over a heavy rule. */

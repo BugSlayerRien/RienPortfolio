@@ -5,6 +5,7 @@ import TechChips from '../components/blades/TechChips';
 import ShotCarousel from '../components/blades/ShotCarousel';
 import { RoleBadge } from '../components/blades/BladeContent';
 import useKeyScroll from '../hooks/useKeyScroll';
+import useShotCycle from '../hooks/useShotCycle';
 import useScrollFx from './useScrollFx';
 import {
   profile,
@@ -126,8 +127,10 @@ function TitleSlot({ titles, style, size }) {
    own geometry — the close-up is framed tight, the suited one steps back — so
    the fit is named on the element and the mask is set per shot in CSS. */
 const SHOTS = [
-  { src: profile.cutout, fit: 'close', w: 900, h: 924 },
-  { src: profile.standing, fit: 'stand', w: 695, h: 1100 },
+  { src: profile.cutout, fit: 'close', w: 900, h: 924, pos: '50% 18%' },
+  /* Taken from the top of the frame and shrunk toward its foot, so the head
+     drops clear of the rim instead of touching it. */
+  { src: profile.standing, fit: 'stand', w: 695, h: 1100, pos: '50% 0%', scale: 0.86 },
 ];
 /* The billboard's one line, set flush to both margins. A long line on purpose:
    see useBillboardFit for why short words do not work here. */
@@ -189,17 +192,31 @@ function useBillboardFit(ref) {
       });
     };
 
-    fit();
+    const fitWhenFontsSettle = () => {
+      fit();
+      document.fonts?.ready.then(fit).catch(() => {});
+    };
+
+    fitWhenFontsSettle();
+
+    /* The column's width changes when the portrait beside it settles. */
     const ro = new ResizeObserver(fit);
-    ro.observe(host);
-    document.fonts?.ready.then(fit).catch(() => {});
+    lines.forEach((line) => ro.observe(line));
+
+    /* Switching theme swaps the display face, which changes how wide the same
+       words are without resizing anything the observer above can see. */
+    const mo = new MutationObserver(fitWhenFontsSettle);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
     window.addEventListener('resize', fit);
     return () => {
       ro.disconnect();
+      mo.disconnect();
       window.removeEventListener('resize', fit);
     };
   }, [ref]);
 }
+
 
 function HeroShots({ shot }) {
   return SHOTS.map((s, i) => (
@@ -212,6 +229,7 @@ function HeroShots({ shot }) {
       height={s.h}
       data-fit={s.fit}
       data-on={i === shot || undefined}
+      style={{ objectPosition: s.pos, scale: s.scale }}
       loading={i === 0 ? undefined : 'lazy'}
     />
   ));
@@ -273,7 +291,7 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
   const [leaving, setLeaving] = useState(false);
 
   const billRef = useRef(null);
-  const [shot, setShot] = useState(0);
+  const shot = useShotCycle(SHOTS.length);
 
   useKeyScroll(scrollRef, true, { step: 120 });
   useBillboardFit(billRef);
@@ -308,13 +326,9 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
 
     /* The billboard's height is measured once rather than on every scroll, so
        choosing a portrait below costs two reads and no layout. */
-    const bill = root.querySelector('.pv-bill');
-    let billH = bill?.offsetHeight || 1;
-
     /* The full-bleed band is sized off 100vw, which counts the scrollbar; told
        how wide the bar is, it can take it back off. */
     const measure = () => {
-      billH = bill?.offsetHeight || 1;
       root.parentElement.style.setProperty(
         '--sbw',
         `${Math.max(window.innerWidth - root.clientWidth, 0)}px`,
@@ -324,15 +338,8 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(root);
-    if (bill) ro.observe(bill);
 
     const onScroll = () => {
-      /* Which hero portrait shows follows the scroll through the billboard, so
-         the swap is something the reader causes rather than waits for. Outside
-         the frame below: it is arithmetic, and it should not wait on a paint. */
-      const through = Math.min(Math.max(root.scrollTop / billH, 0), 0.999);
-      setShot(Math.floor(through * SHOTS.length));
-
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
@@ -432,7 +439,7 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
             {/* The billboard. Each line is sized off the block's own width, so
                 the name is set as large as it can be without breaking — the
                 type is the layout, not a label on top of one. */}
-            <div className="pv-bill" ref={billRef}>
+            <div className="pv-bill pv-bill--hero" ref={billRef}>
               <div className="pv-bill__top">
                 <span className="pv-bill__kicker mono">Portfolio — {profile.tagline}</span>
                 <span className="pv-bill__kicker mono">Bulacan, PH</span>
@@ -457,16 +464,10 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
                   aria-label={profile.fullName}
                 >
                   <span className="pv-hero__ring" aria-hidden="true" />
-                  <span className="pv-hero__disc" aria-hidden="true" />
                   <HeroShots shot={shot} />
                 </figure>
               </div>
 
-              <div className="pv-bill__foot">
-                <p className="pv-hero__lede pv-rise" style={{ '--d': 5 }}>
-                  {about.body[0]}
-                </p>
-              </div>
             </div>
 
             <span className="pv-hero__hint" aria-hidden="true">
@@ -480,9 +481,11 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
             <SectionHead n={1} title="About" />
             <div className="pv-about">
               <div className="pv-prose">
-                <p className="pv-prose__intro" data-pv>
-                  {about.intro}
-                </p>
+                {about.intro && (
+                  <p className="pv-prose__intro" data-pv>
+                    {about.intro}
+                  </p>
+                )}
                 {about.body.slice(1).map((p, i) => (
                   <p key={p.slice(0, 20)} data-pv style={{ '--pv-i': i + 1 }}>
                     {p}
@@ -664,6 +667,7 @@ export default function PlainView({ theme, nextTheme, onCycleTheme, palette, red
           {/* ---------- Contact ---------- */}
           <section className="pv-section pv-contact" id="pv-contact">
             <SectionHead n={5} title="Contact" />
+
             <h2 className="pv-contact__big" data-pv>
               {profile.quote.split(/(systems)/).map((part, i) =>
                 part === 'systems' ? <em key={i}>{part}</em> : part,

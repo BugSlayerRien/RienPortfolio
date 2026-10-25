@@ -1,7 +1,7 @@
 @import './tokens.css';
 @import './theme-editorial.css';
 @import './theme-ethereal.css';
-@import './theme-light.css';
+@import './theme-shared.css';
 
 *,
 *::before,

@@ -1,0 +1,115 @@
+/* ============================================================
+   Shared corrections for Press and Bloom
+   ============================================================
+
+   Both themes change the site's layout, not just its colours, and a few of
+   those changes are the same in each. They live here once rather than twice.
+
+   This file used to be theme-light.css and was mostly undoing opaque dark
+   values that punched holes in a light page — the wave's ground, the blade's
+   backing, the carousel plates, the near-opaque veil. Both themes are dark
+   again, so the base CSS is right and all of that is gone. What is left is
+   structural: the Socials cluster, the headline sweeps, and the type stacks
+   that `.plain` declares on the element itself.
+   ------------------------------------------------------------ */
+
+/* `.plain` sets its own type stack on the element, which outranks a :root-level
+   token, so each theme has to restate it at higher specificity. */
+:root[data-theme='editorial'] .plain {
+  --pv-serif: 'Playfair Display', 'Times New Roman', serif;
+  --pv-sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root[data-theme='ethereal'] .plain {
+  --pv-serif: 'Marcellus', Georgia, serif;
+  --pv-sans: 'Cormorant Garamond', Georgia, serif;
+  --pv-display: 'Marcellus', Georgia, serif;
+}
+
+/* ---------- Socials ----------
+   The burst hangs off the cross point, which on these layouts leaves the
+   cluster stranded to one side with the last card alone on a second row. There
+   are three contacts, so give them one row and centre the block on the page —
+   the burst lives inside the column, whose origin sits on the cross point, so
+   centring means stepping out to the middle from there. */
+
+:root[data-theme='editorial'] .xmb__burst,
+:root[data-theme='ethereal'] .xmb__burst {
+  left: calc(50vw - var(--cross-x));
+  translate: -50% -50%;
+  width: min(1020px, 84vw);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-left: 0;
+  gap: 18px;
+}
+
+:root[data-theme='editorial'] .xmb__quote,
+:root[data-theme='ethereal'] .xmb__quote {
+  left: 0;
+  right: 0;
+  padding-left: 0;
+  text-align: center;
+}
+
+/* A five-stop sweep across a headline is noise in either of these themes; both
+   set their display type in one colour and let the layout carry the interest. */
+:root[data-theme='editorial'] .xmb__quote-line,
+:root[data-theme='ethereal'] .xmb__quote-line,
+:root[data-theme='editorial'] .pv-slot__row,
+:root[data-theme='ethereal'] .pv-slot__row {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  animation: none;
+}
+
+:root[data-theme='editorial'] .xmb__quote-line,
+:root[data-theme='ethereal'] .xmb__quote-line {
+  -webkit-text-fill-color: var(--pearl-100);
+  color: var(--pearl-100);
+}
+
+:root[data-theme='editorial'] .xmb__quote {
+  font-family: var(--pv-serif);
+  font-weight: 600;
+}
+
+:root[data-theme='ethereal'] .xmb__quote {
+  font-family: var(--pv-serif);
+  font-weight: 400;
+}
+
+:root[data-theme='editorial'] .pv-slot__row {
+  color: var(--iri-1);
+}
+
+:root[data-theme='ethereal'] .pv-slot__row {
+  color: var(--iri-1);
+}
+
+@media (max-width: 900px) {
+  :root[data-theme='editorial'] .xmb__burst,
+  :root[data-theme='ethereal'] .xmb__burst {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(440px, 86vw);
+  }
+}
+
+/* ---------- Panel type ----------
+   The panel titles and card names clip the theme's five-stop sweep to their
+   glyphs. In these palettes that sweep runs yellow-red-blue or mint-gold, so a
+   title came out half one colour and half another. Plain light ink instead. */
+
+:root[data-theme='editorial'] .blade__title,
+:root[data-theme='ethereal'] .blade__title,
+:root[data-theme='editorial'] .hero__name,
+:root[data-theme='ethereal'] .hero__name,
+:root[data-theme='editorial'] .protocol__code,
+:root[data-theme='ethereal'] .protocol__code {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: var(--pearl-100);
+  color: var(--pearl-100);
+  animation: none;
+}
