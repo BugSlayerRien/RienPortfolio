@@ -20,49 +20,49 @@
 :root[data-theme='ethereal'] {
   color-scheme: dark;
 
-  /* A dark clearing. The golds and mints below are unchanged: against this
-     ground they finally read as light sources, which is what the halo and the
-     bloom always wanted them to be. */
-  --bg-deep: #0e1611;
-  --bg-base: #141f19;
-  --bg-raise: #1b2a21;
-  --bg-veil: rgba(14, 22, 17, 0.8);
+  /* Neutral grey, with every bit of colour left in the light: the rays, the
+     halo and the selected item's glow are the only warm things on screen, and
+     that contrast is what makes them read as light at all. */
+  --bg-deep: #141414;
+  --bg-base: #1a1a1a;
+  --bg-raise: #232323;
+  --bg-veil: rgba(20, 20, 20, 0.8);
 
-  /* Pale sage through to a dim moss. */
-  --pearl-100: #eaf2e6;
-  --pearl-200: #d7e2d2;
-  --pearl-300: #bccfb8;
-  --pearl-400: #9cb199;
-  --pearl-500: #8a9e87;
-  --pearl-600: #70836e;
+  /* Neutral greys, bright through to dim. */
+  --pearl-100: #f2f2f2;
+  --pearl-200: #dedede;
+  --pearl-300: #c2c2c2;
+  --pearl-400: #a0a0a0;
+  --pearl-500: #8a8a8a;
+  --pearl-600: #6e6e6e;
 
-  /* Sunlight, leaf, water, haze, bloom. */
+  /* Sunlight, and four steps of it warming towards white. */
   --iri-1: #fff4c2;
-  --iri-2: #bfe3a8;
-  --iri-3: #9fd8d2;
-  --iri-4: #e8f2d8;
+  --iri-2: #f6e8bf;
+  --iri-3: #efe6d2;
+  --iri-4: #f6f2e8;
   --iri-5: #ffffff;
 
   --holo-soft: linear-gradient(
     var(--holo-angle),
-    rgba(255, 244, 194, 0.6) 0%,
-    rgba(191, 227, 168, 0.5) 30%,
-    rgba(159, 216, 210, 0.5) 60%,
-    rgba(255, 255, 255, 0.7) 100%
+    rgba(255, 244, 194, 0.5) 0%,
+    rgba(246, 232, 191, 0.4) 30%,
+    rgba(239, 230, 210, 0.4) 60%,
+    rgba(255, 255, 255, 0.6) 100%
   );
 
   --metal: linear-gradient(
     170deg,
-    rgba(234, 242, 230, 0.8) 0%,
-    rgba(234, 242, 230, 0.26) 40%,
-    rgba(191, 227, 168, 0.2) 70%,
-    rgba(234, 242, 230, 0.7) 100%
+    rgba(242, 242, 242, 0.8) 0%,
+    rgba(242, 242, 242, 0.26) 40%,
+    rgba(255, 244, 194, 0.2) 70%,
+    rgba(242, 242, 242, 0.7) 100%
   );
 
-  --glass: rgba(234, 242, 230, 0.06);
-  --glass-strong: rgba(234, 242, 230, 0.12);
-  --edge: rgba(234, 242, 230, 0.14);
-  --edge-bright: rgba(234, 242, 230, 0.3);
+  --glass: rgba(242, 242, 242, 0.06);
+  --glass-strong: rgba(242, 242, 242, 0.12);
+  --edge: rgba(242, 242, 242, 0.14);
+  --edge-bright: rgba(242, 242, 242, 0.3);
 
   --font-ui: 'Marcellus', Georgia, serif;
   --font-mono: 'Marcellus', Georgia, serif;
@@ -82,15 +82,17 @@
   --icon: 56px;
   --icon-sel: 84px;
 
-  /* How far out the arc runs, and how far apart its stops are. */
-  --halo-r: clamp(150px, 19vw, 280px);
-  --halo-step: 23deg;
+  /* How far out the arc runs, and how far apart its stops are. A smaller
+     radius brings the stops closer together, so the step widens to keep them
+     apart: the gap between neighbours is 2 * r * sin(step / 2). */
+  --halo-r: clamp(110px, 13vw, 190px);
+  --halo-step: 30deg;
 
   --shadow-sm: 0 2px 18px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 14px 50px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.6);
-  --shadow-holo: 0 0 0 1px rgba(234, 242, 230, 0.3), 0 10px 44px rgba(159, 216, 210, 0.3),
-    0 0 80px rgba(255, 244, 194, 0.26);
+  --shadow-holo: 0 0 0 1px rgba(242, 242, 242, 0.3), 0 10px 44px rgba(255, 244, 194, 0.26),
+    0 0 80px rgba(255, 244, 194, 0.3);
 
   --track-wide: 0.12em;
 
@@ -100,15 +102,38 @@
   --fs-sm: 0.94rem;
 }
 
-/* The halo needs the page's middle, not a left-hand rail. */
+/* The arc throws the selected item a full --halo-r to the right of the cross
+   point, so the cluster has to start far enough left that the item *and* its
+   label finish before the docked panel. --panel-reserve is that panel: its
+   width plus the blade's right gutter, from Blade.css. */
 :root[data-theme='ethereal'] .xmb {
-  --cross-x: clamp(170px, 24vw, 360px);
+  --cross-x: clamp(120px, 14vw, 215px);
   --cross-y: 50vh;
+  --panel-reserve: calc(min(620px, 46vw) + clamp(18px, 3vw, 44px));
 }
 
-/* ---------- Ground: dappled light ----------
-   No wave here either. A few very large, very soft pools of gold and mint drift
-   across the dark, the way light comes through a canopy. */
+/* The label gets a hard ceiling as well, so a long title wraps instead of
+   running under the panel — arithmetic alone would come apart at some width. */
+:root[data-theme='ethereal'] .xmb__item-text {
+  /* The item is absolutely positioned, so once wrapping is allowed its box
+     shrinks to the longest single word. max-content keeps it on one line while
+     it fits, and the ceiling is what finally makes it wrap. */
+  width: max-content;
+  /* The text does not start at the item's point: the glyph's slot is centred
+     there (half of it to the left, half to the right) and the button adds its
+     gap, so both come off the ceiling along with a margin to spare. */
+  max-width: calc(
+    100vw - var(--cross-x) - var(--halo-r) - var(--panel-reserve) - var(--icon-sel) / 2 - 62px
+  );
+  white-space: normal;
+}
+
+/* ---------- Ground: sun rays ----------
+   No wave here either. A source off the top of the frame, and shafts of light
+   coming down from it at a slight lean. The stop widths are deliberately uneven
+   so the shafts do not read as a regular pattern, and the whole thing fades out
+   towards the floor so it looks like light entering the frame rather than
+   stripes painted across it. */
 
 :root[data-theme='ethereal'] .wavefield__canvas,
 :root[data-theme='ethereal'] .wavefield__film,
@@ -118,11 +143,25 @@
 
 :root[data-theme='ethereal'] .wavefield__ground {
   background:
-    radial-gradient(44% 38% at 24% 18%, rgba(255, 244, 194, 0.16), transparent 70%),
-    radial-gradient(52% 44% at 78% 32%, rgba(159, 216, 210, 0.14), transparent 72%),
-    radial-gradient(60% 50% at 52% 92%, rgba(191, 227, 168, 0.12), transparent 70%),
+    repeating-linear-gradient(
+      97deg,
+      transparent 0 72px,
+      rgba(255, 244, 194, 0.055) 72px 104px,
+      transparent 104px 150px,
+      rgba(255, 244, 194, 0.03) 150px 168px,
+      transparent 168px 258px
+    ),
+    radial-gradient(70% 46% at 44% -14%, rgba(255, 244, 194, 0.2), transparent 72%),
     var(--bg-deep);
-  filter: blur(26px);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 52%, transparent 88%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 52%, transparent 88%);
+  filter: blur(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='ethereal'] .wavefield__ground {
+    animation: none;
+  }
 }
 
 :root[data-theme='ethereal'] body {
@@ -280,7 +319,7 @@
   background: none;
   -webkit-text-fill-color: var(--pearl-100);
   color: var(--pearl-100);
-  text-shadow: 0 0 40px rgba(255, 244, 194, 0.55);
+  text-shadow: 0 0 40px rgba(255, 244, 194, 0.5);
 }
 
 :root[data-theme='ethereal'] .boot__line {
@@ -317,8 +356,8 @@
 
 /* ---------- Detail panel: lacquered black ----------
    Docked on the right like every other theme. The base panel is a navy glass,
-   which next to the green ground read as tinted; here it is a polished black
-   so the clearing around it stays the only colour on screen. */
+   which read as tinted against this ground; here it is a polished black, so
+   the light is the only colour on screen. */
 
 :root[data-theme='ethereal'] .blade .blade__panel {
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -328,7 +367,7 @@
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Cards inside the panel follow it: neutral glass, no green cast. Scoped to
+/* Cards inside the panel follow it: neutral glass, no cast. Scoped to
    the body, because the panel itself is a .pearl-panel too. */
 :root[data-theme='ethereal'] .blade__body .pearl-panel {
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)), #121414;
@@ -423,8 +462,8 @@
   inset: 0;
   pointer-events: none;
   z-index: 60;
-  opacity: 0.3;
+  opacity: 0.22;
   mix-blend-mode: screen;
-  background-image: radial-gradient(rgba(234, 242, 230, 0.16) 0.5px, transparent 0.5px);
+  background-image: radial-gradient(rgba(242, 242, 242, 0.14) 0.5px, transparent 0.5px);
   background-size: 3px 3px;
 }
