@@ -236,11 +236,12 @@ export const projects = {
     status: 'In development',
     roles: ['frontend'],
     shots: [
-      { src: '/img/projects/musika-1.webp', alt: 'Entering the listening room' },
+      { src: '/img/projects/musika-1.webp', alt: 'The start page, with an invitation to enter the listening room' },
       { src: '/img/projects/musika-2.webp', alt: 'The listening room' },
       { src: '/img/projects/musika-3.webp', alt: 'Country atlas' },
       { src: '/img/projects/musika-4.webp', alt: 'Profile Studio, Aero style' },
       { src: '/img/projects/musika-5.webp', alt: 'The catalogue' },
+      { src: '/img/projects/musika-6.webp', alt: 'Playing a 30-second preview from the listening room' },
     ],
     repo: 'https://github.com/BugSlayerRien/Musika',
     repoPrivate: false,
