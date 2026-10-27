@@ -21,7 +21,7 @@ import './Blade.css';
  * they enter view, and the panel publishes `--scroll-p` (0 to 1) for the header
  * rule and the ambient tint to track.
  */
-export default function Blade({ open, reading, category, title, subtitle, onClose, children }) {
+export default function Blade({ open, reading, category, title, subtitle, onClose, onDismiss, children }) {
   const bodyRef = useReveal([title]);
   const panelRef = useRef(null);
 
@@ -50,13 +50,15 @@ export default function Blade({ open, reading, category, title, subtitle, onClos
       data-reading={reading || undefined}
       aria-hidden={!open}
     >
-      <button
-        type="button"
-        className="blade__scrim"
-        onClick={onClose}
-        tabIndex={-1}
-        aria-label="Back to the bar"
-      />
+      {reading && (
+        <button
+          type="button"
+          className="blade__scrim"
+          onClick={onClose}
+          tabIndex={-1}
+          aria-label="Back to the bar"
+        />
+      )}
 
       <section
         className="blade__panel pearl-panel grain"
@@ -76,8 +78,15 @@ export default function Blade({ open, reading, category, title, subtitle, onClos
             {subtitle && <p className="blade__subtitle">{subtitle}</p>}
           </div>
 
-          {reading && (
-            <button type="button" className="blade__close" onClick={onClose} aria-label="Back (Esc)">
+          {/* Reading, this steps back to the docked card. Docked, it puts the
+              card away so the bar can be explored without it. */}
+          {(reading || onDismiss) && (
+            <button
+              type="button"
+              className="blade__close"
+              onClick={reading ? onClose : onDismiss}
+              aria-label={reading ? 'Back (Esc)' : 'Close (Esc)'}
+            >
               <Icon name="close" size={18} />
             </button>
           )}

@@ -28,6 +28,7 @@ export default function App() {
   const [itemIndex, setItemIndex] = useState(0);
   const [settled, setSettled] = useState({ ci: 1, ii: 0 }); // what the panel is showing
   const [reading, setReading] = useState(false); // panel has the keyboard
+  const [panelPut, setPanelPut] = useState(false); // card put away by its own X
   // First visit only: show the on-screen cues for the controls until someone has
   // moved around a couple of times, or ten-odd seconds have passed.
   const [coach, setCoach] = useState(() => {
@@ -94,7 +95,7 @@ export default function App() {
   const panelCategory = categories[settled.ci];
   const panelItem = panelCategory.items[settled.ii];
   // Socials fans out on the bar itself, so it has nothing to show here.
-  const panelOpen = booted && !isDeep && !dropping && panelCategory.mode !== 'burst';
+  const panelOpen = booted && !isDeep && !dropping && !panelPut && panelCategory.mode !== 'burst';
 
   /* ---------- audio plumbing ---------- */
 
@@ -203,6 +204,7 @@ export default function App() {
 
     // Confirming skips the settle delay — you asked for this one.
     setSettled({ ci, ii });
+    setPanelPut(false); // confirming is also how a put-away card comes back
     setReading(true);
     psp.play('enter');
   }, []);
@@ -210,8 +212,16 @@ export default function App() {
   const close = useCallback(() => {
     setReading((r) => {
       if (r) psp.play('back');
+      /* Esc on a card that is already docked puts it away instead, which is
+         the same thing its X does. */
+      if (!r) setPanelPut(true);
       return false;
     });
+  }, []);
+
+  const putPanelAway = useCallback(() => {
+    setPanelPut(true);
+    psp.play('back');
   }, []);
 
   /* ---------- keyboard: WASD + arrows + PlayStation-style confirm ---------- */
@@ -470,6 +480,7 @@ export default function App() {
         title={panelItem.title}
         subtitle={panelItem.subtitle}
         onClose={close}
+        onDismiss={putPanelAway}
       >
         <BladeContent item={panelItem} settings={settings} />
       </Blade>

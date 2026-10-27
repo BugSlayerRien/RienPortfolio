@@ -35,6 +35,9 @@
 
 :root[data-theme='editorial'] .xmb__burst,
 :root[data-theme='ethereal'] .xmb__burst {
+  /* Press anchors --cross-y to the top of its list, which is no place for the
+     Socials cluster; it takes the middle of the screen back. */
+  top: 50vh;
   left: calc(50vw - var(--cross-x));
   translate: -50% -50%;
   width: min(1020px, 84vw);

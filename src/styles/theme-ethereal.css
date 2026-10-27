@@ -85,8 +85,8 @@
   /* How far out the arc runs, and how far apart its stops are. A smaller
      radius brings the stops closer together, so the step widens to keep them
      apart: the gap between neighbours is 2 * r * sin(step / 2). */
-  --halo-r: clamp(110px, 13vw, 190px);
-  --halo-step: 30deg;
+  --halo-r: clamp(100px, 12vw, 175px);
+  --halo-step: 46deg;
 
   --shadow-sm: 0 2px 18px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 14px 50px rgba(0, 0, 0, 0.5);
@@ -107,7 +107,7 @@
    label finish before the docked panel. --panel-reserve is that panel: its
    width plus the blade's right gutter, from Blade.css. */
 :root[data-theme='ethereal'] .xmb {
-  --cross-x: clamp(120px, 14vw, 215px);
+  --cross-x: clamp(100px, 11vw, 170px);
   --cross-y: 50vh;
   --panel-reserve: calc(min(620px, 46vw) + clamp(18px, 3vw, 44px));
 }
@@ -378,10 +378,6 @@
   opacity: 0.12;
 }
 
-:root[data-theme='ethereal'] .blade__edge {
-  display: none;
-}
-
 :root[data-theme='ethereal'] .blade__inner {
   padding-inline: clamp(28px, 5vw, 64px);
 }
@@ -429,6 +425,19 @@
 :root[data-theme='ethereal'] .hud__brand-sub {
   font-style: italic;
   text-transform: lowercase;
+}
+
+/* The circle catches the same shafts the page does, fanned from its top. */
+:root[data-theme='ethereal'] .pv-bill .pv-hero__photo {
+  background-color: var(--bg-raise);
+  background-image:
+    repeating-linear-gradient(
+      97deg,
+      transparent 0 22px,
+      rgba(255, 244, 194, 0.07) 22px 31px,
+      transparent 31px 48px
+    ),
+    radial-gradient(70% 46% at 44% -8%, rgba(255, 244, 194, 0.22), transparent 72%);
 }
 
 /* ---------- Plain view: light and captions ---------- */

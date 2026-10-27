@@ -86,10 +86,18 @@
   --shadow-holo: 0 0 0 1px rgba(246, 243, 234, 0.5);
 }
 
-/* The list hangs off the left margin, and starts below the masthead. */
+/* The list hangs off the left margin and starts below the masthead. A fixed
+   --cross-y rather than a fraction of the viewport, because the list no longer
+   scrolls: it has to begin under the masthead and run down from there. */
 :root[data-theme='editorial'] .xmb {
   --cross-x: clamp(120px, 15vw, 230px);
-  --cross-y: 46vh;
+  --cross-y: 200px;
+}
+
+/* A contents page does not scroll its own masthead away, and its rows do not
+   pass over it: the marker moves down the list, the list stays put. */
+:root[data-theme='editorial'] .xmb__col[data-active]:not([data-burst]) {
+  transform: none;
 }
 
 /* ---------- Ground: a printed page ----------
@@ -137,6 +145,11 @@
   top: 104px;
   width: auto;
   white-space: nowrap;
+}
+
+/* The burst column still travels, so its own head has to be pinned back. */
+:root[data-theme='editorial'] .xmb__col[data-burst] .xmb__cat {
+  translate: -50% calc(-50% + var(--item) * var(--row-gap));
 }
 
 :root[data-theme='editorial'] .xmb__cat-slot {
@@ -414,6 +427,16 @@
   background: none;
   -webkit-text-fill-color: var(--pearl-100);
   color: var(--pearl-100);
+}
+
+/* The portrait's circle is a window onto the same stock as the page: the same
+   dot screen, with one column rule running behind it. */
+:root[data-theme='editorial'] .pv-bill .pv-hero__photo {
+  background-color: var(--bg-raise);
+  background-image:
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(246, 243, 234, 0.07) calc(50% - 1px), rgba(246, 243, 234, 0.07) 50%, transparent 50%),
+    radial-gradient(rgba(246, 243, 234, 0.1) 0.8px, transparent 0.9px);
+  background-size: 100% 100%, 5px 5px;
 }
 
 /* ---------- Plain view: a spread ---------- */

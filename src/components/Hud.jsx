@@ -209,6 +209,10 @@ export default function Hud({
                 </kbd>
                 <span className="mono">Enter to read</span>
               </span>
+              <span className="hud__key">
+                <kbd className="hud__kbd mono" aria-hidden="true">Esc</kbd>
+                <span className="mono">Hide card</span>
+              </span>
             </>
           )}
         </div>

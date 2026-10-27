@@ -87,14 +87,22 @@
 }
 
 /* Iridescent hairline down the leading edge. */
+/* A hairline of the same oil-slick drawn around the whole card, rather than a
+   lit spine down one side of it. The gradient fills the box and a mask keeps
+   only the 1px band at its edge — the trick .pv-hero__ring uses. */
 .blade__edge {
   position: absolute;
-  inset: 0 auto 0 -1px;
-  width: 2px;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
   background: var(--holo);
   background-size: 100% 300%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
   animation: edge-drift 12s linear infinite;
-  box-shadow: 0 0 24px rgba(150, 200, 255, 0.5);
+  pointer-events: none;
   z-index: 2;
 }
 

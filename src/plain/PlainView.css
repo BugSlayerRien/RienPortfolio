@@ -1236,6 +1236,9 @@
 
 .pv-bill__type {
   min-width: 0;
+  /* The photo is the taller of the two, so without this every pixel of slack
+     piles up above the name. */
+  align-self: center;
 }
 
 .pv-bill__line > span {
@@ -1257,8 +1260,11 @@
 /* The portrait is the band's second column, bottom-aligned to the type. */
 .pv-bill .pv-hero__photo {
   --ring-gap: 10px; /* air between the ring and each rule */
+  /* Each theme paints its own ground inside the circle — see the theme files;
+     this is the iridescent one the dark themes share. */
   background:
-    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--iri-2) 26%, transparent), transparent 70%),
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--iri-2) 22%, transparent), transparent 70%),
+    radial-gradient(circle at 22% 86%, color-mix(in srgb, var(--iri-4) 18%, transparent), transparent 66%),
     var(--bg-raise);
   width: clamp(200px, 24vw, 330px);
   height: auto;
