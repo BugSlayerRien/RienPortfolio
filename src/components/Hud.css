@@ -564,13 +564,15 @@ button.hud__key:hover {
 .hud__plain {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
+  /* Sized to match Download CV, which it sits level with. */
+  gap: 9px;
+  padding: 9px 20px;
   border-radius: var(--r-pill);
   border: 1px solid var(--edge);
   background: var(--glass);
   color: var(--pearl-200);
-  font-size: 0.64rem;
+  font-size: 0.76rem;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   transition: border-color var(--dur-tick) var(--ease-soft), color var(--dur-tick) var(--ease-soft),
@@ -591,7 +593,7 @@ button.hud__key:hover {
   }
 
   .hud__plain {
-    padding: 6px 8px;
+    padding: 9px 12px;
   }
 }
 

@@ -147,11 +147,6 @@
   white-space: nowrap;
 }
 
-/* The burst column still travels, so its own head has to be pinned back. */
-:root[data-theme='editorial'] .xmb__col[data-burst] .xmb__cat {
-  translate: -50% calc(-50% + var(--item) * var(--row-gap));
-}
-
 :root[data-theme='editorial'] .xmb__cat-slot {
   display: none;
 }
@@ -258,24 +253,56 @@
   opacity: 0.55;
 }
 
-/* The selected row is marked the way a reader marks a page. */
-:root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-text {
+/* The selected row is marked the way a reader marks a page: a white marker
+   drawn across it. Every row carries one, collapsed, so that leaving a row can
+   animate too. It is drawn left to right when a row is selected, and when the
+   row is left it carries on in the same direction and runs out of the right
+   end — the origin flips with the state, and only the scale is transitioned,
+   so the flip itself is instant. */
+:root[data-theme='editorial'] .xmb__item-text {
   position: relative;
+}
+
+:root[data-theme='editorial'] .xmb__item-text::before {
+  content: '';
+  position: absolute;
+  /* Fixed padding rather than a share of the box: the box is two lines of type
+     and a percentage of it is a different number of pixels for each, which is
+     how the marker came to stop short of the subtitle. */
+  inset: -4px -12px -5px -12px;
+  background: var(--pearl-100);
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 340ms var(--ease-soft);
 }
 
 :root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-text::before {
-  content: '';
-  position: absolute;
-  inset: 6% -12px 16% -12px;
-  background: var(--iri-1);
-  z-index: -1;
+  transform: scaleX(1);
+  transform-origin: left center;
+  transition: transform 420ms var(--ease-out);
 }
 
-/* Marked text sits on the highlighter, so it takes the stock's colour. */
+/* Marked text sits on the marker, so it takes the stock's colour — a beat
+   behind the sweep, so the letters turn over as the white reaches them. */
+:root[data-theme='editorial'] .xmb__item-title,
+:root[data-theme='editorial'] .xmb__item-sub {
+  position: relative;
+  transition: color 200ms var(--ease-soft);
+}
+
 :root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-title,
 :root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-sub {
-  position: relative;
   color: var(--bg-deep);
+  transition-delay: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='editorial'] .xmb__item-text::before,
+  :root[data-theme='editorial'] .xmb__item-title,
+  :root[data-theme='editorial'] .xmb__item-sub {
+    transition: none;
+  }
 }
 
 :root[data-theme='editorial'] .xmb__item[data-selected] .xmb__item-btn {

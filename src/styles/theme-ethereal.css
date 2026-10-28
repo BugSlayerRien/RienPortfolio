@@ -442,10 +442,6 @@
 
 /* ---------- Plain view: light and captions ---------- */
 
-:root[data-theme='ethereal'] .pv-bill {
-  border-color: var(--edge-bright);
-}
-
 /* Section heads reduce to a centred word over a hairline. */
 :root[data-theme='ethereal'] .pv-head {
   justify-items: center;

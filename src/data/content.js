@@ -167,7 +167,20 @@ export const projects = {
     tagline: 'Barbershop Management System with AI-Powered Haircut and Styling Recommendation',
     description:
       'A full barbershop system built around a face scan. A customer photographs themselves in the mobile app, a Python computer-vision pipeline runs MediaPipe face detection and face mesh to derive face shape and hair attributes, and that reading is sorted by an LLM into recommended haircuts grouped by category, each with front, side and back previews rendered on the customer’s own photo. The scan ends on a suggested appointment — a barber and a time slot already chosen — that the customer can process straight away. Separate portals cover the receptionist desk, walk-ins, an in-store kiosk, and an admin view with analytics and an audit log.',
-    tech: ['Flutter', 'Dart', 'PHP', 'PostgreSQL', 'Python', 'MediaPipe', 'Gemini API', 'Grok', 'Replicate'],
+    tech: [
+      'Flutter',
+      'Dart',
+      'PHP',
+      'JavaScript',
+      'HTML',
+      'CSS',
+      'Python',
+      'PostgreSQL',
+      'MediaPipe',
+      'Gemini API',
+      'Grok',
+      'Replicate',
+    ],
     status: 'In development',
     roles: ['fullstack', 'capstone'],
     // Three clients, three carousels. The kiosk set is empty until there are
@@ -210,7 +223,7 @@ export const projects = {
     tagline: 'A Community Management Platform',
     description:
       'A mobile home for the GDGoC Philippines community. Members sign in with email or Google, earn community points, register for events, browse a Career Hub of internships, scholarships and certifications, and read announcements. Organizers get their own dashboard with analytics, partners, announcements and member verification.',
-    tech: ['Flutter', 'Dart', 'Riverpod', 'Supabase', 'Firebase Cloud Messaging', 'Google Calendar API'],
+    tech: ['Flutter', 'Dart', 'SQL', 'Riverpod', 'Supabase', 'Firebase Cloud Messaging', 'Google Calendar API'],
     status: 'In development',
     roles: ['frontend', 'backend'],
     shotsFit: 'contain',
@@ -232,7 +245,7 @@ export const projects = {
     tagline: 'A Community Atlas of Classic English-Language Songs',
     description:
       'A shelf no chart would give you: classic songs sung in English, filed by the country the band came from. Members browse a country atlas and a filterable catalogue, hear real 30-second previews, and file songs of their own. It is built as a Frutiger Aero revival, with glossy glass, particle weather and a retro sound layer synthesised in the browser, plus ten selectable styles in a Profile Studio.',
-    tech: ['React', 'Vite', 'React Router', 'iTunes Search API'],
+    tech: ['React', 'JavaScript', 'HTML', 'CSS', 'Vite', 'React Router', 'iTunes Search API'],
     status: 'In development',
     roles: ['frontend'],
     shots: [
@@ -252,7 +265,7 @@ export const projects = {
     tagline: 'Resort Booking and Operations Management System',
     description:
       'A resort platform with a portal for each role: guests book rooms, day tours and events; the front desk takes payments and reconciles proof-of-payment uploads; operations staff track room status and dispatch; and a manager view handles rates, tiers and users. Payments run through PayMongo, and the whole data layer is Supabase with row-level security separating what each role can see.',
-    tech: ['React', 'Vite', 'Supabase', 'PostgreSQL', 'PayMongo'],
+    tech: ['React', 'JavaScript', 'CSS', 'SQL', 'Vite', 'Supabase', 'PostgreSQL', 'PayMongo'],
     status: 'In development',
     roles: ['backend'],
     shots: [

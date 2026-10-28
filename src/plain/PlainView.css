@@ -1176,8 +1176,6 @@
      scrollbar — 100vw counts it, and the overshoot shifts the page sideways. */
   margin-inline: calc(50% - 50vw + var(--sbw, 0px) / 2);
   padding: 18px clamp(14px, 3vw, 34px) 0;
-  border-top: 2px solid var(--ink);
-  border-bottom: 2px solid var(--ink);
 }
 
 .pv-bill__top,

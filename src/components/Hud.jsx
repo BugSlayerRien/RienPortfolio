@@ -81,7 +81,7 @@ export default function Hud({
 
           {/* The way out for anyone who would rather just scroll. */}
           <button type="button" className="hud__plain" onClick={onPlain} title="Open the plain scrolling view">
-            <Icon name="timeline" size={14} />
+            <Icon name="timeline" size={16} />
             <span className="mono">Plain view</span>
           </button>
         </div>
