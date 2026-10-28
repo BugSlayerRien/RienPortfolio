@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import usePointerField from '../hooks/usePointerField';
 import Icon from './Icon';
+import TempleIdol from './TempleIdol';
 import './Boot.css';
 
 /**
@@ -72,6 +73,10 @@ export default function Boot({ onStart, onFinish, reduced, onPlain }) {
       )}
 
       <div className="boot__center">
+        {/* Shown by the Temple theme only. */}
+        <span className="boot__idol" aria-hidden="true">
+          <TempleIdol />
+        </span>
         <h1 className="boot__logo" aria-label="RIEN">
           <span className="boot__logo-text">
             {LOGO.map((ch, i) => (

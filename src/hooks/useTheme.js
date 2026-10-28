@@ -67,6 +67,17 @@ export const THEMES = [
       [255, 255, 255],
     ],
   },
+  {
+    id: 'temple',
+    label: 'Temple',
+    palette: [
+      [92, 196, 138],
+      [232, 170, 66],
+      [78, 128, 214],
+      [224, 106, 78],
+      [244, 214, 120],
+    ],
+  },
 ];
 
 const indexOf = (id) => Math.max(THEMES.findIndex((t) => t.id === id), 0);

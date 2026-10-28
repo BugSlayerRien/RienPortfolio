@@ -1,0 +1,731 @@
+/* ============================================================
+   Theme — "temple"
+   ============================================================
+
+   A sunken stone temple. A jade idol squats at the heart of a spiral groove
+   cut into the floor, and the menu is a chain of marble orbs running in it.
+
+   Entering a category, the idol fires that category's orbs out of its mouth
+   onto the track. Moving the cursor rolls the whole chain along the groove,
+   so the orb you are on always comes to rest at the same place, three
+   o'clock on the outer ring, with its name carved beside it.
+
+   Xmb.jsx works out the spiral for the screen and publishes it: `--track` is
+   the path itself, `--aim` how far along it the cursor's orb sits, `--slot`
+   the spacing between orbs, and `--fx` / `--fy` on each orb its way back to
+   the idol's mouth. Each orb's place is then a single line of CSS:
+   `--aim + --off * --slot` along the track, where `--off` is its signed
+   distance from the cursor. Because offset-distance is one number along a
+   curve, transitioning it rolls the orbs round the spiral rather than sliding
+   them across in straight lines.
+
+   The keys, wheel, swipe and clicks are the same as everywhere else.
+   ------------------------------------------------------------ */
+
+:root[data-theme='temple'] {
+  color-scheme: dark;
+
+  /* Wet stone in the dark: green-black, with the warmth left to the torches,
+     the gold and the orbs. */
+  --bg-deep: #0d120f;
+  --bg-base: #121915;
+  --bg-raise: #19221d;
+  --bg-veil: rgba(13, 18, 15, 0.82);
+
+  /* Lichen-pale through to moss. */
+  --pearl-100: #efe9d8;
+  --pearl-200: #ddd6c2;
+  --pearl-300: #bfb8a2;
+  --pearl-400: #9c9784;
+  --pearl-500: #85826f;
+  --pearl-600: #6a6a5a;
+
+  /* Gold leaf, then the orbs' stones. */
+  --iri-1: #f2cf72;
+  --iri-2: #e8aa42;
+  --iri-3: #5cc48a;
+  --iri-4: #4e80d6;
+  --iri-5: #e06a4e;
+
+  --holo-soft: linear-gradient(
+    var(--holo-angle),
+    rgba(242, 207, 114, 0.45) 0%,
+    rgba(92, 196, 138, 0.35) 50%,
+    rgba(242, 207, 114, 0.45) 100%
+  );
+
+  --metal: linear-gradient(
+    170deg,
+    rgba(255, 233, 168, 0.85) 0%,
+    rgba(217, 162, 58, 0.5) 45%,
+    rgba(138, 90, 20, 0.4) 75%,
+    rgba(255, 233, 168, 0.7) 100%
+  );
+
+  --glass: rgba(239, 233, 216, 0.05);
+  --glass-strong: rgba(239, 233, 216, 0.1);
+  --edge: rgba(239, 233, 216, 0.13);
+  --edge-bright: rgba(242, 207, 114, 0.42);
+
+  --font-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --pv-serif: 'Cinzel', Georgia, serif;
+  --pv-display: 'Cinzel', Georgia, serif;
+
+  --r-lg: 18px;
+
+  --icon: 48px;
+  --icon-sel: 70px;
+
+  --shadow-sm: 0 3px 16px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 14px 50px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.65);
+  --shadow-holo: 0 0 0 1px rgba(242, 207, 114, 0.4), 0 10px 40px rgba(232, 170, 66, 0.25);
+}
+
+/* Restated on the bar itself, which sets its own sizes. */
+:root[data-theme='temple'] .xmb {
+  --icon: 48px;
+  --icon-sel: 70px;
+  /* The masks fade the top of the screen, which is where the frieze lives. */
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+@media (max-width: 860px) {
+  :root[data-theme='temple'] .xmb {
+    --icon: 38px;
+    --icon-sel: 54px;
+  }
+}
+
+:root[data-theme='temple'] body {
+  background: var(--bg-deep);
+}
+
+/* ---------- Ground: a lit stone floor ----------
+   No wave. Large worn flags from two faint grids at slightly different sizes,
+   a pool of torchlight in each upper corner, and the dark gathering at the
+   floor. Everything is kept very low: this sits behind reading. */
+
+:root[data-theme='temple'] .wavefield__canvas,
+:root[data-theme='temple'] .wavefield__film,
+:root[data-theme='temple'] .wavefield__vignette {
+  display: none;
+}
+
+:root[data-theme='temple'] .wavefield__ground {
+  background:
+    radial-gradient(38% 46% at 0% 0%, rgba(232, 150, 60, 0.13), transparent 70%),
+    radial-gradient(34% 40% at 62% 0%, rgba(232, 150, 60, 0.07), transparent 70%),
+    radial-gradient(60% 50% at 22% 58%, rgba(92, 196, 138, 0.05), transparent 72%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.35) 1px, transparent 1px) 0 0 / 128px 96px,
+    linear-gradient(0deg, rgba(0, 0, 0, 0.35) 1px, transparent 1px) 0 0 / 128px 96px,
+    linear-gradient(90deg, rgba(239, 233, 216, 0.018) 1px, transparent 1px) 1px 0 / 128px 96px,
+    linear-gradient(0deg, rgba(239, 233, 216, 0.018) 1px, transparent 1px) 0 1px / 128px 96px,
+    linear-gradient(180deg, var(--bg-base), var(--bg-deep) 70%);
+  filter: none;
+  animation: none;
+}
+
+/* ============================================================
+   The stage: track and idol
+   ============================================================ */
+
+.temple {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slide) var(--ease-soft);
+}
+
+/* Socials is a cluster in the middle of the screen; the stage steps back. */
+.xmb[data-burst-on] .temple {
+  opacity: 0.16;
+}
+
+.temple__track {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The groove is three strokes: a wide dark cut, the worn floor of the
+   channel, and a thin gold line down its middle — the mapped-out line the
+   orbs follow, visible even where no orb is. */
+.temple__groove-cut {
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: calc(var(--groove) + 8px);
+}
+
+.temple__groove {
+  stroke: #17201b;
+  stroke-width: var(--groove);
+  filter: drop-shadow(0 2px 0 rgba(239, 233, 216, 0.05));
+}
+
+.temple__groove-line {
+  stroke: rgba(242, 207, 114, 0.32);
+  stroke-width: 1.5px;
+  stroke-dasharray: 2 9;
+}
+
+/* Where the track ends: a dark pit with a worn gold lip. */
+.temple__hole {
+  r: calc(var(--groove) * 0.46);
+  fill: #020302;
+  stroke: rgba(242, 207, 114, 0.45);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 14px rgba(0, 0, 0, 0.9));
+}
+
+.temple__idol {
+  position: absolute;
+  left: var(--idol-x);
+  top: var(--idol-y);
+  width: var(--idol-size);
+  height: var(--idol-size);
+  translate: -50% -50%;
+  /* The artwork faces the viewer, mouth at the bottom: half a turn more puts
+     the mouth on the aim. */
+  rotate: calc(var(--aim-angle, 90deg) + 180deg);
+  transition: rotate 420ms var(--ease-out);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.7));
+}
+
+.temple__body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.temple__idol .idol {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* The next orb, waiting in the frog's mouth over the ball painted there, in
+   the colour it will have on the track. Placed from the artwork's measured
+   mouth (MOUTH_DROP / MOUTH_SIZE in TempleIdol.jsx), a touch larger so the
+   painted ball never shows round its edge. Xmb.jsx sets data-orb and
+   data-logo, and grows it back in after each shot. */
+.temple__load {
+  position: absolute;
+  left: 50%;
+  top: 77.5%;
+  width: 24%;
+  height: 24%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.85) 0 7%, rgba(255, 255, 255, 0) 24%),
+    radial-gradient(circle at 42% 36%, var(--orb-hi) 0%, var(--orb) 46%, var(--orb-lo) 100%);
+  box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.5);
+  animation: load-charge 2.8s var(--ease-soft) infinite;
+}
+
+/* Outranks the palette below: a logo orb is ivory whatever its slot. */
+.temple .temple__load[data-logo] {
+  --orb-hi: #fffdf6;
+  --orb: #efe6cf;
+  --orb-lo: #b5a684;
+}
+
+/* Nothing left to fire: an empty mouth. */
+.temple[data-empty] .temple__load {
+  background: radial-gradient(circle at 50% 40%, #2a0d34 0%, #0b0310 75%);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.8);
+  animation: none;
+}
+
+@keyframes load-charge {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 1px rgba(255, 230, 160, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 7px rgba(255, 230, 160, 0.85));
+  }
+}
+
+/* ============================================================
+   The bar, as a chain on the track
+   ============================================================ */
+
+/* Everything shares the screen's origin, so the one track fits every column:
+   no sliding rail, no scrolling column, every column at the left edge. */
+:root[data-theme='temple'] .xmb__rail,
+:root[data-theme='temple'] .xmb__col,
+:root[data-theme='temple'] .xmb__col[data-active] {
+  transform: none;
+}
+
+:root[data-theme='temple'] .xmb__col {
+  left: 0;
+  opacity: 1;
+}
+
+/* ---------- Categories: a frieze along the top ---------- */
+
+:root[data-theme='temple'] .xmb__cat {
+  top: var(--frieze-y);
+  left: calc(var(--frieze-x) + var(--ci) * var(--frieze-step));
+  width: 52px;
+  color: var(--pearl-400);
+}
+
+:root[data-theme='temple'] .xmb__cat-slot {
+  width: 52px;
+  height: 52px;
+}
+
+/* Each category is a carved roundel: dark stone with a bevelled edge. */
+:root[data-theme='temple'] .xmb__cat-glyph {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--pearl-400);
+  background: radial-gradient(circle at 40% 32%, #2a342e, #121814 72%);
+  box-shadow: inset 0 2px 1px rgba(239, 233, 216, 0.1), inset 0 -3px 6px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
+  filter: none;
+}
+
+:root[data-theme='temple'] .xmb__cat-glyph svg {
+  width: 22px;
+  height: 22px;
+}
+
+:root[data-theme='temple'] .xmb__col:not([data-active]) .xmb__cat {
+  opacity: 0.7;
+}
+
+:root[data-theme='temple'] .xmb__col[data-active] .xmb__cat-glyph {
+  color: #2a1a05;
+  background: radial-gradient(circle at 38% 30%, #fff1c4, #f2cf72 45%, #a8741e 100%);
+  box-shadow: 0 0 0 1px rgba(90, 58, 12, 0.8), 0 0 22px rgba(242, 207, 114, 0.45),
+    0 4px 10px rgba(0, 0, 0, 0.5);
+  filter: none;
+}
+
+:root[data-theme='temple'] .xmb[data-idle] .xmb__col[data-active] .xmb__cat-glyph {
+  animation: none;
+}
+
+/* Named under the roundel, in carved capitals. */
+:root[data-theme='temple'] .xmb__cat-label {
+  top: 100%;
+  bottom: auto;
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  color: var(--iri-1);
+  transform: translateY(-4px);
+}
+
+/* ---------- Items: orbs on the track ---------- */
+
+:root[data-theme='temple'] .xmb__items {
+  top: 0;
+  left: 0;
+}
+
+:root[data-theme='temple'] .xmb__item {
+  top: 0;
+  left: 0;
+  translate: none;
+  offset-path: var(--track);
+  offset-distance: calc(var(--aim) + var(--off) * var(--slot));
+  offset-rotate: 0deg;
+  /* The orb's centre rides the line, not the item's box. */
+  offset-anchor: calc(var(--icon-sel) / 2) 50%;
+  transition: offset-distance var(--dur-slide) var(--ease-xmb), opacity var(--dur-slide) var(--ease-soft);
+}
+
+:root[data-theme='temple'] .xmb__item[data-offset='1'] {
+  opacity: 0.9;
+}
+:root[data-theme='temple'] .xmb__item[data-offset='2'] {
+  opacity: 0.78;
+}
+:root[data-theme='temple'] .xmb__item[data-offset='3'] {
+  opacity: 0.64;
+}
+:root[data-theme='temple'] .xmb__item[data-offset='4'] {
+  opacity: 0.5;
+}
+
+/* Run off either end of the track: gone down the hole. */
+:root[data-theme='temple'] .xmb__item[data-sunk] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root[data-theme='temple'] .xmb__item-btn {
+  margin-left: 0;
+  gap: 16px;
+  transform-origin: calc(var(--icon-sel) / 2) 50%;
+}
+
+/* Not fired yet: still in the idol, so not on the track and not hoverable. */
+:root[data-theme='temple'] .xmb__col[data-active] .xmb__item:not([data-fired]) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Fired: out of the idol's mouth, small and fast, and onto its place on the
+   track. Xmb.jsx adds data-fired the first time the cursor reaches an orb, so
+   this runs once per orb; moving back up is only the roll. */
+:root[data-theme='temple'] .xmb__item[data-fired] .xmb__item-btn {
+  animation: temple-fire 640ms cubic-bezier(0.2, 0.75, 0.25, 1) backwards;
+  animation-delay: calc(var(--fire-rank, 0) * 90ms);
+}
+
+@keyframes temple-fire {
+  0% {
+    translate: var(--fx, 0px) var(--fy, 0px);
+    scale: var(--fire-scale, 0.3);
+    opacity: 1;
+  }
+  78% {
+    scale: 1.06;
+  }
+  100% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+/* --- The orbs themselves: polished stone marbles --- */
+
+:root[data-theme='temple'] .xmb__item,
+.temple__load {
+  --orb-hi: #b8f0cf;
+  --orb: #2f9a63;
+  --orb-lo: #0d3a24;
+  --orb-ink: #f4fff8;
+}
+:root[data-theme='temple'] .xmb__item:nth-child(5n + 2),
+.temple__load[data-orb='1'] {
+  --orb-hi: #ffe2a6;
+  --orb: #e09a2e;
+  --orb-lo: #6a3a06;
+  --orb-ink: #2a1703;
+}
+:root[data-theme='temple'] .xmb__item:nth-child(5n + 3),
+.temple__load[data-orb='2'] {
+  --orb-hi: #c4d8ff;
+  --orb: #3d6ccc;
+  --orb-lo: #10224e;
+  --orb-ink: #f2f6ff;
+}
+:root[data-theme='temple'] .xmb__item:nth-child(5n + 4),
+.temple__load[data-orb='3'] {
+  --orb-hi: #ffc6b4;
+  --orb: #d65a3e;
+  --orb-lo: #5a1a0c;
+  --orb-ink: #fff4f0;
+}
+:root[data-theme='temple'] .xmb__item:nth-child(5n + 5),
+.temple__load[data-orb='4'] {
+  --orb-hi: #fff4c8;
+  --orb: #e6c35a;
+  --orb-lo: #7a5410;
+  --orb-ink: #2a1c03;
+}
+
+:root[data-theme='temple'] .xmb__item-glyph {
+  border-radius: 50%;
+  border: 0;
+  color: var(--orb-ink);
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.85) 0 7%, rgba(255, 255, 255, 0) 24%),
+    radial-gradient(circle at 42% 36%, var(--orb-hi) 0%, var(--orb) 46%, var(--orb-lo) 100%);
+  box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.4), inset 0 3px 5px rgba(255, 255, 255, 0.22),
+    0 7px 12px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme='temple'] .xmb__item-glyph::before,
+:root[data-theme='temple'] .xmb__item-sheen {
+  display: none;
+}
+
+/* A mark drawn for a light ground sits on an ivory orb. */
+:root[data-theme='temple'] .xmb__item-glyph[data-logo] {
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.9) 0 7%, rgba(255, 255, 255, 0) 24%),
+    radial-gradient(circle at 42% 36%, #fffdf6 0%, #efe6cf 55%, #b5a684 100%);
+}
+
+:root[data-theme='temple'] .xmb__item-glyph[data-logo='cover'] {
+  background: #0b0e1c;
+}
+
+:root[data-theme='temple'] .xmb__item-logo {
+  border-radius: 50%;
+  padding: 16%;
+}
+
+:root[data-theme='temple'] .xmb__item-glyph[data-logo='cover'] .xmb__item-logo {
+  padding: 0;
+}
+
+/* The cursor's orb: bigger, gold-rimmed, lit. */
+:root[data-theme='temple'] .xmb__item[data-selected] .xmb__item-glyph {
+  box-shadow: inset 0 -8px 14px rgba(0, 0, 0, 0.38), inset 0 3px 6px rgba(255, 255, 255, 0.25),
+    0 0 0 3px #f2cf72, 0 0 0 5px rgba(90, 58, 12, 0.85), 0 0 34px rgba(242, 207, 114, 0.45),
+    0 10px 18px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme='temple'] .xmb[data-idle] .xmb__item[data-selected] .xmb__item-glyph {
+  animation: orb-glint 4.6s var(--ease-soft) infinite;
+}
+
+@keyframes orb-glint {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+:root[data-theme='temple'] .xmb__item-btn:hover .xmb__item-glyph {
+  transform: scale(1.06);
+}
+
+/* Only the cursor's orb is named. The others' labels are taken out of the
+   box altogether, so an invisible label can never catch the pointer. */
+:root[data-theme='temple'] .xmb__item:not([data-selected]) .xmb__item-text {
+  display: none;
+}
+
+:root[data-theme='temple'] .xmb__item[data-selected] .xmb__item-text {
+  width: max-content;
+  max-width: var(--label-max, 260px);
+  white-space: normal;
+  animation: temple-label 420ms var(--ease-out) 120ms backwards;
+}
+
+@keyframes temple-label {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+:root[data-theme='temple'] .xmb__item-title,
+:root[data-theme='temple'] .xmb__node-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+:root[data-theme='temple'] .xmb__item[data-selected] .xmb__item-title {
+  font-size: 1.32rem;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: var(--pearl-100);
+  color: var(--pearl-100);
+  animation: none;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.8), 0 0 22px rgba(242, 207, 114, 0.22);
+  filter: none;
+}
+
+:root[data-theme='temple'] .xmb__item[data-selected] .xmb__item-sub,
+:root[data-theme='temple'] .xmb__node-value {
+  color: var(--iri-1);
+  letter-spacing: 0.14em;
+}
+
+:root[data-theme='temple'] .xmb__focus {
+  display: none;
+}
+
+/* ---------- Socials ----------
+   The columns sit at the screen's left edge here, so the cluster is centred
+   from there rather than stepped out from a cross point. (One class more
+   than the shared rule, which loads after this sheet.) */
+:root[data-theme='temple'] .xmb .xmb__burst {
+  left: 50vw;
+}
+
+:root[data-theme='temple'] .xmb__node-glyph {
+  border-radius: 50%;
+  color: #2a1a05;
+  background: radial-gradient(circle at 38% 30%, #fff1c4, #f2cf72 45%, #a8741e 100%);
+  border: 0;
+}
+
+/* ---------- Reduced motion: no shots, no rolling ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='temple'] .xmb__item,
+  .temple__idol {
+    transition: none;
+  }
+
+  :root[data-theme='temple'] .xmb__item[data-fired] .xmb__item-btn,
+  :root[data-theme='temple'] .xmb__item[data-selected] .xmb__item-text,
+  .temple__load {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Start page: the idol, the name carved over it
+   ============================================================ */
+
+.boot__idol {
+  display: none;
+}
+
+:root[data-theme='temple'] .boot__idol {
+  display: block;
+  width: clamp(110px, 16vw, 170px);
+  margin: 0 auto clamp(14px, 2.4vh, 26px);
+  filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.7));
+  animation: idol-wake 1.6s var(--ease-out) both;
+}
+
+:root[data-theme='temple'] .boot__idol .idol {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes idol-wake {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+:root[data-theme='temple'] .boot__frame,
+:root[data-theme='temple'] .boot__scan-grid {
+  opacity: 0;
+}
+
+:root[data-theme='temple'] .boot__bloom {
+  opacity: 0.55;
+  filter: blur(50px);
+  background: radial-gradient(circle, rgba(232, 150, 60, 0.35), transparent 65%);
+}
+
+:root[data-theme='temple'] .boot__line {
+  opacity: 0.15;
+}
+
+:root[data-theme='temple'] .boot__logo-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+
+/* Carved: a dark cut below each letter and a lit edge above. */
+:root[data-theme='temple'] .boot__ch {
+  background: none;
+  -webkit-text-fill-color: var(--iri-1);
+  color: var(--iri-1);
+  text-shadow: 0 -1px 0 rgba(255, 244, 210, 0.6), 0 3px 0 rgba(0, 0, 0, 0.85),
+    0 0 40px rgba(232, 150, 60, 0.35);
+}
+
+/* The prompt is a stone tablet. */
+:root[data-theme='temple'] .boot__prompt {
+  background: linear-gradient(180deg, #232c26, #161d19);
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 1px 0 rgba(239, 233, 216, 0.1), inset 0 -2px 0 rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(242, 207, 114, 0.22), var(--shadow-md);
+  backdrop-filter: none;
+  border-radius: 10px;
+}
+
+:root[data-theme='temple'] .boot__prompt-ring {
+  display: none;
+}
+
+:root[data-theme='temple'] .boot__prompt-label {
+  font-family: var(--font-display);
+  letter-spacing: 0.22em;
+  color: var(--iri-1);
+}
+
+/* ---------- Panel: dark stone with a gold inlay edge ---------- */
+
+:root[data-theme='temple'] .blade .blade__panel {
+  border: 1px solid rgba(242, 207, 114, 0.2);
+  background:
+    linear-gradient(155deg, rgba(239, 233, 216, 0.06), rgba(239, 233, 216, 0.01) 40%, rgba(239, 233, 216, 0.035)),
+    linear-gradient(180deg, #141b17 0%, #0b100d 100%);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 207, 114, 0.12);
+}
+
+:root[data-theme='temple'] .blade__body .pearl-panel {
+  background: linear-gradient(160deg, rgba(239, 233, 216, 0.06), rgba(239, 233, 216, 0.015)), #121915;
+  border-color: rgba(239, 233, 216, 0.1);
+}
+
+:root[data-theme='temple'] .blade__body .pearl-panel::before {
+  opacity: 0.1;
+}
+
+:root[data-theme='temple'] .blade__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- HUD ---------- */
+
+:root[data-theme='temple'] .hud__chip,
+:root[data-theme='temple'] .hud__cv,
+:root[data-theme='temple'] .hud__plain {
+  background: linear-gradient(180deg, #202923, #151c18);
+  border: 1px solid rgba(242, 207, 114, 0.25);
+  color: var(--pearl-100);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-theme='temple'] .hud__ch {
+  background: none;
+  -webkit-text-fill-color: var(--iri-1);
+  color: var(--iri-1);
+  font-family: var(--font-display);
+}
+
+/* ---------- Plain view ---------- */
+
+:root[data-theme='temple'] .pv-bill .pv-hero__photo {
+  background-color: var(--bg-raise);
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 54%, rgba(242, 207, 114, 0.14) 54.5% 55.5%, transparent 56%),
+    radial-gradient(circle at 50% 50%, transparent 66%, rgba(242, 207, 114, 0.1) 66.5% 67.5%, transparent 68%),
+    radial-gradient(70% 60% at 30% 10%, rgba(232, 150, 60, 0.16), transparent 70%);
+}
+
+:root[data-theme='temple'] .pv-head__title {
+  letter-spacing: 0.08em;
+}

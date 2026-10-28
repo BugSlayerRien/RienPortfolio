@@ -449,6 +449,7 @@ export default function App() {
       />
 
       <Xmb
+        theme={theme.id}
         categories={categories}
         catIndex={catIndex}
         itemIndex={itemIndex}

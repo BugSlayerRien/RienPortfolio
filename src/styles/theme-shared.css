@@ -1,5 +1,5 @@
 /* ============================================================
-   Shared corrections for Press and Bloom
+   Shared corrections for Press, Bloom and Temple
    ============================================================
 
    Both themes change the site's layout, not just its colours, and a few of
@@ -26,6 +26,11 @@
   --pv-display: 'Marcellus', Georgia, serif;
 }
 
+:root[data-theme='temple'] .plain {
+  --pv-serif: 'Cinzel', Georgia, serif;
+  --pv-display: 'Cinzel', Georgia, serif;
+}
+
 /* ---------- Socials ----------
    The burst hangs off the cross point, which on these layouts leaves the
    cluster stranded to one side with the last card alone on a second row. There
@@ -34,7 +39,8 @@
    centring means stepping out to the middle from there. */
 
 :root[data-theme='editorial'] .xmb__burst,
-:root[data-theme='ethereal'] .xmb__burst {
+:root[data-theme='ethereal'] .xmb__burst,
+:root[data-theme='temple'] .xmb__burst {
   /* Press anchors --cross-y to the top of its list, which is no place for the
      Socials cluster; it takes the middle of the screen back. */
   top: 50vh;
@@ -47,7 +53,8 @@
 }
 
 :root[data-theme='editorial'] .xmb__quote,
-:root[data-theme='ethereal'] .xmb__quote {
+:root[data-theme='ethereal'] .xmb__quote,
+:root[data-theme='temple'] .xmb__quote {
   left: 0;
   right: 0;
   padding-left: 0;
@@ -59,7 +66,9 @@
 :root[data-theme='editorial'] .xmb__quote-line,
 :root[data-theme='ethereal'] .xmb__quote-line,
 :root[data-theme='editorial'] .pv-slot__row,
-:root[data-theme='ethereal'] .pv-slot__row {
+:root[data-theme='ethereal'] .pv-slot__row,
+:root[data-theme='temple'] .xmb__quote-line,
+:root[data-theme='temple'] .pv-slot__row {
   background: none;
   -webkit-background-clip: border-box;
   background-clip: border-box;
@@ -67,7 +76,8 @@
 }
 
 :root[data-theme='editorial'] .xmb__quote-line,
-:root[data-theme='ethereal'] .xmb__quote-line {
+:root[data-theme='ethereal'] .xmb__quote-line,
+:root[data-theme='temple'] .xmb__quote-line {
   -webkit-text-fill-color: var(--pearl-100);
   color: var(--pearl-100);
 }
@@ -86,13 +96,20 @@
   color: var(--iri-1);
 }
 
-:root[data-theme='ethereal'] .pv-slot__row {
+:root[data-theme='ethereal'] .pv-slot__row,
+:root[data-theme='temple'] .pv-slot__row {
   color: var(--iri-1);
+}
+
+:root[data-theme='temple'] .xmb__quote {
+  font-family: var(--pv-serif);
+  font-weight: 500;
 }
 
 @media (max-width: 900px) {
   :root[data-theme='editorial'] .xmb__burst,
-  :root[data-theme='ethereal'] .xmb__burst {
+  :root[data-theme='ethereal'] .xmb__burst,
+  :root[data-theme='temple'] .xmb__burst {
     grid-template-columns: minmax(0, 1fr);
     width: min(440px, 86vw);
   }
@@ -108,7 +125,10 @@
 :root[data-theme='editorial'] .hero__name,
 :root[data-theme='ethereal'] .hero__name,
 :root[data-theme='editorial'] .protocol__code,
-:root[data-theme='ethereal'] .protocol__code {
+:root[data-theme='ethereal'] .protocol__code,
+:root[data-theme='temple'] .blade__title,
+:root[data-theme='temple'] .hero__name,
+:root[data-theme='temple'] .protocol__code {
   background: none;
   -webkit-background-clip: border-box;
   background-clip: border-box;
